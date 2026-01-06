@@ -2,12 +2,13 @@
   "name": "intentkit",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "Type-safe LLM context management for TypeScript",
   "repository": {
     "type": "git",
     "url": "https://github.com/your-username/intentkit.git"
   },
-  "author": "Your Name <your@email.com>",
+  "author": "Your Name <alex.guzey@gmail.com>",
   "license": "MIT",
   "packageManager": "pnpm@9.15.0",
   "engines": {
@@ -15,6 +16,7 @@
     "pnpm": ">=9.0.0"
   },
   "scripts": {
+    "clean:node_modules": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
@@ -30,21 +32,29 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.0",
+    "@changesets/cli": "^2.29.8",
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
+    "@eslint/js": "^9.39.2",
     "@types/node": "^20.11.0",
-    "husky": "^9.0.0",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.2.0",
-    "turbo": "^2.3.0",
-    "typescript": "^5.7.0",
-    "vitest": "^2.1.0"
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "eslint": "^9.17.0",
+    "globals": "^17.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "turbo": "^2.7.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.52.0",
+    "vitest": "^4.0.16"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
       "prettier --write",
       "eslint --fix"
     ],
-    "*.{json,md}": [
+    "*.{json,md, yaml}": [
       "prettier --write"
     ]
   }
