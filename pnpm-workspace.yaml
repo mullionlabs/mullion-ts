@@ -1,3 +1,43 @@
 packages:
   - "packages/*"
   - "examples/*"
+
+catalog:
+  # TypeScript ecosystem
+  typescript: ^5.9.3
+  '@types/node': ^20.11.30
+
+  # Build tools
+  tsup: ^8.5.1
+  turbo: ^2.7.3
+
+  # Testing
+  vitest: ^4.0.16
+
+  # Validation - Using v4 for latest features and performance
+  # Minimum 4.1.8 required for AI SDK 5+ compatibility
+  zod: ^4.1.8
+
+  # Linting & Formatting
+  eslint: ^9.39.2
+  prettier: ^3.7.4
+  '@typescript-eslint/eslint-plugin': ^8.18.0
+  '@typescript-eslint/parser': ^8.18.0
+  '@typescript-eslint/rule-tester': ^8.18.0
+  '@typescript-eslint/utils': ^8.18.0
+  typescript-eslint: ^8.18.0
+  '@eslint/js': ^9.39.2
+  globals: ^17.0.0
+
+  # Git hooks & commits
+  husky: ^9.1.7
+  lint-staged: ^16.2.7
+  '@commitlint/cli': ^20.3.0
+  '@commitlint/config-conventional': ^20.3.0
+
+  # Versioning
+  '@changesets/cli': ^2.29.8
+
+  # Vercel AI SDK
+  ai: ^6.0.12
+  '@ai-sdk/openai': ^2.0.0

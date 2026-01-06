@@ -30,6 +30,7 @@ export default tseslint.config(
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
+        defaultProject: './tsconfig.json',
       },
       globals: {
         ...globals.node,
@@ -37,20 +38,16 @@ export default tseslint.config(
       },
     },
     rules: {
-      // Code style - following CLAUDE.md conventions
       '@typescript-eslint/naming-convention': [
         'error',
-        // Types: PascalCase
         {
           selector: 'typeLike',
           format: ['PascalCase'],
         },
-        // Functions: camelCase
         {
           selector: 'function',
           format: ['camelCase'],
         },
-        // Variables: camelCase or UPPER_CASE for constants
         {
           selector: 'variable',
           format: ['camelCase', 'UPPER_CASE'],
@@ -69,7 +66,6 @@ export default tseslint.config(
         },
       ],
 
-      // Prefer interface over type for objects (CLAUDE.md convention)
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
 
       // Additional quality rules
@@ -85,13 +81,12 @@ export default tseslint.config(
     },
   },
 
-  // Test files - more lenient rules
+  // Test files - disable type-aware linting
   {
     files: ['**/*.test.ts', '**/*.spec.ts'],
+    extends: [tseslint.configs.disableTypeChecked],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
     },
   },
 

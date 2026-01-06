@@ -23,10 +23,10 @@
 
 ### 0.2 First Changeset
 
-- [ ] Run `pnpm changeset`
-- [ ] Create a test changeset for @intentkit/core
-- [ ] Run `pnpm version` to see version bump
-- [ ] Revert test changeset
+- [x] Run `pnpm changeset`
+- [x] Create a test changeset for @intentkit/core
+- [x] Run `pnpm version` to see version bump
+- [x] Revert test changeset
 
 ---
 
@@ -36,41 +36,41 @@
 
 ### 1.1 Brand Types (`packages/core/src/brand.ts`)
 
-- [ ] Create `Brand<T, B>` utility type
-- [ ] Create `ScopeId` branded string type
-- [ ] Add JSDoc with examples
-- [ ] Export from index.ts
+- [x] Create `Brand<T, B>` utility type
+- [x] Create `ScopeId` branded string type
+- [x] Add JSDoc with examples
+- [x] Export from index.ts
 
 ### 1.2 Owned Type (`packages/core/src/owned.ts`)
 
-- [ ] Define `Owned<T, S>` interface
-- [ ] Add all required fields: value, confidence, \_\_scope, traceId
-- [ ] Create `createOwned()` factory function
-- [ ] Create `isOwned()` type guard
-- [ ] Add comprehensive JSDoc
-- [ ] Write unit tests
+- [x] Define `Owned<T, S>` interface
+- [x] Add all required fields: value, confidence, \_\_scope, traceId
+- [x] Create `createOwned()` factory function
+- [x] Create `isOwned()` type guard
+- [x] Add comprehensive JSDoc
+- [x] Write unit tests
 
 ### 1.3 SemanticValue Type (`packages/core/src/semantic-value.ts`)
 
-- [ ] Define `SemanticValue<T, S>` extending Owned
-- [ ] Add `alternatives` array
-- [ ] Add `reasoning` field
-- [ ] Create factory and type guards
-- [ ] Write unit tests
+- [x] Define `SemanticValue<T, S>` extending Owned
+- [x] Add `alternatives` array
+- [x] Add `reasoning` field
+- [x] Create factory and type guards
+- [x] Write unit tests
 
 ### 1.4 Context Type (`packages/core/src/context.ts`)
 
-- [ ] Define `Context<S>` interface
-- [ ] Define `ContextOptions` type
-- [ ] Add method signatures: `infer`, `bridge`, `use`
-- [ ] Add JSDoc with examples
+- [x] Define `Context<S>` interface
+- [x] Define `ContextOptions` type
+- [x] Add method signatures: `infer`, `bridge`, `use`
+- [x] Add JSDoc with examples
 
 ### 1.5 Verify Core Package
 
-- [ ] Update `packages/core/src/index.ts` with all exports
-- [ ] Run `pnpm --filter @intentkit/core build`
-- [ ] Run `pnpm --filter @intentkit/core test`
-- [ ] Run `pnpm --filter @intentkit/core typecheck`
+- [x] Update `packages/core/src/index.ts` with all exports
+- [x] Run `pnpm --filter @intentkit/core build`
+- [x] Run `pnpm --filter @intentkit/core test`
+- [x] Run `pnpm --filter @intentkit/core typecheck`
 
 ---
 

@@ -41,7 +41,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@typescript-eslint/utils": "^8.18.0"
+    "@typescript-eslint/utils": "catalog:"
   },
   "peerDependencies": {
     "@intentkit/core": ">=0.0.1",
@@ -56,13 +56,13 @@
   },
   "devDependencies": {
     "@intentkit/core": "workspace:*",
-    "@types/node": "^20.11.0",
-    "@typescript-eslint/parser": "^8.18.0",
-    "@typescript-eslint/rule-tester": "^8.18.0",
-    "eslint": "^9.17.0",
-    "tsup": "^8.3.0",
-    "typescript": "^5.7.0",
-    "vitest": "^2.1.0"
+    "@types/node": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "@typescript-eslint/rule-tester": "catalog:",
+    "eslint": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"
