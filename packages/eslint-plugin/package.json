@@ -1,0 +1,70 @@
+{
+  "name": "eslint-plugin-intentkit",
+  "version": "0.0.1",
+  "description": "ESLint rules for type-safe LLM context management",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "llm",
+    "typescript",
+    "context",
+    "safety"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/intentkit.git",
+    "directory": "packages/eslint-plugin"
+  },
+  "license": "MIT",
+  "author": "Your Name <your@email.com>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@typescript-eslint/utils": "^8.18.0"
+  },
+  "peerDependencies": {
+    "@intentkit/core": ">=0.0.1",
+    "@typescript-eslint/parser": ">=8.0.0",
+    "eslint": ">=8.57.0",
+    "typescript": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@intentkit/core": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@intentkit/core": "workspace:*",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "@typescript-eslint/rule-tester": "^8.18.0",
+    "eslint": "^9.17.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

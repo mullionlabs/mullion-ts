@@ -1,0 +1,27 @@
+{
+  "model": "claude-sonnet-4-20250514",
+  "permissions": {
+    "allow_file_write": true,
+    "allow_file_read": true,
+    "allow_bash": true,
+    "allow_mcp": false
+  },
+  "context": {
+    "include": [
+      "CLAUDE.md",
+      "TODO.md",
+      "packages/*/README.md",
+      "packages/*/src/index.ts",
+      "turbo.json",
+      ".changeset/config.json"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "coverage",
+      ".git",
+      "*.lock",
+      ".turbo"
+    ]
+  }
+}

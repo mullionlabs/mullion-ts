@@ -1,0 +1,54 @@
+{
+  "name": "@intentkit/core",
+  "version": "0.0.1",
+  "description": "Core types and utilities for IntentKit",
+  "keywords": [
+    "llm",
+    "typescript",
+    "types",
+    "context",
+    "ai",
+    "safety"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/intentkit.git",
+    "directory": "packages/core"
+  },
+  "license": "MIT",
+  "author": "Your Name <your@email.com>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

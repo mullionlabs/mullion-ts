@@ -1,0 +1,63 @@
+{
+  "name": "@intentkit/ai-sdk",
+  "version": "0.0.1",
+  "description": "IntentKit integration with Vercel AI SDK",
+  "keywords": [
+    "llm",
+    "ai-sdk",
+    "vercel",
+    "typescript",
+    "context",
+    "openai",
+    "anthropic"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/intentkit.git",
+    "directory": "packages/ai-sdk"
+  },
+  "license": "MIT",
+  "author": "Your Name <your@email.com>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@intentkit/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "ai": ">=3.0.0",
+    "zod": ">=3.22.0"
+  },
+  "devDependencies": {
+    "@ai-sdk/openai": "^1.0.0",
+    "@types/node": "^20.11.0",
+    "ai": "^4.0.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0",
+    "zod": "^3.23.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
