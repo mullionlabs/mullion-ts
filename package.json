@@ -1,14 +1,17 @@
 {
-  "name": "intentkit",
-  "version": "0.0.0",
+  "name": "scopestack",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "description": "Type-safe LLM context management for TypeScript",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/intentkit.git"
+    "url": "https://github.com/scopestack/scopestack-ts.git"
   },
-  "author": "Your Name <alex.guzey@gmail.com>",
+  "author": {
+    "name": "Oleksandr Huzei",
+    "email": "alex.guzey@gmail.com"
+  },
   "license": "MIT",
   "packageManager": "pnpm@9.15.0",
   "engines": {

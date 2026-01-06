@@ -1,5 +1,5 @@
 {
-  "name": "@intentkit/ai-sdk",
+  "name": "@scopestack/ai-sdk",
   "version": "0.0.1",
   "description": "IntentKit integration with Vercel AI SDK",
   "keywords": [
