@@ -3,10 +3,16 @@ import { generateObject } from 'ai';
 import type { z } from 'zod';
 import { createOwned } from '@scopestack/core';
 import type { Context, InferOptions, Owned } from '@scopestack/core';
-import type { CacheSegmentsAPI } from './cache-segments.js';
-import { createCacheSegmentsAPI } from './cache-segments.js';
-import { createCacheConfig } from './cache-config.js';
-import type { Provider } from './cache-capabilities.js';
+import type { CacheSegmentManager } from './cache/segments.js';
+import { createCacheSegmentManager } from './cache/segments.js';
+import {
+  createDefaultCacheConfig,
+  createAnthropicAdapter,
+  createOpenAIAdapter,
+} from './cache/types.js';
+import type { Provider } from './cache/capabilities.js';
+import type { CacheStats } from './cache/metrics.js';
+import { CacheMetricsCollector } from './cache/metrics.js';
 
 /**
  * Confidence scores mapped to LLM finish reasons.
@@ -184,38 +190,75 @@ export interface ScopeStackClientOptions {
 }
 
 /**
+ * Cache options for infer() method.
+ */
+export interface CacheOptions {
+  /** Cache strategy for this inference call */
+  readonly cache?: 'use-segments' | 'none';
+}
+
+/**
+ * Extended InferOptions that includes cache configuration.
+ */
+export interface ScopeStackInferOptions extends InferOptions, CacheOptions {}
+
+/**
  * Extended Context interface that includes cache segments API.
  */
 export interface ScopeStackContext<S extends string> extends Context<S> {
-  /** Cache segments API for this context */
-  readonly cache: CacheSegmentsAPI;
+  /** Cache segments manager for this context */
+  readonly cache: CacheSegmentManager;
+
+  /** Enhanced infer method with cache options */
+  infer<T>(
+    schema: z.ZodType<T> & { _type?: T },
+    input: string,
+    options?: ScopeStackInferOptions
+  ): Promise<Owned<T, S>>;
+
+  /** Get aggregated cache statistics for this context */
+  getCacheStats(): CacheStats;
 }
 
 export function createScopeStackClient(
   model: LanguageModel,
-  options: ScopeStackClientOptions = {}
+  clientOptions: ScopeStackClientOptions = {}
 ): ScopeStackClient {
   return {
     async scope<S extends string, R>(
       name: S,
       fn: (ctx: Context<S>) => Promise<R>
     ): Promise<R> {
-      // Create cache API if enabled
-      const cacheAPI =
-        options.enableCache && options.provider && options.model
-          ? createCacheSegmentsAPI(
-              options.provider,
-              options.model,
-              createCacheConfig() // Use default cache config for now
+      // Create cache segment manager if enabled
+      const cacheManager =
+        clientOptions.enableCache &&
+        clientOptions.provider &&
+        clientOptions.model
+          ? createCacheSegmentManager(
+              clientOptions.provider,
+              clientOptions.model,
+              createDefaultCacheConfig({ enabled: true })
             )
           : undefined;
 
-      // Create context with working infer implementation and optional cache API
-      const ctx: Context<S> & { cache?: CacheSegmentsAPI } = {
+      // Create metrics collector for cache statistics
+      const metricsCollector =
+        clientOptions.provider && clientOptions.model
+          ? new CacheMetricsCollector(
+              clientOptions.provider,
+              clientOptions.model
+            )
+          : undefined;
+
+      // Create context with working infer implementation and cache manager
+      const ctx: Context<S> & {
+        cache?: CacheSegmentManager;
+        getCacheStats?: () => CacheStats;
+      } = {
         scope: name,
 
-        // Add cache API if enabled
-        ...(cacheAPI ? { cache: cacheAPI } : {}),
+        // Add cache manager if enabled
+        ...(cacheManager ? { cache: cacheManager } : {}),
 
         /**
          * Infer a typed value from unstructured input using the LLM.
@@ -223,6 +266,10 @@ export function createScopeStackClient(
          * Uses Vercel AI SDK's generateObject to extract structured data
          * according to the provided Zod schema. The result is wrapped in
          * an Owned type tagged with this scope.
+         *
+         * Cache Integration:
+         * - `cache: 'use-segments'` (default): Uses segments from cache manager
+         * - `cache: 'none'`: Disables caching for this call
          *
          * Confidence is automatically extracted from the LLM's finish reason:
          * - `stop` (1.0): Model completed naturally
@@ -235,8 +282,64 @@ export function createScopeStackClient(
         async infer<T>(
           schema: z.ZodType<T> & { _type?: T },
           input: string,
-          options?: InferOptions
+          options?: ScopeStackInferOptions
         ): Promise<Owned<T, S>> {
+          // Determine cache strategy (use client-level provider/model info)
+          const cacheStrategy = options?.cache ?? 'use-segments';
+          const useCache = cacheStrategy !== 'none' && cacheManager;
+
+          // Prepare provider options with cache if enabled
+          let providerOptions = {};
+          if (useCache) {
+            const segments = cacheManager.getSegments();
+
+            if (
+              segments.length > 0 &&
+              clientOptions.provider === 'anthropic' &&
+              clientOptions.model
+            ) {
+              // Convert segments to Anthropic provider options
+              const adapter = createAnthropicAdapter(clientOptions.model);
+              const cacheConfig = createDefaultCacheConfig({
+                enabled: true,
+                breakpoints: segments.length,
+              });
+              const anthropicOptions = adapter.toProviderOptions(cacheConfig);
+
+              if (anthropicOptions.cache) {
+                providerOptions = {
+                  // Map to Anthropic's cache control format
+                  experimental_providerMetadata: {
+                    anthropic: {
+                      cacheControl: segments.map((segment) => ({
+                        type: 'ephemeral' as const,
+                        ...(segment.ttl ? { ttl: segment.ttl } : {}),
+                      })),
+                    },
+                  },
+                };
+              }
+            } else if (
+              clientOptions.provider === 'openai' &&
+              clientOptions.model
+            ) {
+              // OpenAI uses automatic caching - no special provider options needed
+              const adapter = createOpenAIAdapter(clientOptions.model);
+              const cacheConfig = createDefaultCacheConfig({ enabled: true });
+              const openaiOptions = adapter.toProviderOptions(cacheConfig);
+
+              if (openaiOptions.autoCaching) {
+                providerOptions = {
+                  experimental_providerMetadata: {
+                    openai: {
+                      caching: true,
+                    },
+                  },
+                };
+              }
+            }
+          }
+
           // Use Vercel AI SDK to generate structured output
           const result = await generateObject({
             model,
@@ -245,6 +348,7 @@ export function createScopeStackClient(
             temperature: options?.temperature,
             maxTokens: options?.maxTokens,
             system: options?.systemPrompt,
+            ...providerOptions,
           });
 
           // Extract confidence from finish reason
@@ -252,17 +356,22 @@ export function createScopeStackClient(
             result.finishReason
           );
 
-          // Record metrics if cache is enabled and metrics collection is on
-          if (cacheAPI && result.usage && cacheAPI._recordMetrics) {
-            cacheAPI._recordMetrics(result.usage);
+          // Collect cache metrics from the result
+          if (metricsCollector && result.usage) {
+            metricsCollector.addMetrics(
+              result.usage as Record<string, unknown>
+            );
           }
 
-          // Wrap in Owned with scope and extracted confidence
+          // Generate trace ID with cache information
+          const traceId = `${name}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+          // Wrap in Owned with scope and confidence
           return createOwned({
             value: result.object,
             scope: name,
             confidence,
-            traceId: `${name}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            traceId,
           });
         },
 
@@ -296,6 +405,28 @@ export function createScopeStackClient(
           }
 
           return owned.value;
+        },
+
+        /**
+         * Get aggregated cache statistics for this context.
+         *
+         * Returns cumulative metrics from all infer() calls made within
+         * this scope, including cache hit rates and cost savings.
+         */
+        getCacheStats(): CacheStats {
+          return (
+            metricsCollector?.getAggregatedStats() ?? {
+              provider: 'unknown',
+              cacheWriteTokens: 0,
+              cacheReadTokens: 0,
+              inputTokens: 0,
+              outputTokens: 0,
+              savedTokens: 0,
+              cacheHitRate: 0,
+              estimatedSavingsUsd: 0,
+              raw: { noMetrics: true },
+            }
+          );
         },
       };
 

@@ -8,6 +8,8 @@ export type {
   ScopeStackClient,
   ScopeStackClientOptions,
   ScopeStackContext,
+  ScopeStackInferOptions,
+  CacheOptions,
 } from './client.js';
 
 // Cache capabilities for provider optimization
@@ -15,35 +17,41 @@ export {
   getCacheCapabilities,
   supportsCacheFeature,
   getEffectiveBreakpointLimit,
-} from './cache-capabilities.js';
-export type { CacheCapabilities, Provider } from './cache-capabilities.js';
+  isValidTtl,
+  getRecommendedCacheStrategy,
+} from './cache/capabilities.js';
+export type { CacheCapabilities, Provider } from './cache/capabilities.js';
 
 // Cache configuration types and utilities
 export {
-  validateCacheConfig,
-  createCacheConfig,
-  createUserContentCacheConfig,
-  createDeveloperCacheConfig,
-  adaptToAnthropicCache,
-  adaptToOpenAICache,
-} from './cache-config.js';
+  validateTtlOrdering,
+  validateBreakpointLimit,
+  validateMinTokens,
+  createAnthropicAdapter,
+  createOpenAIAdapter,
+  createDefaultCacheConfig,
+  createUserContentConfig,
+  createDeveloperContentConfig,
+} from './cache/types.js';
 export type {
   CacheConfig,
   CacheScope,
   CacheTTL,
-  CacheSegmentConfig,
-  AnthropicCacheConfig,
-  OpenAICacheConfig,
-} from './cache-config.js';
+  AnthropicProviderOptions,
+  OpenAIProviderOptions,
+  ProviderOptions,
+  AnthropicCacheAdapter,
+  OpenAICacheAdapter,
+  ValidationResult,
+} from './cache/types.js';
 
 // Cache segments API for first-class caching
-export { createCacheSegmentsAPI } from './cache-segments.js';
+export { createCacheSegmentManager } from './cache/segments.js';
 export type {
-  CacheSegmentsAPI,
-  CacheSegmentOptions,
-  CacheSegmentMetadata,
-  CacheContextMetadata,
-} from './cache-segments.js';
+  CacheSegmentManager,
+  CacheSegment,
+  SegmentOptions,
+} from './cache/segments.js';
 
 // Cache metrics for performance tracking and cost analysis
 export {
@@ -54,12 +62,12 @@ export {
   estimateCacheSavings,
   formatCacheStats,
   CacheMetricsCollector,
-} from './cache-metrics.js';
+} from './cache/metrics.js';
 export type {
   CacheStats,
   AnthropicCacheMetrics,
   OpenAICacheMetrics,
-} from './cache-metrics.js';
+} from './cache/metrics.js';
 
 // Re-export core types for convenience
 export type { Context, Owned, Schema, InferOptions } from '@scopestack/core';

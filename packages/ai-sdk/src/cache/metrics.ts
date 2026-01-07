@@ -6,46 +6,53 @@
  * cost savings from cache utilization.
  */
 
-import type { Provider } from './cache-capabilities.js';
-import { getCacheCapabilities } from './cache-capabilities.js';
+import type { Provider } from './capabilities.js';
+import { getCacheCapabilities } from './capabilities.js';
+
+import type { CacheTTL } from './types.js';
 
 /**
  * Provider-agnostic cache statistics.
  *
  * Normalized metrics that work across different LLM providers,
- * allowing consistent tracking and reporting regardless of the
- * underlying provider implementation.
+ * following the Task 7.4 specification for consistent tracking
+ * and reporting regardless of provider implementation.
  */
 export interface CacheStats {
-  /** Total tokens used in the request */
-  readonly totalTokens: number;
+  /** Provider that generated these metrics */
+  readonly provider: 'anthropic' | 'openai' | 'unknown';
 
-  /** Number of tokens that were served from cache */
-  readonly cachedTokens: number;
+  /** Number of tokens written to cache (cache creation cost) */
+  readonly cacheWriteTokens: number;
 
-  /** Number of tokens that were processed fresh (not cached) */
-  readonly freshTokens: number;
+  /** Number of tokens read from cache (cache hit benefit) */
+  readonly cacheReadTokens: number;
 
-  /** Number of tokens saved by using cache */
+  /** Total input tokens in the request */
+  readonly inputTokens: number;
+
+  /** Total output tokens generated */
+  readonly outputTokens: number;
+
+  // Derived metrics
+  /** Total tokens saved by cache usage */
   readonly savedTokens: number;
 
+  /** Cache hit rate (0-1, where 1 = 100% cache hit) */
+  readonly cacheHitRate: number;
+
   /** Estimated cost savings in USD from cache usage */
-  readonly estimatedSavedUsd: number;
+  readonly estimatedSavingsUsd: number;
 
-  /** Cache hit ratio (0-1, where 1 = 100% cache hit) */
-  readonly cacheHitRatio: number;
+  // Debug information
+  /** Time-to-live for cached content */
+  readonly ttl?: CacheTTL;
 
-  /** Provider-specific raw metrics for debugging */
-  readonly rawMetrics: Record<string, unknown>;
+  /** Number of cache breakpoints used in request */
+  readonly breakpointsUsed?: number;
 
-  /** Timestamp when metrics were collected */
-  readonly collectedAt: Date;
-
-  /** Provider that generated these metrics */
-  readonly provider: Provider;
-
-  /** Model that was used */
-  readonly model: string;
+  /** Raw provider-specific metrics for debugging */
+  readonly raw?: unknown;
 }
 
 /**
@@ -131,40 +138,39 @@ const TOKEN_PRICING: Record<string, { input: number; output: number }> = {
  */
 export function parseAnthropicMetrics(
   usage: AnthropicCacheMetrics,
-  provider: Provider = 'anthropic',
+  provider: 'anthropic' = 'anthropic',
   model: string
 ): CacheStats {
-  const totalTokens = (usage.input_tokens || 0) + (usage.output_tokens || 0);
+  const inputTokens = usage.input_tokens || 0;
+  const outputTokens = usage.output_tokens || 0;
   const cacheReadTokens = usage.cache_read_input_tokens ?? 0;
-  const cacheCreationTokens = usage.cache_creation_input_tokens ?? 0;
+  const cacheWriteTokens = usage.cache_creation_input_tokens ?? 0;
 
-  // For Anthropic, cached tokens are those served from cache
-  const cachedTokens = cacheReadTokens;
-  const freshTokens = totalTokens - cachedTokens;
-  const savedTokens = cachedTokens; // These would have been processed fresh otherwise
+  // Tokens saved = tokens that were read from cache instead of processed fresh
+  const savedTokens = cacheReadTokens;
 
   const pricing = TOKEN_PRICING[model] || TOKEN_PRICING.default;
   // Cache savings primarily apply to input tokens (where most cache benefit occurs)
-  const estimatedSavedUsd = (savedTokens / 1_000_000) * pricing.input;
+  const estimatedSavingsUsd = (savedTokens / 1_000_000) * pricing.input;
 
-  const cacheHitRatio = totalTokens > 0 ? cachedTokens / totalTokens : 0;
+  // Cache hit rate based on input tokens (where caching applies)
+  const cacheHitRate = inputTokens > 0 ? cacheReadTokens / inputTokens : 0;
 
   return {
-    totalTokens,
-    cachedTokens,
-    freshTokens,
+    provider,
+    cacheWriteTokens,
+    cacheReadTokens,
+    inputTokens,
+    outputTokens,
     savedTokens,
-    estimatedSavedUsd,
-    cacheHitRatio,
-    rawMetrics: {
-      input_tokens: usage.input_tokens,
-      output_tokens: usage.output_tokens,
-      cache_creation_input_tokens: cacheCreationTokens,
+    cacheHitRate,
+    estimatedSavingsUsd,
+    raw: {
+      input_tokens: inputTokens,
+      output_tokens: outputTokens,
+      cache_creation_input_tokens: cacheWriteTokens,
       cache_read_input_tokens: cacheReadTokens,
     },
-    collectedAt: new Date(),
-    provider,
-    model,
   };
 }
 
@@ -181,36 +187,41 @@ export function parseAnthropicMetrics(
  */
 export function parseOpenAIMetrics(
   usage: OpenAICacheMetrics,
-  provider: Provider = 'openai',
+  provider: 'openai' = 'openai',
   model: string
 ): CacheStats {
-  const totalTokens = usage.total_tokens || 0;
-  const cachedTokens = usage.prompt_tokens_details?.cached_tokens ?? 0;
-  const freshTokens = totalTokens - cachedTokens;
-  const savedTokens = cachedTokens; // These would have been processed fresh otherwise
+  const inputTokens = usage.prompt_tokens || 0;
+  const outputTokens = usage.completion_tokens || 0;
+  const cacheReadTokens = usage.prompt_tokens_details?.cached_tokens ?? 0;
+
+  // For OpenAI, cache writes are automatic - no explicit write cost
+  const cacheWriteTokens = 0;
+
+  // Tokens saved = tokens that were read from cache
+  const savedTokens = cacheReadTokens;
 
   const pricing = TOKEN_PRICING[model] || TOKEN_PRICING.default;
   // Cache savings primarily apply to input/prompt tokens
-  const estimatedSavedUsd = (savedTokens / 1_000_000) * pricing.input;
+  const estimatedSavingsUsd = (savedTokens / 1_000_000) * pricing.input;
 
-  const cacheHitRatio = totalTokens > 0 ? cachedTokens / totalTokens : 0;
+  // Cache hit rate based on prompt tokens (where caching applies)
+  const cacheHitRate = inputTokens > 0 ? cacheReadTokens / inputTokens : 0;
 
   return {
-    totalTokens,
-    cachedTokens,
-    freshTokens,
+    provider,
+    cacheWriteTokens,
+    cacheReadTokens,
+    inputTokens,
+    outputTokens,
     savedTokens,
-    estimatedSavedUsd,
-    cacheHitRatio,
-    rawMetrics: {
-      prompt_tokens: usage.prompt_tokens,
-      completion_tokens: usage.completion_tokens,
-      total_tokens: totalTokens,
+    cacheHitRate,
+    estimatedSavingsUsd,
+    raw: {
+      prompt_tokens: inputTokens,
+      completion_tokens: outputTokens,
+      total_tokens: usage.total_tokens,
       prompt_tokens_details: usage.prompt_tokens_details,
     },
-    collectedAt: new Date(),
-    provider,
-    model,
   };
 }
 
@@ -234,28 +245,27 @@ export function parseCacheMetrics(
     case 'anthropic':
       return parseAnthropicMetrics(
         usage as AnthropicCacheMetrics,
-        provider,
+        'anthropic',
         model
       );
 
     case 'openai':
-      return parseOpenAIMetrics(usage as OpenAICacheMetrics, provider, model);
+      return parseOpenAIMetrics(usage as OpenAICacheMetrics, 'openai', model);
 
     case 'google':
     case 'other':
     default:
       // For unknown providers, return minimal stats
       return {
-        totalTokens: 0,
-        cachedTokens: 0,
-        freshTokens: 0,
+        provider: 'unknown',
+        cacheWriteTokens: 0,
+        cacheReadTokens: 0,
+        inputTokens: 0,
+        outputTokens: 0,
         savedTokens: 0,
-        estimatedSavedUsd: 0,
-        cacheHitRatio: 0,
-        rawMetrics: usage,
-        collectedAt: new Date(),
-        provider,
-        model,
+        cacheHitRate: 0,
+        estimatedSavingsUsd: 0,
+        raw: usage,
       };
   }
 }
@@ -272,47 +282,52 @@ export function parseCacheMetrics(
 export function aggregateCacheMetrics(metrics: CacheStats[]): CacheStats {
   if (metrics.length === 0) {
     return {
-      totalTokens: 0,
-      cachedTokens: 0,
-      freshTokens: 0,
+      provider: 'unknown',
+      cacheWriteTokens: 0,
+      cacheReadTokens: 0,
+      inputTokens: 0,
+      outputTokens: 0,
       savedTokens: 0,
-      estimatedSavedUsd: 0,
-      cacheHitRatio: 0,
-      rawMetrics: {},
-      collectedAt: new Date(),
-      provider: 'other',
-      model: 'aggregated',
+      cacheHitRate: 0,
+      estimatedSavingsUsd: 0,
+      raw: { aggregatedFrom: 0 },
     };
   }
 
-  const totalTokens = metrics.reduce((sum, m) => sum + m.totalTokens, 0);
-  const cachedTokens = metrics.reduce((sum, m) => sum + m.cachedTokens, 0);
-  const freshTokens = metrics.reduce((sum, m) => sum + m.freshTokens, 0);
+  const cacheWriteTokens = metrics.reduce(
+    (sum, m) => sum + m.cacheWriteTokens,
+    0
+  );
+  const cacheReadTokens = metrics.reduce(
+    (sum, m) => sum + m.cacheReadTokens,
+    0
+  );
+  const inputTokens = metrics.reduce((sum, m) => sum + m.inputTokens, 0);
+  const outputTokens = metrics.reduce((sum, m) => sum + m.outputTokens, 0);
   const savedTokens = metrics.reduce((sum, m) => sum + m.savedTokens, 0);
-  const estimatedSavedUsd = metrics.reduce(
-    (sum, m) => sum + m.estimatedSavedUsd,
+  const estimatedSavingsUsd = metrics.reduce(
+    (sum, m) => sum + m.estimatedSavingsUsd,
     0
   );
 
-  const cacheHitRatio = totalTokens > 0 ? cachedTokens / totalTokens : 0;
+  const cacheHitRate = inputTokens > 0 ? cacheReadTokens / inputTokens : 0;
 
-  // Use the provider/model from the first metric (assuming homogeneous)
+  // Use the provider from the first metric (assuming homogeneous)
   const firstMetric = metrics[0];
 
   return {
-    totalTokens,
-    cachedTokens,
-    freshTokens,
-    savedTokens,
-    estimatedSavedUsd,
-    cacheHitRatio,
-    rawMetrics: {
-      aggregatedFrom: metrics.length,
-      individualMetrics: metrics.map((m) => m.rawMetrics),
-    },
-    collectedAt: new Date(),
     provider: firstMetric.provider,
-    model: firstMetric.model,
+    cacheWriteTokens,
+    cacheReadTokens,
+    inputTokens,
+    outputTokens,
+    savedTokens,
+    cacheHitRate,
+    estimatedSavingsUsd,
+    raw: {
+      aggregatedFrom: metrics.length,
+      individualMetrics: metrics.map((m) => m.raw),
+    },
   };
 }
 
@@ -378,16 +393,22 @@ export function estimateCacheSavings(
  * @returns Formatted string representation
  */
 export function formatCacheStats(stats: CacheStats): string {
-  const hitRatioPercent = (stats.cacheHitRatio * 100).toFixed(1);
-  const savedUsdFormatted = stats.estimatedSavedUsd.toFixed(4);
+  const hitRatePercent = (stats.cacheHitRate * 100).toFixed(1);
+  const savedUsdFormatted = stats.estimatedSavingsUsd.toFixed(4);
+  const totalTokens = stats.inputTokens + stats.outputTokens;
 
   return [
-    `Cache Stats (${stats.provider}/${stats.model}):`,
-    `  Total Tokens: ${stats.totalTokens.toLocaleString()}`,
-    `  Cached: ${stats.cachedTokens.toLocaleString()} (${hitRatioPercent}%)`,
-    `  Fresh: ${stats.freshTokens.toLocaleString()}`,
+    `Cache Stats (${stats.provider}):`,
+    `  Input Tokens: ${stats.inputTokens.toLocaleString()}`,
+    `  Output Tokens: ${stats.outputTokens.toLocaleString()}`,
+    `  Total Tokens: ${totalTokens.toLocaleString()}`,
+    `  Cache Read: ${stats.cacheReadTokens.toLocaleString()} (${hitRatePercent}%)`,
+    `  Cache Write: ${stats.cacheWriteTokens.toLocaleString()}`,
     `  Saved: ${stats.savedTokens.toLocaleString()} tokens (~$${savedUsdFormatted})`,
-    `  Collected: ${stats.collectedAt.toISOString()}`,
+    ...(stats.ttl ? [`  TTL: ${stats.ttl}`] : []),
+    ...(stats.breakpointsUsed
+      ? [`  Breakpoints: ${stats.breakpointsUsed}`]
+      : []),
   ].join('\n');
 }
 

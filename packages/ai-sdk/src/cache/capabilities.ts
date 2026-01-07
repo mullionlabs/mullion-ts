@@ -4,6 +4,9 @@
  * This module provides information about caching capabilities of different
  * LLM providers and models, enabling ScopeStack to optimize cache usage
  * based on provider-specific constraints and features.
+ *
+ * IMPORTANT: These constraints are based on real provider limitations discovered during research.
+ * Ignoring them will result in "cache exists but doesn't work" scenarios.
  */
 
 /**
@@ -13,6 +16,9 @@
  * and what constraints exist for a given model.
  */
 export interface CacheCapabilities {
+  /** Whether caching is supported at all for this provider/model */
+  readonly supported: boolean;
+
   /** Minimum number of tokens required for cache to be effective */
   readonly minTokens: number;
 
@@ -22,8 +28,14 @@ export interface CacheCapabilities {
   /** Whether the provider supports TTL (time-to-live) for cache entries */
   readonly supportsTtl: boolean;
 
+  /** Specific TTL values supported by this provider/model */
+  readonly supportedTtl: readonly ('5m' | '1h')[];
+
   /** Whether the provider supports caching tool/function calls */
   readonly supportsToolCaching: boolean;
+
+  /** Whether caching is automatic (like OpenAI) vs explicit (like Anthropic) */
+  readonly isAutomatic: boolean;
 }
 
 /**
@@ -33,92 +45,159 @@ export type Provider = 'anthropic' | 'openai' | 'google' | 'other';
 
 /**
  * Anthropic model names with their cache characteristics.
+ *
+ * Model-specific thresholds based on provider documentation:
+ * - Claude Opus 4.5, Haiku 4.5: 4096 tokens
+ * - Claude Haiku 3/3.5: 2048 tokens
+ * - Claude Sonnet, Opus (others): 1024 tokens
  */
 const ANTHROPIC_MODELS = {
-  // Claude 3.5 Sonnet
+  // Claude 4.5 models (future-proofing)
+  'claude-opus-4-5': {
+    supported: true,
+    minTokens: 4096,
+    maxBreakpoints: 4,
+    supportsTtl: true,
+    supportedTtl: ['5m', '1h'] as const,
+    supportsToolCaching: false,
+    isAutomatic: false,
+  },
+  'claude-4-5-haiku': {
+    supported: true,
+    minTokens: 4096,
+    maxBreakpoints: 4,
+    supportsTtl: true,
+    supportedTtl: ['5m', '1h'] as const,
+    supportsToolCaching: false,
+    isAutomatic: false,
+  },
+
+  // Claude 3.5 models
   'claude-3-5-sonnet-20241022': {
+    supported: true,
     minTokens: 1024,
     maxBreakpoints: 4,
     supportsTtl: true,
+    supportedTtl: ['5m', '1h'] as const,
     supportsToolCaching: false,
+    isAutomatic: false,
   },
   'claude-3-5-sonnet-20240620': {
+    supported: true,
     minTokens: 1024,
     maxBreakpoints: 4,
     supportsTtl: true,
+    supportedTtl: ['5m', '1h'] as const,
     supportsToolCaching: false,
+    isAutomatic: false,
   },
-
-  // Claude 3.5 Haiku
   'claude-3-5-haiku-20241022': {
-    minTokens: 1024,
+    supported: true,
+    minTokens: 2048, // Haiku 3.5 uses higher threshold
     maxBreakpoints: 4,
     supportsTtl: true,
+    supportedTtl: ['5m', '1h'] as const,
     supportsToolCaching: false,
+    isAutomatic: false,
   },
 
-  // Claude 3 Opus
+  // Claude 3 models
   'claude-3-opus-20240229': {
+    supported: true,
     minTokens: 1024,
     maxBreakpoints: 4,
     supportsTtl: true,
+    supportedTtl: ['5m', '1h'] as const,
     supportsToolCaching: false,
+    isAutomatic: false,
   },
-
-  // Claude 3 Sonnet
   'claude-3-sonnet-20240229': {
+    supported: true,
     minTokens: 1024,
     maxBreakpoints: 4,
     supportsTtl: true,
+    supportedTtl: ['5m', '1h'] as const,
     supportsToolCaching: false,
+    isAutomatic: false,
   },
-
-  // Claude 3 Haiku
   'claude-3-haiku-20240307': {
-    minTokens: 1024,
+    supported: true,
+    minTokens: 2048, // Haiku 3 uses higher threshold
     maxBreakpoints: 4,
     supportsTtl: true,
+    supportedTtl: ['5m', '1h'] as const,
     supportsToolCaching: false,
+    isAutomatic: false,
   },
 } as const;
 
 /**
  * OpenAI model names with their cache characteristics.
+ *
  * OpenAI uses automatic caching without explicit breakpoints.
+ * Minimum 1024 tokens, 128 token increments for optimal caching.
  */
 const OPENAI_MODELS = {
-  // GPT-4 models
+  // GPT-4o models
   'gpt-4o': {
+    supported: true,
     minTokens: 1024,
     maxBreakpoints: Infinity,
     supportsTtl: false,
+    supportedTtl: [] as const,
     supportsToolCaching: true,
+    isAutomatic: true,
   },
   'gpt-4o-mini': {
+    supported: true,
     minTokens: 1024,
     maxBreakpoints: Infinity,
     supportsTtl: false,
+    supportedTtl: [] as const,
     supportsToolCaching: true,
+    isAutomatic: true,
   },
+
+  // GPT-4 Turbo
   'gpt-4-turbo': {
+    supported: true,
     minTokens: 1024,
     maxBreakpoints: Infinity,
     supportsTtl: false,
+    supportedTtl: [] as const,
     supportsToolCaching: true,
+    isAutomatic: true,
   },
-  'gpt-4': {
+  'gpt-4-turbo-preview': {
+    supported: true,
     minTokens: 1024,
     maxBreakpoints: Infinity,
     supportsTtl: false,
+    supportedTtl: [] as const,
+    supportsToolCaching: true,
+    isAutomatic: true,
+  },
+
+  // GPT-4 Classic
+  'gpt-4': {
+    supported: true,
+    minTokens: 1024,
+    maxBreakpoints: Infinity,
+    supportsTtl: false,
+    supportedTtl: [] as const,
     supportsToolCaching: false,
+    isAutomatic: true,
   },
 
   // GPT-3.5 models
   'gpt-3.5-turbo': {
+    supported: false, // GPT-3.5 doesn't have caching
     minTokens: 1024,
-    maxBreakpoints: Infinity,
+    maxBreakpoints: 0,
     supportsTtl: false,
+    supportedTtl: [] as const,
     supportsToolCaching: false,
+    isAutomatic: false,
   },
 } as const;
 
@@ -126,10 +205,13 @@ const OPENAI_MODELS = {
  * Default cache capabilities for unknown or unsupported models.
  */
 const DEFAULT_CAPABILITIES: CacheCapabilities = {
+  supported: false,
   minTokens: 2048, // Conservative default
   maxBreakpoints: 1, // Safe minimum
   supportsTtl: false,
+  supportedTtl: [],
   supportsToolCaching: false,
+  isAutomatic: false,
 } as const;
 
 /**
@@ -150,18 +232,39 @@ const DEFAULT_CAPABILITIES: CacheCapabilities = {
  * // Anthropic Claude
  * const claudeCaps = getCacheCapabilities('anthropic', 'claude-3-5-sonnet-20241022');
  * console.log(claudeCaps);
- * // { minTokens: 1024, maxBreakpoints: 4, supportsTtl: true, supportsToolCaching: false }
+ * // {
+ * //   supported: true,
+ * //   minTokens: 1024,
+ * //   maxBreakpoints: 4,
+ * //   supportsTtl: true,
+ * //   supportedTtl: ['5m', '1h'],
+ * //   supportsToolCaching: false,
+ * //   isAutomatic: false
+ * // }
  *
  * // OpenAI GPT-4
  * const gptCaps = getCacheCapabilities('openai', 'gpt-4o');
  * console.log(gptCaps);
- * // { minTokens: 1024, maxBreakpoints: Infinity, supportsTtl: false, supportsToolCaching: true }
+ * // {
+ * //   supported: true,
+ * //   minTokens: 1024,
+ * //   maxBreakpoints: Infinity,
+ * //   supportsTtl: false,
+ * //   supportedTtl: [],
+ * //   supportsToolCaching: true,
+ * //   isAutomatic: true
+ * // }
  * ```
  *
  * @example
  * ```typescript
  * // Use capabilities to optimize cache strategy
  * const caps = getCacheCapabilities('anthropic', 'claude-3-5-sonnet-20241022');
+ *
+ * if (!caps.supported) {
+ *   console.log('Caching not supported for this model');
+ *   return;
+ * }
  *
  * if (systemPrompt.length < caps.minTokens) {
  *   console.log('System prompt too short for caching');
@@ -185,12 +288,16 @@ export function getCacheCapabilities(
         return modelConfig;
       }
 
-      // Fallback for unknown Anthropic models - use Claude 3.5 Sonnet defaults
+      // Fallback for unknown Anthropic models
+      // Use Claude 3.5 Sonnet defaults (most common case)
       return {
+        supported: true,
         minTokens: 1024,
         maxBreakpoints: 4,
         supportsTtl: true,
+        supportedTtl: ['5m', '1h'],
         supportsToolCaching: false,
+        isAutomatic: false,
       };
     }
 
@@ -202,16 +309,31 @@ export function getCacheCapabilities(
         return modelConfig;
       }
 
-      // Fallback for unknown OpenAI models - assume modern capabilities
+      // Fallback for unknown OpenAI models
+      // Assume modern GPT-4 capabilities by default
       return {
+        supported: true,
         minTokens: 1024,
         maxBreakpoints: Infinity,
         supportsTtl: false,
+        supportedTtl: [],
         supportsToolCaching: true,
+        isAutomatic: true,
       };
     }
 
     case 'google':
+      // Google Gemini has caching but different API
+      return {
+        supported: false, // Not implemented yet
+        minTokens: 2048,
+        maxBreakpoints: 1,
+        supportsTtl: true,
+        supportedTtl: ['5m', '1h'],
+        supportsToolCaching: false,
+        isAutomatic: false,
+      };
+
     case 'other':
     default:
       // Return conservative defaults for unsupported providers
@@ -236,12 +358,17 @@ export function getCacheCapabilities(
  *   // Can use TTL-based caching
  *   ctx.cache.system(prompt, { ttl: '1h' });
  * }
+ *
+ * if (supportsCacheFeature('openai', 'gpt-4o', 'automatic')) {
+ *   // OpenAI handles caching automatically
+ *   console.log('Automatic caching enabled');
+ * }
  * ```
  */
 export function supportsCacheFeature(
   provider: Provider,
   model: string,
-  feature: 'ttl' | 'toolCaching'
+  feature: 'ttl' | 'toolCaching' | 'automatic'
 ): boolean {
   const caps = getCacheCapabilities(provider, model);
 
@@ -250,6 +377,8 @@ export function supportsCacheFeature(
       return caps.supportsTtl;
     case 'toolCaching':
       return caps.supportsToolCaching;
+    case 'automatic':
+      return caps.isAutomatic;
     default:
       return false;
   }
@@ -282,4 +411,65 @@ export function getEffectiveBreakpointLimit(
 ): number {
   const caps = getCacheCapabilities(provider, model);
   return caps.maxBreakpoints === Infinity ? maxPractical : caps.maxBreakpoints;
+}
+
+/**
+ * Validate if a TTL value is supported by a provider/model.
+ *
+ * @param provider - The LLM provider
+ * @param model - The specific model name
+ * @param ttl - The TTL value to validate
+ * @returns True if the TTL is supported
+ *
+ * @example
+ * ```typescript
+ * if (isValidTtl('anthropic', 'claude-3-5-sonnet-20241022', '1h')) {
+ *   // Can use 1 hour TTL
+ * }
+ *
+ * if (!isValidTtl('openai', 'gpt-4o', '5m')) {
+ *   // OpenAI doesn't support explicit TTL
+ * }
+ * ```
+ */
+export function isValidTtl(
+  provider: Provider,
+  model: string,
+  ttl: '5m' | '1h'
+): boolean {
+  const caps = getCacheCapabilities(provider, model);
+  return caps.supportsTtl && caps.supportedTtl.includes(ttl);
+}
+
+/**
+ * Get the recommended cache strategy for a provider/model combination.
+ *
+ * @param provider - The LLM provider
+ * @param model - The specific model name
+ * @returns Recommended caching strategy description
+ *
+ * @example
+ * ```typescript
+ * const strategy = getRecommendedCacheStrategy('anthropic', 'claude-3-5-sonnet-20241022');
+ * // "explicit-segments" - Use explicit cache segments with TTL
+ *
+ * const openaiStrategy = getRecommendedCacheStrategy('openai', 'gpt-4o');
+ * // "automatic-optimization" - OpenAI handles caching automatically
+ * ```
+ */
+export function getRecommendedCacheStrategy(
+  provider: Provider,
+  model: string
+): 'explicit-segments' | 'automatic-optimization' | 'disabled' {
+  const caps = getCacheCapabilities(provider, model);
+
+  if (!caps.supported) {
+    return 'disabled';
+  }
+
+  if (caps.isAutomatic) {
+    return 'automatic-optimization';
+  }
+
+  return 'explicit-segments';
 }
