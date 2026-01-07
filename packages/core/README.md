@@ -21,7 +21,8 @@ pnpm add @scopestack/core
 ## Quick Start
 
 ```typescript
-import { scope, Owned, Context } from '@scopestack/core';
+import { scope } from '@scopestack/core';
+import type { Owned, Context } from '@scopestack/core';
 
 // Create a scoped execution
 const result = await scope('analysis', async (ctx) => {
@@ -59,7 +60,7 @@ interface SemanticValue<T, S extends string> extends Owned<T, S> {
 }
 ```
 
-### Context<S>
+### Context\<S\>
 
 Scoped execution context:
 
