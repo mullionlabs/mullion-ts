@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-scopestack",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "ESLint rules for type-safe LLM context management",
   "keywords": [
     "eslint",
@@ -44,7 +44,7 @@
     "@typescript-eslint/utils": "catalog:"
   },
   "peerDependencies": {
-    "@scopestack/core": ">=0.0.1",
+    "@scopestack/core": ">=0.1.0",
     "@typescript-eslint/parser": ">=8.0.0",
     "eslint": ">=8.57.0",
     "typescript": ">=5.0.0"

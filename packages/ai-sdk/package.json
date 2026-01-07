@@ -1,6 +1,6 @@
 {
   "name": "@scopestack/ai-sdk",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "ScopeStack integration with Vercel AI SDK",
   "keywords": [
     "llm",

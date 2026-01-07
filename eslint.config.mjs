@@ -6,6 +6,7 @@ export default tseslint.config(
   // Ignore patterns
   {
     ignores: [
+      '**/examples/**',
       '**/dist/**',
       '**/node_modules/**',
       '**/.turbo/**',

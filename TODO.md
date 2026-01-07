@@ -174,7 +174,7 @@
 ### 5.3 Tests
 
 - [x] Mock provider tests
-- [ ] Integration test with real API (manual)
+- [x] Integration test with real API (manual) ✅ COMPLETED
 
 ---
 
@@ -184,20 +184,63 @@
 
 ### 6.1 Basic Example (`examples/basic/`)
 
-- [ ] Simple Node.js demo
-- [ ] Show scope, Owned, bridge
-- [ ] Show ESLint catching leak
+- [x] Simple Node.js demo
+- [x] Show scope, Owned, bridge
+- [x] Show ESLint catching leak
 
 ### 6.2 README
 
-- [ ] Root README with quick start
-- [ ] Package READMEs (already created)
-- [ ] Examples in docs
+- [x] Root README with quick start
+- [x] Package READMEs (already created)
+- [x] Examples in docs
 
 ### 6.3 First Changeset
 
-- [ ] Create changesets for all packages
-- [ ] Prepare for 0.1.0 release
+- [x] Create changesets for all packages
+- [x] Prepare for 0.1.0 release
+
+**✅ MILESTONE COMPLETED: ScopeStack 0.1.0 Release Ready**
+
+**Package Versions:**
+
+- @scopestack/core: 0.1.0
+- @scopestack/ai-sdk: 0.1.0
+- eslint-plugin-scopestack: 1.0.0
+- scopestack-basic-example: 1.0.1
+
+## Task 7: Cache Foundation (Week 3)
+
+### 7.1 Provider Capability Matrix
+
+- [ ] Create `getCacheCapabilities(provider, model)` function
+- [ ] Return: `{ minTokens, maxBreakpoints, supportsTtl, supportsToolCaching }`
+- [ ] Anthropic model-specific thresholds
+- [ ] OpenAI auto-cache detection
+- [ ] Export from @scopestack/ai-sdk
+
+### 7.2 CacheConfig Types (Provider-Agnostic)
+
+- [ ] Define abstract `CacheConfig` interface
+- [ ] Define `CacheScope`: 'system-only' | 'developer-content' | 'allow-user-content'
+- [ ] Define `CacheTTL`: '5m' | '1h'
+- [ ] Provider-specific adapters (Anthropic, OpenAI)
+- [ ] Validation: TTL ordering, breakpoint limits
+
+### 7.3 Cache Segments API (First-Class)
+
+- [ ] `ctx.cache.segment(key, content, options)` — explicit caching
+- [ ] `ctx.cache.system(systemPrompt, options)` — system prompt helper
+- [ ] Track segments in context metadata
+- [ ] Validate minimum token threshold per model
+- [ ] **Safe-by-default**: only cache developer-controlled content
+
+### 7.4 Cache Metrics
+
+- [ ] Parse Anthropic: `cache_creation_input_tokens`, `cache_read_input_tokens`
+- [ ] Parse OpenAI: `prompt_tokens_details.cached_tokens`
+- [ ] `CacheStats` interface (provider-agnostic)
+- [ ] `ctx.getCacheStats()` method
+- [ ] Calculate `savedTokens`, `estimatedSavedUsd`
 
 ---
 

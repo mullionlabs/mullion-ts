@@ -1,0 +1,27 @@
+{
+  "name": "scopestack-basic-example",
+  "version": "1.0.1",
+  "description": "Basic ScopeStack example demonstrating core concepts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "demo": "node demo.js",
+    "lint": "eslint *.js",
+    "lint:fix": "eslint *.js --fix"
+  },
+  "dependencies": {
+    "@scopestack/core": "workspace:*",
+    "@scopestack/ai-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@ai-sdk/openai": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "@types/node": "catalog:",
+    "ai": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-scopestack": "workspace:*",
+    "typescript": "catalog:",
+    "zod": "catalog:"
+  }
+}
