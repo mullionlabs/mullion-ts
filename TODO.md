@@ -161,19 +161,19 @@
 
 ### 5.1 Client (`packages/ai-sdk/src/client.ts`)
 
-- [ ] `createScopeStackClient(provider)` function
-- [ ] Scope method on client
-- [ ] Type inference
+- [x] `createScopeStackClient(provider)` function
+- [x] Scope method on client
+- [x] Type inference
 
 ### 5.2 Inference (`packages/ai-sdk/src/infer.ts`)
 
-- [ ] Wrap `generateObject`
-- [ ] Return `Owned<T, S>`
-- [ ] Confidence extraction
+- [x] Wrap `generateObject`
+- [x] Return `Owned<T, S>`
+- [x] Confidence extraction (based on finishReason: stop=1.0, length=0.75, content-filter=0.6, error=0.3)
 
 ### 5.3 Tests
 
-- [ ] Mock provider tests
+- [x] Mock provider tests
 - [ ] Integration test with real API (manual)
 
 ---
