@@ -27,3 +27,17 @@ export type {
   ContextOptions,
   InferOptions,
 } from './context.js';
+
+// Scope function for creating scoped execution contexts
+export { scope } from './scope.js';
+
+// Bridge utilities for transferring values across scope boundaries
+export type { BridgeMultipleOptions, BridgeMetadata } from './bridge.js';
+export {
+  bridge,
+  bridgeSemantic,
+  bridgeMultiple,
+  getProvenance,
+  isBridged,
+  bridgeWithMetadata,
+} from './bridge.js';
