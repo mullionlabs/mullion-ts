@@ -7,9 +7,11 @@
  */
 
 import noContextLeak from './rules/no-context-leak.js';
+import requireConfidenceCheck from './rules/require-confidence-check.js';
 
 const rules = {
   'no-context-leak': noContextLeak,
+  'require-confidence-check': requireConfidenceCheck,
 };
 
 /**
@@ -17,6 +19,7 @@ const rules = {
  *
  * Enables all rules with sensible defaults:
  * - no-context-leak: error - Prevents accidental context leaks
+ * - require-confidence-check: warn - Suggests confidence validation
  */
 const recommended = {
   plugins: {
@@ -24,13 +27,12 @@ const recommended = {
   },
   rules: {
     'scopestack/no-context-leak': 'error',
+    'scopestack/require-confidence-check': 'warn',
   },
 };
 
 /**
  * Strict configuration with all rules as errors.
- *
- * Same as recommended for now, but allows room for warn-level rules in the future.
  */
 const strict = {
   plugins: {
@@ -38,6 +40,7 @@ const strict = {
   },
   rules: {
     'scopestack/no-context-leak': 'error',
+    'scopestack/require-confidence-check': 'error',
   },
 };
 

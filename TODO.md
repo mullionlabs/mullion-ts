@@ -140,18 +140,18 @@
 
 ### 4.1 Rule Setup
 
-- [ ] Create rule file
-- [ ] Define meta
+- [x] Create rule file
+- [x] Define meta
 
 ### 4.2 Rule Implementation
 
-- [ ] Detect `Owned`/`SemanticValue` usage
-- [ ] Check for `.confidence` comparison
-- [ ] Allow explicit handlers
+- [x] Detect `Owned`/`SemanticValue` usage
+- [x] Check for `.confidence` comparison
+- [x] Allow explicit handlers
 
 ### 4.3 Rule Tests
 
-- [ ] Valid and invalid cases
+- [x] Valid and invalid cases
 
 ---
 
