@@ -1,129 +1,151 @@
 # @scopestack/core
 
-Core type definitions and utilities for ScopeStack.
-
-## Overview
-
-This package provides the foundational types for type-safe LLM context management:
-
-- `Owned<T, S>` — Value with scope ownership
-- `SemanticValue<T, S>` — Extended owned value with confidence, alternatives, reasoning
-- `Context<S>` — Scoped execution context
-- `scope()` — Create isolated execution scope
-- `bridge()` — Safely cross scope boundaries
+> Core types and utilities for type-safe LLM context management
 
 ## Installation
 
 ```bash
-pnpm add @scopestack/core
+npm install @scopestack/core
 ```
 
-## Quick Start
+## Overview
+
+The core package provides fundamental types and utilities for ScopeStack's type-safe context management system. Use this package if you want to build custom integrations or don't need the Vercel AI SDK wrapper.
+
+## Key Types
+
+### `Owned<T, S>`
+
+Wraps LLM-generated values with scope tracking and metadata:
 
 ```typescript
-import { scope } from '@scopestack/core';
-import type { Owned, Context } from '@scopestack/core';
+import type { Owned } from '@scopestack/core';
 
-// Create a scoped execution
-const result = await scope('analysis', async (ctx) => {
-  // Everything inferred here is Owned by 'analysis' scope
-  const sentiment = await ctx.infer(SentimentSchema, userInput);
-  // sentiment: Owned<Sentiment, 'analysis'>
-
-  return sentiment;
-});
-```
-
-## Types
-
-### Owned<T, S>
-
-A value with tracked scope ownership:
-
-```typescript
 interface Owned<T, S extends string> {
-  value: T;
-  confidence: number;
-  __scope: S; // Branded type
-  traceId: string;
+  value: T; // The actual data
+  confidence: number; // 0-1 confidence score
+  __scope: S; // Compile-time scope tracking
+  traceId: string; // Unique identifier for audit trails
 }
 ```
 
-### SemanticValue<T, S>
+### `Context<S>`
 
-Extended owned value with LLM-specific metadata:
-
-```typescript
-interface SemanticValue<T, S extends string> extends Owned<T, S> {
-  alternatives?: Array<{ value: T; confidence: number }>;
-  reasoning?: string;
-}
-```
-
-### Context\<S\>
-
-Scoped execution context:
+Provides scoped execution environment for LLM operations:
 
 ```typescript
+import type { Context } from '@scopestack/core';
+
 interface Context<S extends string> {
   readonly scope: S;
 
-  // Infer a value within this scope
-  infer<T>(schema: Schema<T>, input: string): Promise<Owned<T, S>>;
+  // Infer structured data from unstructured input
+  infer<T>(
+    schema: Schema<T>,
+    input: string,
+    options?: InferOptions
+  ): Promise<Owned<T, S>>;
 
-  // Bridge a value from another scope
+  // Transfer value from another scope
   bridge<T, OS extends string>(owned: Owned<T, OS>): Owned<T, S | OS>;
 
-  // Use a value from another scope (alias for bridge)
-  use<T, OS extends string>(owned: Owned<T, OS>): Owned<T, S | OS>;
+  // Extract raw value (scope-safe)
+  use<T>(owned: Owned<T, S>): T;
+}
+```
+
+## Utilities
+
+### `createOwned()`
+
+Factory function for creating Owned values:
+
+```typescript
+import { createOwned } from '@scopestack/core';
+
+const data = createOwned({
+  value: { name: 'John', age: 30 },
+  scope: 'user-data',
+  confidence: 0.95,
+  traceId: 'trace-123',
+});
+
+console.log(data.__scope); // 'user-data'
+```
+
+### `isOwned()`
+
+Type guard for checking if a value is Owned:
+
+```typescript
+import { isOwned } from '@scopestack/core';
+
+if (isOwned(someValue)) {
+  // TypeScript knows someValue is Owned<unknown, string>
+  console.log(someValue.confidence);
+}
+```
+
+## Example: Custom Integration
+
+```typescript
+import { createOwned, isOwned } from '@scopestack/core';
+import type { Context, Owned } from '@scopestack/core';
+
+// Create a custom context implementation
+class MyContext<S extends string> implements Context<S> {
+  constructor(public readonly scope: S) {}
+
+  async infer<T>(schema: any, input: string): Promise<Owned<T, S>> {
+    // Your custom LLM integration here
+    const result = await myLLM.generate(schema, input);
+
+    return createOwned({
+      value: result.data,
+      scope: this.scope,
+      confidence: result.confidence,
+      traceId: `${this.scope}-${Date.now()}`,
+    });
+  }
+
+  bridge<T, OS extends string>(owned: Owned<T, OS>): Owned<T, S | OS> {
+    return {
+      ...owned,
+      __scope: this.scope as S | OS,
+    };
+  }
+
+  use<T>(owned: Owned<T, S>): T {
+    if (owned.__scope !== this.scope) {
+      throw new Error(`Scope mismatch: ${owned.__scope} !== ${this.scope}`);
+    }
+    return owned.value;
+  }
+}
+
+// Usage
+const ctx = new MyContext('my-scope');
+const result = await ctx.infer(schema, 'analyze this text');
+
+if (result.confidence > 0.8) {
+  console.log('High confidence result:', ctx.use(result));
 }
 ```
 
 ## API Reference
 
-### scope(name, fn)
+### Types
 
-Create an isolated execution scope:
+- `Owned<T, S>` - Scoped value wrapper
+- `Context<S>` - Execution context interface
+- `Schema<T>` - Schema interface (usually Zod)
+- `InferOptions` - Options for inference operations
 
-```typescript
-function scope<S extends string, R>(
-  name: S,
-  fn: (ctx: Context<S>) => Promise<R>
-): Promise<R>;
-```
+### Functions
 
-### bridge(owned, targetScope)
+- `createOwned(params)` - Create Owned value
+- `isOwned(value)` - Type guard for Owned values
 
-Explicitly cross scope boundaries:
+## License
 
-```typescript
-function bridge<T, S extends string, TS extends string>(
-  owned: Owned<T, S>,
-  targetScope: TS
-): Owned<T, S | TS>;
-```
-
-## Design Principles
-
-1. **Compile-time safety** — Scope violations are TypeScript errors
-2. **Explicit bridging** — No implicit scope crossing
-3. **Trackable provenance** — Every value knows its origin
-4. **Confidence-aware** — Uncertainty is first-class
-
-## Development
-
-```bash
-# Build
-pnpm build
-
-# Test
-pnpm test
-
-# Type check
-pnpm typecheck
-```
-
-## Related Packages
-
-- `eslint-plugin-scopestack` — ESLint rules for detecting scope violations
-- `@scopestack/ai-sdk` — Vercel AI SDK integration
+MIT - see [LICENSE](../../LICENSE) for details.

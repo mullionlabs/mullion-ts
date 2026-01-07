@@ -1,18 +1,18 @@
 # eslint-plugin-scopestack
 
-ESLint rules for type-safe LLM context management.
-
-## Overview
-
-Catch context leaks and confidence issues at lint time, before runtime.
+> ESLint plugin for detecting ScopeStack context leaks and enforcing best practices
 
 ## Installation
 
 ```bash
-pnpm add -D eslint-plugin-scopestack
+npm install eslint-plugin-scopestack --save-dev
 ```
 
-## Configuration
+## Overview
+
+This ESLint plugin provides static analysis rules to catch context leaks and enforce confidence checking in ScopeStack applications. It helps prevent security vulnerabilities by detecting when LLM-generated values cross scope boundaries without proper bridging.
+
+## Quick Setup
 
 ### Flat Config (ESLint 9+)
 
@@ -21,167 +21,349 @@ pnpm add -D eslint-plugin-scopestack
 import scopestack from 'eslint-plugin-scopestack';
 
 export default [
-  scopestack.configs.recommended,
-  // ... your other configs
+  {
+    plugins: {
+      scopestack,
+    },
+    rules: {
+      'scopestack/no-context-leak': 'error',
+      'scopestack/require-confidence-check': 'warn',
+    },
+  },
 ];
 ```
 
-### Legacy Config
+### Legacy Config (.eslintrc)
 
 ```javascript
-// .eslintrc.js
-module.exports = {
-  plugins: ['scopestack'],
-  extends: ['plugin:scopestack/recommended'],
-};
+{
+  "plugins": ["scopestack"],
+  "rules": {
+    "scopestack/no-context-leak": "error",
+    "scopestack/require-confidence-check": "warn"
+  }
+}
+```
+
+### Using Preset Configs
+
+```javascript
+// Use recommended configuration
+import scopestack from 'eslint-plugin-scopestack';
+
+export default [
+  ...scopestack.configs.recommended
+];
+
+// Or use strict configuration
+export default [
+  ...scopestack.configs.strict
+];
 ```
 
 ## Rules
 
-### `scopestack/no-context-leak`
+### `no-context-leak` (🚨 Error)
 
-Detects when an `Owned` value crosses scope boundary without explicit bridge.
+**Prevents accidental context leaks when LLM-generated values cross scope boundaries without proper bridging.**
+
+#### ❌ Incorrect
 
 ```typescript
-// ❌ Error: Context leak - 'adminNotes' from scope 'admin' used in scope 'customer'
-async function handleCustomer(ctx: Context<'customer'>) {
-  const adminNotes = await adminCtx.infer(Notes, doc);
-  return ctx.respond(adminNotes.value); // LEAK!
-}
+let leaked;
 
-// ✅ OK: Explicit bridge
-async function handleCustomer(ctx: Context<'customer'>) {
-  const adminNotes = await adminCtx.infer(Notes, doc);
-  const bridged = ctx.bridge(adminNotes);
-  return ctx.respond(bridged.value);
-}
+await client.scope('admin', async (ctx) => {
+  leaked = await ctx.infer(Schema, 'secret data'); // 🚨 ESLint error
+});
+
+await client.scope('public', async (ctx) => {
+  return leaked.value; // 🚨 ESLint error
+});
 ```
 
-**Options:**
+```typescript
+await client.scope('scope-a', async (ctxA) => {
+  const dataA = await ctxA.infer(Schema, input);
+
+  await client.scope('scope-b', async (ctxB) => {
+    return dataA.value; // 🚨 ESLint error - cross-scope usage
+  });
+});
+```
+
+#### ✅ Correct
+
+```typescript
+await client.scope('admin', async (adminCtx) => {
+  const adminData = await adminCtx.infer(Schema, 'secret data');
+
+  await client.scope('public', async (publicCtx) => {
+    const bridged = publicCtx.bridge(adminData); // ✅ Explicit bridge
+    return bridged.value;
+  });
+});
+```
+
+```typescript
+await client.scope('scope-a', async (ctxA) => {
+  const dataA = await ctxA.infer(Schema, input);
+  return ctxA.use(dataA); // ✅ Safe - same scope
+});
+```
+
+### `require-confidence-check` (⚠️ Warning)
+
+**Warns when LLM-generated values are used without checking their confidence scores.**
+
+#### ❌ Triggers Warning
+
+```typescript
+await client.scope('processing', async (ctx) => {
+  const result = await ctx.infer(Schema, input);
+
+  // ⚠️ ESLint warning - using value without confidence check
+  if (result.value.category === 'important') {
+    processImportantData(result.value);
+  }
+
+  return result.value; // ⚠️ ESLint warning
+});
+```
+
+#### ✅ Correct
+
+```typescript
+await client.scope('processing', async (ctx) => {
+  const result = await ctx.infer(Schema, input);
+
+  // ✅ Check confidence before use
+  if (result.confidence >= 0.8 && result.value.category === 'important') {
+    processImportantData(result.value);
+  }
+
+  // ✅ Or use a handler function
+  return handleResult(result); // Function receives full Owned object
+});
+```
+
+## Configuration
+
+### Rule Options
+
+#### `no-context-leak`
 
 ```javascript
 {
   "scopestack/no-context-leak": ["error", {
-    // Scopes that are always allowed to access each other
-    "allowedPairs": [["internal", "public"]]
+    "allowBridge": true,    // Allow ctx.bridge() calls (default: true)
+    "strictMode": false     // Stricter checking (default: false)
   }]
 }
 ```
 
-### `scopestack/require-confidence-check`
-
-Requires confidence check before using `Owned` value.
-
-```typescript
-// ❌ Warning: Using Owned value without confidence check
-const sentiment = await ctx.infer(SentimentSchema, input);
-return sentiment.value; // No confidence check!
-
-// ✅ OK: Confidence checked
-const sentiment = await ctx.infer(SentimentSchema, input);
-if (sentiment.confidence >= 0.8) {
-  return sentiment.value;
-}
-return fallback;
-
-// ✅ OK: Using bridge.resolve with require_confidence
-const sentiment = await ctx.infer(SentimentSchema, input);
-const resolved = bridge.resolve(sentiment, { require_confidence: 0.8 });
-return resolved.value;
-```
-
-**Options:**
+#### `require-confidence-check`
 
 ```javascript
 {
   "scopestack/require-confidence-check": ["warn", {
-    // Minimum confidence threshold
-    "threshold": 0.8,
-    // Functions that count as confidence handling
-    "handlerFunctions": ["bridge.resolve", "handleLowConfidence"]
+    "minConfidence": 0.8,      // Minimum confidence threshold
+    "requireExplicit": false,  // Require explicit .confidence checks
+    "allowHandlers": true      // Allow functions that handle Owned values
   }]
 }
 ```
 
-### `scopestack/no-unsafe-parallel-write` (experimental)
+### Preset Configurations
 
-Detects potential race conditions in parallel LLM calls.
+#### `recommended`
+
+```javascript
+{
+  rules: {
+    'scopestack/no-context-leak': 'error',
+    'scopestack/require-confidence-check': 'warn'
+  }
+}
+```
+
+#### `strict`
+
+```javascript
+{
+  rules: {
+    'scopestack/no-context-leak': 'error',
+    'scopestack/require-confidence-check': 'error' // More strict
+  }
+}
+```
+
+## Examples
+
+### Real-World Violations
+
+#### Customer Support Pipeline
 
 ```typescript
-// ❌ Warning: Both branches write to 'summary'
-const [a, b] = await Promise.all([
-  ctx.infer(Summary, doc1),
-  ctx.infer(Summary, doc2),
-]);
-state.summary = a.value; // Race!
-state.summary = b.value; // Race!
+// ❌ BAD: Customer data leaks to admin scope
+let customerQuery;
 
-// ✅ OK: Explicit merge
-const [a, b] = await Promise.all([
-  ctx.infer(Summary, doc1),
-  ctx.infer(Summary, doc2),
-]);
-state.summary = merge(a, b, { strategy: 'combine' });
+await client.scope('customer', async (ctx) => {
+  customerQuery = await ctx.infer(QuerySchema, userInput); // 🚨 Leak
+});
+
+await client.scope('admin', async (ctx) => {
+  // This could expose customer PII to admin systems
+  return analyzeWithAdminTools(customerQuery.value); // 🚨 Leak
+});
+
+// ✅ GOOD: Explicit bridging
+await client.scope('customer', async (customerCtx) => {
+  const query = await customerCtx.infer(QuerySchema, userInput);
+
+  return await client.scope('admin', async (adminCtx) => {
+    const bridged = adminCtx.bridge(query); // ✅ Tracked transfer
+    return analyzeWithAdminTools(bridged.value);
+  });
+});
 ```
 
-## Recommended Config
+#### Multi-Tenant Data Processing
 
-```javascript
-// All rules with sensible defaults
-scopestack.configs.recommended = {
-  plugins: { scopestack },
-  rules: {
-    'scopestack/no-context-leak': 'error',
-    'scopestack/require-confidence-check': 'warn',
-    'scopestack/no-unsafe-parallel-write': 'warn',
-  },
-};
+```typescript
+// ❌ BAD: Tenant data cross-contamination
+const results = [];
+
+for (const tenant of tenants) {
+  await client.scope(`tenant-${tenant.id}`, async (ctx) => {
+    const data = await ctx.infer(Schema, tenant.input);
+    results.push(data); // 🚨 Mixing tenant scopes!
+  });
+}
+
+// ✅ GOOD: Keep tenant data isolated
+const results = [];
+
+for (const tenant of tenants) {
+  const result = await client.scope(`tenant-${tenant.id}`, async (ctx) => {
+    const data = await ctx.infer(Schema, tenant.input);
+    return ctx.use(data); // ✅ Extract safely within scope
+  });
+  results.push({ tenantId: tenant.id, data: result });
+}
 ```
 
-## Strict Config
+### Confidence Checking Patterns
 
-```javascript
-// All rules as errors
-scopestack.configs.strict = {
-  plugins: { scopestack },
-  rules: {
-    'scopestack/no-context-leak': 'error',
-    'scopestack/require-confidence-check': 'error',
-    'scopestack/no-unsafe-parallel-write': 'error',
-  },
-};
+#### ❌ Common Anti-Patterns
+
+```typescript
+// Direct value access without confidence check
+const result = await ctx.infer(Schema, input);
+const decision = result.value.decision; // ⚠️ Warning
+
+// Implicit confidence in conditional
+if (result.value.important) {
+  // ⚠️ Warning
+  processImportant();
+}
 ```
 
-## Development
+#### ✅ Good Patterns
+
+```typescript
+// Explicit confidence checking
+const result = await ctx.infer(Schema, input);
+
+if (result.confidence >= 0.9) {
+  const decision = result.value.decision; // ✅ Safe
+}
+
+// Handler function approach
+function handleClassification(owned: Owned<Classification, string>) {
+  if (owned.confidence < 0.8) {
+    return escalateToHuman(owned);
+  }
+  return processAutomatically(owned.value);
+}
+
+const result = await ctx.infer(Schema, input);
+handleClassification(result); // ✅ Handler receives full context
+```
+
+## TypeScript Integration
+
+The plugin leverages TypeScript's type system for accurate detection:
+
+```typescript
+// The plugin understands scope types
+type AdminData = Owned<Secret, 'admin'>;
+type UserData = Owned<Public, 'user'>;
+
+// It detects type mismatches
+function processUserData(data: UserData) {
+  /* ... */
+}
+
+const adminData: AdminData = await adminCtx.infer(SecretSchema, input);
+processUserData(adminData); // 🚨 Type and scope mismatch detected
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### False Positives
+
+If you get false positives, you might need to:
+
+1. **Update TypeScript configuration:**
+
+   ```json
+   {
+     "parserOptions": {
+       "project": "./tsconfig.json"
+     }
+   }
+   ```
+
+2. **Ensure proper imports:**
+   ```typescript
+   import type { Owned, Context } from '@scopestack/core';
+   ```
+
+#### Missing Violations
+
+If leaks aren't being caught:
+
+1. **Check TypeScript types are available**
+2. **Verify the plugin can access type information**
+3. **Ensure you're using the correct scope patterns**
+
+### Debugging
+
+Enable debug mode to see what the plugin is detecting:
 
 ```bash
-# Build
-pnpm build
-
-# Test rules
-pnpm test
-
-# Run on example code
-pnpm lint:examples
+DEBUG=eslint-plugin-scopestack eslint your-file.ts
 ```
 
-## How It Works
+## Examples in Action
 
-The plugin uses TypeScript type information via `@typescript-eslint/parser` to:
+See the [basic example](../../examples/basic/) which demonstrates both correct usage and intentional violations that ESLint catches.
 
-1. Track `Owned<T, S>` values and their scope parameter `S`
-2. Analyze data flow to detect scope boundary crossings
-3. Check for `.confidence` access patterns
+Run the example:
 
-This is why the plugin requires TypeScript and a properly configured `tsconfig.json`.
+```bash
+cd examples/basic
+npm install
+npm run lint  # See violations caught
+npm run demo  # See proper usage
+```
 
-## Limitations
+## Contributing
 
-- Requires TypeScript (no plain JS support)
-- Cannot detect runtime-only scope violations
-- `any` casts will bypass checks (as with all TS tooling)
+Found a bug or want to add a rule? See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
 
-## Related Packages
+## License
 
-- `@scopestack/core` — Core type definitions
-- `@scopestack/ai-sdk` — Vercel AI SDK integration
+MIT - see [LICENSE](../../LICENSE) for details.
