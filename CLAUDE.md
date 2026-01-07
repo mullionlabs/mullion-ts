@@ -163,6 +163,18 @@ await customerCtx.respond(safe.value);
 - No `any` — use `unknown` and narrow
 - Prefer `interface` over `type` for objects
 - Use branded types for nominal typing
+- **Import types separately**: Use `import type` for type-only imports
+
+  ```typescript
+  // ✅ GOOD: Types imported separately
+  import { scope } from './scope.js';
+  import type { Owned, Context } from './types.js';
+
+  // ❌ BAD: Types mixed with values
+  import { scope, Owned, Context } from './scope.js';
+  ```
+
+  (Enforced by `@typescript-eslint/consistent-type-imports`)
 
 ### Naming
 
@@ -209,12 +221,13 @@ turbo run build --force
 
 ## Decision Log
 
-| Date    | Decision               | Rationale                              |
-| ------- | ---------------------- | -------------------------------------- |
-| 2026-01 | TypeScript only        | Stronger type system, less competition |
-| 2026-01 | ESLint plugin first    | Lowest adoption friction               |
-| 2026-01 | Turborepo + Changesets | Independent releases, build caching    |
-| 2026-01 | Integrate with AI SDK  | 2.7M weekly downloads                  |
+| Date    | Decision               | Rationale                                                     |
+| ------- | ---------------------- | ------------------------------------------------------------- |
+| 2026-01 | TypeScript only        | Stronger type system, less competition                        |
+| 2026-01 | ESLint plugin first    | Lowest adoption friction                                      |
+| 2026-01 | Turborepo + Changesets | Independent releases, build caching                           |
+| 2026-01 | Integrate with AI SDK  | 2.7M weekly downloads                                         |
+| 2026-01 | Separate type imports  | Better tree-shaking, clearer code intent, enforced via ESLint |
 
 ## Links
 
