@@ -80,24 +80,24 @@
 
 ### 2.1 Scope Function (`packages/core/src/scope.ts`)
 
-- [ ] Implement `scope<S>(name, fn)` function
-- [ ] Create context instance inside scope
-- [ ] Handle async execution
-- [ ] Generate trace IDs
-- [ ] Write unit tests
+- [x] Implement `scope<S>(name, fn)` function
+- [x] Create context instance inside scope
+- [x] Handle async execution
+- [x] Generate trace IDs
+- [x] Write unit tests
 
 ### 2.2 Bridge Function (`packages/core/src/bridge.ts`)
 
-- [ ] Implement `bridge()` for crossing scopes
-- [ ] Track provenance (source → target)
-- [ ] Maintain type safety with union types
-- [ ] Write unit tests
+- [x] Implement `bridge()` for crossing scopes
+- [x] Track provenance (source → target)
+- [x] Maintain type safety with union types
+- [x] Write unit tests
 
 ### 2.3 Integration Test
 
-- [ ] Create test with nested scopes
-- [ ] Test bridge between scopes
-- [ ] Verify type inference works correctly
+- [x] Create test with nested scopes
+- [x] Test bridge between scopes
+- [x] Verify type inference works correctly
 
 ---
 
