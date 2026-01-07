@@ -212,47 +212,159 @@
 
 ### 7.1 Provider Capability Matrix
 
-- [ ] Create `getCacheCapabilities(provider, model)` function
-- [ ] Return: `{ minTokens, maxBreakpoints, supportsTtl, supportsToolCaching }`
-- [ ] Anthropic model-specific thresholds
-- [ ] OpenAI auto-cache detection
-- [ ] Export from @scopestack/ai-sdk
+- [x] Create `getCacheCapabilities(provider, model)` function
+- [x] Return: `{ minTokens, maxBreakpoints, supportsTtl, supportsToolCaching }`
+- [x] Anthropic model-specific thresholds
+- [x] OpenAI auto-cache detection
+- [x] Export from @scopestack/ai-sdk
 
 ### 7.2 CacheConfig Types (Provider-Agnostic)
 
-- [ ] Define abstract `CacheConfig` interface
-- [ ] Define `CacheScope`: 'system-only' | 'developer-content' | 'allow-user-content'
-- [ ] Define `CacheTTL`: '5m' | '1h'
-- [ ] Provider-specific adapters (Anthropic, OpenAI)
-- [ ] Validation: TTL ordering, breakpoint limits
+- [x] Define abstract `CacheConfig` interface
+- [x] Define `CacheScope`: 'system-only' | 'developer-content' | 'allow-user-content'
+- [x] Define `CacheTTL`: '5m' | '1h'
+- [x] Provider-specific adapters (Anthropic, OpenAI)
+- [x] Validation: TTL ordering, breakpoint limits
 
 ### 7.3 Cache Segments API (First-Class)
 
-- [ ] `ctx.cache.segment(key, content, options)` — explicit caching
-- [ ] `ctx.cache.system(systemPrompt, options)` — system prompt helper
-- [ ] Track segments in context metadata
-- [ ] Validate minimum token threshold per model
-- [ ] **Safe-by-default**: only cache developer-controlled content
+- [x] `ctx.cache.segment(key, content, options)` — explicit caching
+- [x] `ctx.cache.system(systemPrompt, options)` — system prompt helper
+- [x] Track segments in context metadata
+- [x] Validate minimum token threshold per model
+- [x] **Safe-by-default**: only cache developer-controlled content
 
 ### 7.4 Cache Metrics
 
-- [ ] Parse Anthropic: `cache_creation_input_tokens`, `cache_read_input_tokens`
-- [ ] Parse OpenAI: `prompt_tokens_details.cached_tokens`
-- [ ] `CacheStats` interface (provider-agnostic)
-- [ ] `ctx.getCacheStats()` method
-- [ ] Calculate `savedTokens`, `estimatedSavedUsd`
+- [x] Parse Anthropic: `cache_creation_input_tokens`, `cache_read_input_tokens`
+- [x] Parse OpenAI: `prompt_tokens_details.cached_tokens`
+- [x] `CacheStats` interface (provider-agnostic)
+- [x] `ctx.getCacheStats()` method
+- [x] Calculate `savedTokens`, `estimatedSavedUsd`
 
 ---
 
-## Future (Week 3+)
+## Task 8: Fork with Cache Optimization (Week 4-5)
 
-### Backlog
+### 8.1 Fork Strategies
 
-- [ ] OpenAI Agents SDK adapter
-- [ ] `fork()` and `merge()` primitives
-- [ ] Caching strategy helpers
-- [ ] Next.js example
-- [ ] VSCode extension
+- [ ] Define `ForkStrategy`: 'fast-parallel' | 'cache-optimized'
+- [ ] `'fast-parallel'`: Promise.all, no warmup
+- [ ] `'cache-optimized'`: warmup step, then parallel
+- [ ] Document trade-offs clearly
+
+### 8.2 Warmup Implementation
+
+- [ ] Warmup executes minimal call to prime cache
+- [ ] Cache segments shared across branches
+- [ ] Track warmup cost in metrics
+
+### 8.3 Schema Conflict Handling (Anthropic)
+
+- [ ] Detect when branches have different tool schemas
+- [ ] Warn: "Different schemas break Anthropic cache reuse"
+- [ ] Suggest: universal schema pattern OR generateText fallback
+- [ ] Option: `schemaConflict: 'warn' | 'error' | 'allow'`
+
+### 8.4 Fork API Design
+
+```typescript
+// Explicit cache segments
+await ctx.cache.segment('document', document, { ttl: '5m' });
+
+const [risk, opportunity] = await fork(ctx, {
+  strategy: 'cache-optimized',
+  warmup: 'explicit', // or 'first-branch'
+  branches: [
+    (c) => c.infer(RiskSchema, 'Analyze risk'),
+    (c) => c.infer(OpportunitySchema, 'Find opportunities'),
+  ],
+  onSchemaConflict: 'warn', // Anthropic-specific
+});
+```
+
+### 8.5 Fork Tests
+
+- [ ] Test: warmup enables cache hits (Anthropic)
+- [ ] Test: fast-parallel has no cross-branch cache
+- [ ] Test: schema conflict warning fires
+- [ ] Test: cache metrics show savings
+
+---
+
+## Task 9: Merge Strategies (Week 5-6)
+
+### 9.1 Core Strategies
+
+- [ ] `categorical.weightedVote()` — vote by confidence
+- [ ] `continuous.weightedAverage()` — with dispersion metric
+- [ ] `object.fieldwise()` — per-field merge with conflict detection
+
+### 9.2 Consensus & Provenance
+
+- [ ] `merge.requireConsensus(k)` — require k/n agreement
+- [ ] Return `MergeResult` with provenance:
+  - Which branches contributed
+  - Which values were rejected
+  - Confidence based on agreement
+- [ ] Low consensus → low confidence Owned
+
+### 9.3 Tests
+
+- [ ] Test conflict detection
+- [ ] Test provenance tracking
+- [ ] Test consensus thresholds
+
+---
+
+## Task 10: Cost Estimation (Week 6)
+
+### 10.1 Token Estimation
+
+- [ ] `estimateTokens(text, model?)` — best-effort
+- [ ] Use tiktoken for OpenAI
+- [ ] Approximate for Claude (or mark as estimate)
+
+### 10.2 Pricing Tables
+
+- [ ] Separate module/JSON for prices
+- [ ] Override via config/env
+- [ ] Include "as-of" date
+- [ ] Anthropic cache economics:
+  - Write: +25% (5m) or x2 (1h)
+  - Read: ~10% of base
+
+### 10.3 Cost in Context
+
+- [ ] `ctx.getLastCallCost()` — actual (from usage)
+- [ ] `ctx.estimateNextCallCost()` — pre-call estimate
+- [ ] Both in trace data
+
+---
+
+## Task 11: Trace & Observability (Week 6+)
+
+### 11.1 JSON Trace Schema
+
+- [ ] Define trace format (inputs, outputs, cache, cost, provenance)
+- [ ] Include estimate vs actual comparison
+
+### 11.2 Exporter Hooks
+
+- [ ] `onTrace(trace)` callback
+- [ ] Example: Langfuse/LangSmith integration
+- [ ] OpenTelemetry-compatible format (optional)
+
+---
+
+## Design Constraints (MUST document)
+
+1. **Anthropic generateObject uses tools** → different schemas break cache
+2. **Anthropic cache warmup required** → parallel calls don't share cache without warmup
+3. **Model-specific thresholds** → use `getCacheCapabilities()`, not hardcoded
+4. **TTL ordering** → longer TTL must come before shorter
+5. **Max 4 breakpoints** → validate in CacheConfig
+6. **Safe-by-default** → don't cache user content without explicit opt-in
 
 ---
 
