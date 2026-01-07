@@ -37,4 +37,12 @@ export default [
       'no-undef': 'off',
     },
   },
+  // Special config for bad-example.js - disable ScopeStack rules since they're intentionally violated
+  {
+    files: ['bad-example.js'],
+    rules: {
+      'scopestack/no-context-leak': 'off',
+      'scopestack/require-confidence-check': 'off',
+    },
+  },
 ];
