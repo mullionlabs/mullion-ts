@@ -3,6 +3,10 @@ import { generateObject } from 'ai';
 import type { z } from 'zod';
 import { createOwned } from '@scopestack/core';
 import type { Context, InferOptions, Owned } from '@scopestack/core';
+import type { CacheSegmentsAPI } from './cache-segments.js';
+import { createCacheSegmentsAPI } from './cache-segments.js';
+import { createCacheConfig } from './cache-config.js';
+import type { Provider } from './cache-capabilities.js';
 
 /**
  * Confidence scores mapped to LLM finish reasons.
@@ -131,6 +135,7 @@ export interface ScopeStackClient {
  * tracked for provenance.
  *
  * @param model - A Vercel AI SDK language model instance
+ * @param options - Optional client configuration
  * @returns A ScopeStack client with scope() method
  *
  * @example
@@ -164,15 +169,53 @@ export interface ScopeStackClient {
  * const client = createScopeStackClient(model);
  * ```
  */
-export function createScopeStackClient(model: LanguageModel): ScopeStackClient {
+/**
+ * Configuration options for ScopeStack client.
+ */
+export interface ScopeStackClientOptions {
+  /** LLM provider name for cache optimization */
+  readonly provider?: Provider;
+
+  /** Model identifier for provider-specific features */
+  readonly model?: string;
+
+  /** Enable cache segments API (default: false) */
+  readonly enableCache?: boolean;
+}
+
+/**
+ * Extended Context interface that includes cache segments API.
+ */
+export interface ScopeStackContext<S extends string> extends Context<S> {
+  /** Cache segments API for this context */
+  readonly cache: CacheSegmentsAPI;
+}
+
+export function createScopeStackClient(
+  model: LanguageModel,
+  options: ScopeStackClientOptions = {}
+): ScopeStackClient {
   return {
     async scope<S extends string, R>(
       name: S,
       fn: (ctx: Context<S>) => Promise<R>
     ): Promise<R> {
-      // Create context with working infer implementation
-      const ctx: Context<S> = {
+      // Create cache API if enabled
+      const cacheAPI =
+        options.enableCache && options.provider && options.model
+          ? createCacheSegmentsAPI(
+              options.provider,
+              options.model,
+              createCacheConfig() // Use default cache config for now
+            )
+          : undefined;
+
+      // Create context with working infer implementation and optional cache API
+      const ctx: Context<S> & { cache?: CacheSegmentsAPI } = {
         scope: name,
+
+        // Add cache API if enabled
+        ...(cacheAPI ? { cache: cacheAPI } : {}),
 
         /**
          * Infer a typed value from unstructured input using the LLM.
@@ -208,6 +251,11 @@ export function createScopeStackClient(model: LanguageModel): ScopeStackClient {
           const confidence = extractConfidenceFromFinishReason(
             result.finishReason
           );
+
+          // Record metrics if cache is enabled and metrics collection is on
+          if (cacheAPI && result.usage && cacheAPI._recordMetrics) {
+            cacheAPI._recordMetrics(result.usage);
+          }
 
           // Wrap in Owned with scope and extracted confidence
           return createOwned({
