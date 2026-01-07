@@ -1,6 +1,6 @@
-# @intentkit/ai-sdk
+# @scopestack/ai-sdk
 
-IntentKit integration with Vercel AI SDK.
+ScopeStack integration with Vercel AI SDK.
 
 ## Overview
 
@@ -9,19 +9,19 @@ Thin wrapper around Vercel AI SDK that returns `Owned` values with scope trackin
 ## Installation
 
 ```bash
-pnpm add @intentkit/ai-sdk @intentkit/core
+pnpm add @scopestack/ai-sdk @scopestack/core
 pnpm add @ai-sdk/openai  # or your preferred provider
 ```
 
 ## Quick Start
 
 ```typescript
-import { createIntentClient } from '@intentkit/ai-sdk';
+import { createScopeStackClient } from '@scopestack/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
 // Create client with provider
-const client = createIntentClient(openai('gpt-4o'));
+const client = createScopeStackClient(openai('gpt-4o'));
 
 // Use scoped inference
 const result = await client.scope('analysis', async (ctx) => {
@@ -32,30 +32,30 @@ const result = await client.scope('analysis', async (ctx) => {
     }),
     'Analyze: "I love this product!"'
   );
-  
+
   // sentiment: Owned<{ sentiment: string; confidence: number }, 'analysis'>
-  console.log(sentiment.value);     // { sentiment: 'positive', confidence: 0.95 }
+  console.log(sentiment.value); // { sentiment: 'positive', confidence: 0.95 }
   console.log(sentiment.confidence); // 0.95
-  console.log(sentiment.__scope);    // 'analysis'
-  
+  console.log(sentiment.__scope); // 'analysis'
+
   return sentiment;
 });
 ```
 
 ## API Reference
 
-### createIntentClient(provider)
+### createScopeStackClient(provider)
 
-Create an IntentKit-wrapped AI SDK client:
+Create an ScopeStack-wrapped AI SDK client:
 
 ```typescript
-import { createIntentClient } from '@intentkit/ai-sdk';
+import { createScopeStackClient } from '@scopestack/ai-sdk';
 import { anthropic } from '@ai-sdk/anthropic';
 
-const client = createIntentClient(anthropic('claude-sonnet-4-20250514'), {
+const client = createScopeStackClient(anthropic('claude-sonnet-4-20250514'), {
   // Default confidence extraction method
   confidenceMethod: 'self-eval', // 'logprobs' | 'self-eval' | 'schema'
-  
+
   // Caching strategy
   caching: {
     enabled: true,
@@ -70,7 +70,7 @@ Create a scoped execution context:
 
 ```typescript
 const result = await client.scope('my-scope', async (ctx) => {
-  // ctx: IntentContext<'my-scope'>
+  // ctx: ScopeStackContext<'my-scope'>
   return await ctx.infer(schema, input);
 });
 ```
@@ -86,10 +86,10 @@ const value = await ctx.infer(
   {
     // Override confidence method for this call
     confidenceMethod: 'schema',
-    
+
     // Number of samples for ensemble confidence
     samples: 3,
-    
+
     // System prompt
     system: 'You are an analyst...',
   }
@@ -114,7 +114,7 @@ await client.scope('customer', async (ctx) => {
 
 ## Confidence Extraction
 
-IntentKit supports multiple methods for extracting confidence:
+ScopeStack supports multiple methods for extracting confidence:
 
 ### Schema-based (recommended)
 
@@ -132,7 +132,7 @@ const schema = z.object({
 Ask the model to evaluate its own confidence:
 
 ```typescript
-const client = createIntentClient(provider, {
+const client = createScopeStackClient(provider, {
   confidenceMethod: 'self-eval',
 });
 ```
@@ -142,17 +142,17 @@ const client = createIntentClient(provider, {
 Use token probabilities (when available):
 
 ```typescript
-const client = createIntentClient(provider, {
+const client = createScopeStackClient(provider, {
   confidenceMethod: 'logprobs',
 });
 ```
 
 ## Caching
 
-IntentKit integrates with provider caching to reduce costs for `fork` operations:
+ScopeStack integrates with provider caching to reduce costs for `fork` operations:
 
 ```typescript
-const client = createIntentClient(provider, {
+const client = createScopeStackClient(provider, {
   caching: {
     enabled: true,
     // Mark stable content as cacheable
@@ -165,7 +165,7 @@ await client.scope('analysis', async (ctx) => {
   // Only user message varies
   return ctx.infer(schema, userInput, {
     system: 'Long system prompt...', // Cached
-    context: largeDocument,          // Cached
+    context: largeDocument, // Cached
   });
 });
 ```
@@ -173,7 +173,7 @@ await client.scope('analysis', async (ctx) => {
 ## Error Handling
 
 ```typescript
-import { IntentKitError, LowConfidenceError } from '@intentkit/ai-sdk';
+import { ScopeStackError, LowConfidenceError } from '@scopestack/ai-sdk';
 
 try {
   const result = await ctx.infer(schema, input, {
@@ -200,9 +200,9 @@ const schema = z.object({
 await client.scope('test', async (ctx) => {
   const result = await ctx.infer(schema, input);
   // result: Owned<{ category: 'A' | 'B' | 'C'; score: number }, 'test'>
-  
+
   result.value.category; // Autocomplete: 'A' | 'B' | 'C'
-  result.__scope;        // Type: 'test'
+  result.__scope; // Type: 'test'
 });
 ```
 
@@ -232,5 +232,5 @@ OPENAI_API_KEY=... pnpm test:integration
 
 ## Related Packages
 
-- `@intentkit/core` — Core type definitions
-- `eslint-plugin-intentkit` — ESLint rules
+- `@scopestack/core` — Core type definitions
+- `eslint-plugin-scopestack` — ESLint rules

@@ -1,7 +1,7 @@
 {
-  "name": "@intentkit/core",
+  "name": "@scopestack/core",
   "version": "0.0.1",
-  "description": "Core types and utilities for IntentKit",
+  "description": "Core types and utilities for ScopeStack",
   "keywords": [
     "llm",
     "typescript",
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/intentkit.git",
+    "url": "https://github.com/scopestack/scopestack-ts.git",
     "directory": "packages/core"
   },
   "license": "MIT",

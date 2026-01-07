@@ -231,14 +231,14 @@ export interface Context<S extends string> {
  * Schema definition for LLM inference operations.
  *
  * This is a placeholder interface that will be implemented by integration packages
- * (like @intentkit/ai-sdk). It represents a schema that can describe the
+ * (like @scopestack/ai-sdk). It represents a schema that can describe the
  * structure of data to extract from unstructured input.
  *
  * @template T - The TypeScript type that the schema describes
  *
  * @example
  * ```typescript
- * // Using Zod schemas (from @intentkit/ai-sdk)
+ * // Using Zod schemas (from @scopestack/ai-sdk)
  * import { z } from 'zod';
  *
  * const UserSchema: Schema<User> = z.object({
@@ -280,7 +280,7 @@ export interface ContextOptions {
    *
    * @example
    * ```typescript
-   * // Using Vercel AI SDK (from @intentkit/ai-sdk)
+   * // Using Vercel AI SDK (from @scopestack/ai-sdk)
    * import { openai } from '@ai-sdk/openai';
    *
    * const options: ContextOptions = {

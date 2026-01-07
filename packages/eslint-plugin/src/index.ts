@@ -1,2 +1,2 @@
-// eslint-plugin-intentkit - ESLint rules for IntentKit
+// eslint-plugin-scopestack - ESLint rules for ScopeStack
 export {};

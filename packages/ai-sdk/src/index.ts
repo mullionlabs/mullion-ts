@@ -1,2 +1,2 @@
-// @intentkit/ai-sdk - Vercel AI SDK integration for IntentKit
+// @scopestack/ai-sdk - Vercel AI SDK integration for ScopeStack
 export {};

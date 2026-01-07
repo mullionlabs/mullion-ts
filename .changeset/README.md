@@ -11,6 +11,7 @@ pnpm changeset
 ```
 
 This will prompt you to:
+
 1. Select which packages have changed
 2. Choose the bump type (major/minor/patch) for each
 3. Write a summary of the changes
@@ -25,7 +26,7 @@ git checkout -b feature/new-eslint-rule
 
 # Add a changeset describing the change
 pnpm changeset
-# Select: eslint-plugin-intentkit
+# Select: eslint-plugin-scopestack
 # Bump type: minor
 # Summary: "Add new rule 'no-unhandled-alternatives'"
 
@@ -56,20 +57,22 @@ pnpm release
 ## Versioning Strategy
 
 We use **independent versioning**:
+
 - Each package has its own version
-- Changes to `@intentkit/core` don't auto-bump other packages
+- Changes to `@scopestack/core` don't auto-bump other packages
 - Peer dependency updates are handled automatically
 
 ### Peer Dependencies
 
-- `eslint-plugin-intentkit` has `@intentkit/core` as peer dependency
-- `@intentkit/ai-sdk` has `@intentkit/core` as peer dependency
+- `eslint-plugin-scopestack` has `@scopestack/core` as peer dependency
+- `@scopestack/ai-sdk` has `@scopestack/core` as peer dependency
 
 When releasing a breaking change to `core`, you may need to update peer dep ranges in other packages.
 
 ## CI Integration
 
 GitHub Actions will:
+
 1. Create a "Version Packages" PR when changesets exist on main
 2. Merge the PR to trigger npm publish
 3. Create GitHub releases with changelogs

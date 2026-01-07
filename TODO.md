@@ -1,4 +1,4 @@
-# IntentKit TODO
+# ScopeStack TODO
 
 ## Current Sprint: Week 1-2 (Foundation)
 
@@ -24,7 +24,7 @@
 ### 0.2 First Changeset
 
 - [x] Run `pnpm changeset`
-- [x] Create a test changeset for @intentkit/core
+- [x] Create a test changeset for @scopestack/core
 - [x] Run `pnpm version` to see version bump
 - [x] Revert test changeset
 
@@ -32,7 +32,7 @@
 
 ## Task 1: Core Types
 
-**Goal:** Implement fundamental types in @intentkit/core
+**Goal:** Implement fundamental types in @scopestack/core
 
 ### 1.1 Brand Types (`packages/core/src/brand.ts`)
 
@@ -68,9 +68,9 @@
 ### 1.5 Verify Core Package
 
 - [x] Update `packages/core/src/index.ts` with all exports
-- [x] Run `pnpm --filter @intentkit/core build`
-- [x] Run `pnpm --filter @intentkit/core test`
-- [x] Run `pnpm --filter @intentkit/core typecheck`
+- [x] Run `pnpm --filter @scopestack/core build`
+- [x] Run `pnpm --filter @scopestack/core test`
+- [x] Run `pnpm --filter @scopestack/core typecheck`
 
 ---
 
@@ -161,7 +161,7 @@
 
 ### 5.1 Client (`packages/ai-sdk/src/client.ts`)
 
-- [ ] `createIntentClient(provider)` function
+- [ ] `createScopeStackClient(provider)` function
 - [ ] Scope method on client
 - [ ] Type inference
 

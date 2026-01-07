@@ -1,6 +1,6 @@
-# @intentkit/core
+# @scopestack/core
 
-Core type definitions and utilities for IntentKit.
+Core type definitions and utilities for ScopeStack.
 
 ## Overview
 
@@ -15,20 +15,20 @@ This package provides the foundational types for type-safe LLM context managemen
 ## Installation
 
 ```bash
-pnpm add @intentkit/core
+pnpm add @scopestack/core
 ```
 
 ## Quick Start
 
 ```typescript
-import { scope, Owned, Context } from '@intentkit/core';
+import { scope, Owned, Context } from '@scopestack/core';
 
 // Create a scoped execution
 const result = await scope('analysis', async (ctx) => {
   // Everything inferred here is Owned by 'analysis' scope
   const sentiment = await ctx.infer(SentimentSchema, userInput);
   // sentiment: Owned<Sentiment, 'analysis'>
-  
+
   return sentiment;
 });
 ```
@@ -43,7 +43,7 @@ A value with tracked scope ownership:
 interface Owned<T, S extends string> {
   value: T;
   confidence: number;
-  __scope: S;  // Branded type
+  __scope: S; // Branded type
   traceId: string;
 }
 ```
@@ -66,13 +66,13 @@ Scoped execution context:
 ```typescript
 interface Context<S extends string> {
   readonly scope: S;
-  
+
   // Infer a value within this scope
   infer<T>(schema: Schema<T>, input: string): Promise<Owned<T, S>>;
-  
+
   // Bridge a value from another scope
   bridge<T, OS extends string>(owned: Owned<T, OS>): Owned<T, S | OS>;
-  
+
   // Use a value from another scope (alias for bridge)
   use<T, OS extends string>(owned: Owned<T, OS>): Owned<T, S | OS>;
 }
@@ -124,5 +124,5 @@ pnpm typecheck
 
 ## Related Packages
 
-- `eslint-plugin-intentkit` — ESLint rules for detecting scope violations
-- `@intentkit/ai-sdk` — Vercel AI SDK integration
+- `eslint-plugin-scopestack` — ESLint rules for detecting scope violations
+- `@scopestack/ai-sdk` — Vercel AI SDK integration

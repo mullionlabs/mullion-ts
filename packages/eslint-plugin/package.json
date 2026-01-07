@@ -1,5 +1,5 @@
 {
-  "name": "eslint-plugin-intentkit",
+  "name": "eslint-plugin-scopestack",
   "version": "0.0.1",
   "description": "ESLint rules for type-safe LLM context management",
   "keywords": [
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/intentkit.git",
+    "url": "https://github.com/scopestack/scopestack-ts.git",
     "directory": "packages/eslint-plugin"
   },
   "license": "MIT",
@@ -44,18 +44,18 @@
     "@typescript-eslint/utils": "catalog:"
   },
   "peerDependencies": {
-    "@intentkit/core": ">=0.0.1",
+    "@scopestack/core": ">=0.0.1",
     "@typescript-eslint/parser": ">=8.0.0",
     "eslint": ">=8.57.0",
     "typescript": ">=5.0.0"
   },
   "peerDependenciesMeta": {
-    "@intentkit/core": {
+    "@scopestack/core": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@intentkit/core": "workspace:*",
+    "@scopestack/core": "workspace:*",
     "@types/node": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "@typescript-eslint/rule-tester": "catalog:",

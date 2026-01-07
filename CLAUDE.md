@@ -1,8 +1,8 @@
-# IntentKit Development Guide
+# ScopeStack Development Guide
 
 ## Project Overview
 
-**IntentKit** — TypeScript library for type-safe LLM context management.
+**ScopeStack** — TypeScript library for type-safe LLM context management.
 
 **Core philosophy:** Compile-time safety, not runtime orchestration. We are ESLint + TypeScript for LLM workflows, not a new LangChain.
 
@@ -19,9 +19,9 @@
 ## Project Structure
 
 ```
-intentkit/
+scopestack/
 ├── packages/
-│   ├── core/                 # @intentkit/core
+│   ├── core/                 # @scopestack/core
 │   │   ├── src/
 │   │   │   ├── types.ts      # Owned, Context, SemanticValue
 │   │   │   ├── scope.ts      # scope() function
@@ -31,7 +31,7 @@ intentkit/
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   │
-│   ├── eslint-plugin/        # eslint-plugin-intentkit
+│   ├── eslint-plugin/        # eslint-plugin-scopestack
 │   │   ├── src/
 │   │   │   ├── rules/
 │   │   │   │   ├── no-context-leak.ts
@@ -39,7 +39,7 @@ intentkit/
 │   │   │   └── index.ts
 │   │   └── ...
 │   │
-│   └── ai-sdk/               # @intentkit/ai-sdk
+│   └── ai-sdk/               # @scopestack/ai-sdk
 │       ├── src/
 │       │   ├── client.ts
 │       │   └── index.ts
@@ -67,7 +67,7 @@ pnpm install
 pnpm build
 
 # Build specific package
-pnpm --filter @intentkit/core build
+pnpm --filter @scopestack/core build
 
 # Run tests
 pnpm test
@@ -107,12 +107,12 @@ pnpm release
 ## Package Dependencies
 
 ```
-@intentkit/core (standalone)
+@scopestack/core (standalone)
      ↑
      │ peerDependency
      │
-eslint-plugin-intentkit ←── peerDep: @typescript-eslint/parser, eslint
-@intentkit/ai-sdk ←─────── peerDep: ai (Vercel AI SDK), zod
+eslint-plugin-scopestack ←── peerDep: @typescript-eslint/parser, eslint
+@scopestack/ai-sdk ←─────── peerDep: ai (Vercel AI SDK), zod
 ```
 
 ## Key Concepts
@@ -158,18 +158,21 @@ await customerCtx.respond(safe.value);
 ## Code Style & Conventions
 
 ### TypeScript
+
 - Strict mode always (`"strict": true`)
 - No `any` — use `unknown` and narrow
 - Prefer `interface` over `type` for objects
 - Use branded types for nominal typing
 
 ### Naming
+
 - Types: PascalCase (`Owned`, `Context`)
 - Functions: camelCase (`createScope`)
 - Constants: UPPER_SNAKE_CASE (`DEFAULT_CONFIDENCE_THRESHOLD`)
 - Files: kebab-case (`no-context-leak.ts`)
 
 ### Testing
+
 - Every ESLint rule: test valid AND invalid cases
 - Type tests using `expectType` / `tsd`
 - Unit tests with Vitest
@@ -179,6 +182,7 @@ await customerCtx.respond(safe.value);
 ### Task Size
 
 Break work into small tasks:
+
 - ✅ "Implement `Owned<T, S>` type with JSDoc"
 - ✅ "Create ESLint rule skeleton for no-context-leak"
 - ❌ "Build the entire ESLint plugin" (too big)
@@ -205,12 +209,12 @@ turbo run build --force
 
 ## Decision Log
 
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-01 | TypeScript only | Stronger type system, less competition |
-| 2026-01 | ESLint plugin first | Lowest adoption friction |
-| 2026-01 | Turborepo + Changesets | Independent releases, build caching |
-| 2026-01 | Integrate with AI SDK | 2.7M weekly downloads |
+| Date    | Decision               | Rationale                              |
+| ------- | ---------------------- | -------------------------------------- |
+| 2026-01 | TypeScript only        | Stronger type system, less competition |
+| 2026-01 | ESLint plugin first    | Lowest adoption friction               |
+| 2026-01 | Turborepo + Changesets | Independent releases, build caching    |
+| 2026-01 | Integrate with AI SDK  | 2.7M weekly downloads                  |
 
 ## Links
 

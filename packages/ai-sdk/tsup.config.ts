@@ -8,5 +8,5 @@ export default defineConfig({
   sourcemap: true,
   treeshake: true,
   minify: false,
-  external: ['@intentkit/core', 'ai', 'zod'],
+  external: ['@scopestack/core', 'ai', 'zod'],
 });

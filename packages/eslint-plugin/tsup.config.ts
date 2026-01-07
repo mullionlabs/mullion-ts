@@ -10,7 +10,7 @@ export default defineConfig({
   minify: false,
   external: [
     '@typescript-eslint/utils',
-    '@intentkit/core',
+    '@scopestack/core',
     'eslint',
     'typescript',
   ],

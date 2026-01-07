@@ -1,4 +1,4 @@
-# eslint-plugin-intentkit
+# eslint-plugin-scopestack
 
 ESLint rules for type-safe LLM context management.
 
@@ -9,7 +9,7 @@ Catch context leaks and confidence issues at lint time, before runtime.
 ## Installation
 
 ```bash
-pnpm add -D eslint-plugin-intentkit
+pnpm add -D eslint-plugin-scopestack
 ```
 
 ## Configuration
@@ -18,10 +18,10 @@ pnpm add -D eslint-plugin-intentkit
 
 ```javascript
 // eslint.config.js
-import intentkit from 'eslint-plugin-intentkit';
+import scopestack from 'eslint-plugin-scopestack';
 
 export default [
-  intentkit.configs.recommended,
+  scopestack.configs.recommended,
   // ... your other configs
 ];
 ```
@@ -31,14 +31,14 @@ export default [
 ```javascript
 // .eslintrc.js
 module.exports = {
-  plugins: ['intentkit'],
-  extends: ['plugin:intentkit/recommended'],
+  plugins: ['scopestack'],
+  extends: ['plugin:scopestack/recommended'],
 };
 ```
 
 ## Rules
 
-### `intentkit/no-context-leak`
+### `scopestack/no-context-leak`
 
 Detects when an `Owned` value crosses scope boundary without explicit bridge.
 
@@ -58,16 +58,17 @@ async function handleCustomer(ctx: Context<'customer'>) {
 ```
 
 **Options:**
+
 ```javascript
 {
-  "intentkit/no-context-leak": ["error", {
+  "scopestack/no-context-leak": ["error", {
     // Scopes that are always allowed to access each other
     "allowedPairs": [["internal", "public"]]
   }]
 }
 ```
 
-### `intentkit/require-confidence-check`
+### `scopestack/require-confidence-check`
 
 Requires confidence check before using `Owned` value.
 
@@ -90,9 +91,10 @@ return resolved.value;
 ```
 
 **Options:**
+
 ```javascript
 {
-  "intentkit/require-confidence-check": ["warn", {
+  "scopestack/require-confidence-check": ["warn", {
     // Minimum confidence threshold
     "threshold": 0.8,
     // Functions that count as confidence handling
@@ -101,7 +103,7 @@ return resolved.value;
 }
 ```
 
-### `intentkit/no-unsafe-parallel-write` (experimental)
+### `scopestack/no-unsafe-parallel-write` (experimental)
 
 Detects potential race conditions in parallel LLM calls.
 
@@ -126,12 +128,12 @@ state.summary = merge(a, b, { strategy: 'combine' });
 
 ```javascript
 // All rules with sensible defaults
-intentkit.configs.recommended = {
-  plugins: { intentkit },
+scopestack.configs.recommended = {
+  plugins: { scopestack },
   rules: {
-    'intentkit/no-context-leak': 'error',
-    'intentkit/require-confidence-check': 'warn',
-    'intentkit/no-unsafe-parallel-write': 'warn',
+    'scopestack/no-context-leak': 'error',
+    'scopestack/require-confidence-check': 'warn',
+    'scopestack/no-unsafe-parallel-write': 'warn',
   },
 };
 ```
@@ -140,12 +142,12 @@ intentkit.configs.recommended = {
 
 ```javascript
 // All rules as errors
-intentkit.configs.strict = {
-  plugins: { intentkit },
+scopestack.configs.strict = {
+  plugins: { scopestack },
   rules: {
-    'intentkit/no-context-leak': 'error',
-    'intentkit/require-confidence-check': 'error',
-    'intentkit/no-unsafe-parallel-write': 'error',
+    'scopestack/no-context-leak': 'error',
+    'scopestack/require-confidence-check': 'error',
+    'scopestack/no-unsafe-parallel-write': 'error',
   },
 };
 ```
@@ -181,5 +183,5 @@ This is why the plugin requires TypeScript and a properly configured `tsconfig.j
 
 ## Related Packages
 
-- `@intentkit/core` — Core type definitions
-- `@intentkit/ai-sdk` — Vercel AI SDK integration
+- `@scopestack/core` — Core type definitions
+- `@scopestack/ai-sdk` — Vercel AI SDK integration

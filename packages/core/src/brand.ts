@@ -26,7 +26,7 @@ export type Brand<T, B extends string> = T & { readonly __brand: B };
 /**
  * ScopeId is a branded string type representing a unique scope identifier.
  *
- * Used throughout IntentKit to track ownership and provenance of LLM-generated values.
+ * Used throughout ScopeStack to track ownership and provenance of LLM-generated values.
  * Each scope has a unique identifier that prevents accidental mixing of data from different contexts.
  *
  * @example
