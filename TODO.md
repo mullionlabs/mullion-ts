@@ -107,30 +107,30 @@
 
 ### 3.1 Rule Setup
 
-- [ ] Create `packages/eslint-plugin/src/rules/no-context-leak.ts`
-- [ ] Set up rule meta (docs, schema, messages)
-- [ ] Create empty `create()` function
+- [x] Create `packages/eslint-plugin/src/rules/no-context-leak.ts`
+- [x] Set up rule meta (docs, schema, messages)
+- [x] Create empty `create()` function
 
 ### 3.2 Rule Implementation
 
-- [ ] Set up TypeScript type services
-- [ ] Track `Owned` values and their scope parameter
-- [ ] Detect scope boundary crossings
-- [ ] Report when crossing without bridge()
+- [x] Set up TypeScript type services
+- [x] Track `Owned` values and their scope parameter
+- [x] Detect scope boundary crossings
+- [x] Report when crossing without bridge()
 
 ### 3.3 Rule Tests
 
-- [ ] Create test file with RuleTester
-- [ ] Test: valid code (no leak)
-- [ ] Test: invalid code (leak detected)
-- [ ] Test: bridged code (valid)
-- [ ] Test: edge cases
+- [x] Create test file with RuleTester
+- [x] Test: valid code (no leak)
+- [x] Test: invalid code (leak detected)
+- [x] Test: bridged code (valid)
+- [x] Test: edge cases
 
 ### 3.4 Plugin Export
 
-- [ ] Create `packages/eslint-plugin/src/index.ts`
-- [ ] Export rules and configs
-- [ ] Create `recommended` config
+- [x] Create `packages/eslint-plugin/src/index.ts`
+- [x] Export rules and configs
+- [x] Create `recommended` config
 
 ---
 
@@ -140,18 +140,18 @@
 
 ### 4.1 Rule Setup
 
-- [ ] Create rule file
-- [ ] Define meta
+- [x] Create rule file
+- [x] Define meta
 
 ### 4.2 Rule Implementation
 
-- [ ] Detect `Owned`/`SemanticValue` usage
-- [ ] Check for `.confidence` comparison
-- [ ] Allow explicit handlers
+- [x] Detect `Owned`/`SemanticValue` usage
+- [x] Check for `.confidence` comparison
+- [x] Allow explicit handlers
 
 ### 4.3 Rule Tests
 
-- [ ] Valid and invalid cases
+- [x] Valid and invalid cases
 
 ---
 
