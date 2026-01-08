@@ -203,7 +203,7 @@
 
 ---
 
-## Task 7: Cache Foundation (new)
+## Task 7: Cache Foundation ✅
 
 **Goal:** Provider-aware caching with safe defaults
 
@@ -219,143 +219,52 @@
 5. **Max 4 breakpoints** → Anthropic limit per request
 6. **Safe-by-default** → never cache user content without explicit opt-in
 
-### 7.1 Provider Capability Matrix
+### 7.1 Provider Capability Matrix ✅
 
 - [x] Create `packages/ai-sdk/src/cache/capabilities.ts`
 - [x] Implement `getCacheCapabilities(provider, model)` function
-- [x] Return type:
-  ```typescript
-  interface CacheCapabilities {
-    supported: boolean;
-    minTokens: number; // 1024, 2048, or 4096
-    maxBreakpoints: number; // 4 for Anthropic
-    supportsTtl: boolean;
-    supportedTtl: ('5m' | '1h')[];
-    supportsToolCaching: boolean;
-    isAutomatic: boolean; // true for OpenAI
-  }
-  ```
-- [x] Anthropic model-specific thresholds:
-  - Claude Opus 4.5, Haiku 4.5: 4096 tokens
-  - Claude Haiku 3/3.5: 2048 tokens
-  - Claude Sonnet, Opus (others): 1024 tokens
+- [x] Anthropic model-specific thresholds
 - [x] OpenAI: automatic caching, 1024 min, 128 increment
 - [x] Write unit tests
 - [x] Export from @mullion/ai-sdk
 
-### 7.2 CacheConfig Types
+### 7.2 CacheConfig Types ✅
 
 - [x] Create `packages/ai-sdk/src/cache/types.ts`
-- [x] Define provider-agnostic `CacheConfig`:
-
-  ```typescript
-  type CacheTTL = '5m' | '1h';
-  type CacheScope = 'system-only' | 'developer-content' | 'allow-user-content';
-
-  interface CacheConfig {
-    enabled: boolean;
-    scope?: CacheScope; // default: 'developer-content'
-    ttl?: CacheTTL; // default: '5m'
-    breakpoints?: number; // 1-4, default: 1
-  }
-  ```
-
-- [x] Define provider-specific adapters:
-  ```typescript
-  interface AnthropicCacheAdapter {
-    toProviderOptions(config: CacheConfig): AnthropicProviderOptions;
-  }
-  ```
-- [x] Validation functions:
-  - `validateTtlOrdering(segments)` — longer before shorter
-  - `validateBreakpointLimit(count)` — max 4
-  - `validateMinTokens(tokens, model)` — meets threshold
+- [x] Define provider-agnostic `CacheConfig`
+- [x] Define provider-specific adapters
+- [x] Validation functions
 - [x] Export types from package
 
-### 7.3 Cache Segments API (First-Class Primitive)
+### 7.3 Cache Segments API ✅
 
 - [x] Create `packages/ai-sdk/src/cache/segments.ts`
-- [x] Implement `CacheSegmentManager`:
-
-  ```typescript
-  interface CacheSegment {
-    key: string;
-    content: string;
-    tokenCount: number; // estimated
-    ttl: CacheTTL;
-    scope: CacheScope;
-    createdAt: number;
-  }
-
-  class CacheSegmentManager {
-    segment(key: string, content: string, options?: SegmentOptions): void;
-    system(systemPrompt: string, options?: SegmentOptions): void;
-    getSegments(): CacheSegment[];
-    clear(): void;
-    validateForModel(model: string): ValidationResult;
-  }
-  ```
-
+- [x] Implement `CacheSegmentManager`
 - [x] Add to context: `ctx.cache: CacheSegmentManager`
 - [x] Validate minimum token threshold per model before caching
 - [x] **Safe-by-default**: reject user content unless `scope: 'allow-user-content'`
 - [x] Warn if content below minimum threshold
 - [x] Write unit tests
 
-### 7.4 Cache Metrics Parser
+### 7.4 Cache Metrics Parser ✅
 
 - [x] Create `packages/ai-sdk/src/cache/metrics.ts`
-- [x] Parse Anthropic response:
-  ```typescript
-  // From providerMetadata.anthropic
-  {
-    cacheCreationInputTokens: number;
-    cacheReadInputTokens: number;
-  }
-  ```
-- [x] Parse OpenAI response:
-  ```typescript
-  // From usage.prompt_tokens_details
-  {
-    cached_tokens: number;
-  }
-  ```
-- [x] Define provider-agnostic `CacheStats`:
-  ```typescript
-  interface CacheStats {
-    provider: 'anthropic' | 'openai' | 'unknown';
-    cacheWriteTokens: number;
-    cacheReadTokens: number;
-    inputTokens: number;
-    outputTokens: number;
-    // Derived
-    savedTokens: number;
-    cacheHitRate: number; // 0-1
-    estimatedSavingsUsd: number;
-    // Debug
-    ttl?: CacheTTL;
-    breakpointsUsed?: number;
-    raw?: unknown;
-  }
-  ```
+- [x] Parse Anthropic response
+- [x] Parse OpenAI response
+- [x] Define provider-agnostic `CacheStats`
 - [x] Implement `ctx.getCacheStats()` method
 - [x] Write unit tests
 
-### 7.5 Cache Integration with infer()
+### 7.5 Cache Integration with infer() ✅
 
-- [x] Update `ctx.infer()` to accept cache options:
-  ```typescript
-  ctx.infer(schema, prompt, {
-    cache: 'use-segments' | 'none', // default: 'use-segments'
-  });
-  ```
+- [x] Update `ctx.infer()` to accept cache options
 - [x] Inject `providerOptions` for Anthropic based on segments
 - [x] Track cache stats in context trace
 - [x] Write integration tests
 
 ---
 
-## Task 8: Fork with Cache Optimization (Week 4-5)
+## Task 8: Fork with Cache Optimization ✅
 
 **Goal:** Parallel execution that maximizes cache reuse
 
@@ -367,239 +276,93 @@
 > 2. Different tool schemas = different cache prefix = no reuse
 > 3. `Promise.all()` without warmup = zero cache hits between branches
 
-### 8.1 Fork Types
+### 8.1 Fork Types ✅
 
 - [x] Create `packages/core/src/fork/types.ts`
-- [x] Define `ForkStrategy`:
-  ```typescript
-  type ForkStrategy =
-    | 'fast-parallel' // Promise.all, no warmup, no cross-branch cache
-    | 'cache-optimized'; // warmup first, then parallel with cache reuse
-  ```
-- [x] Define `ForkOptions`:
-  ```typescript
-  interface ForkOptions<T> {
-    strategy: ForkStrategy;
-    warmup?: 'explicit' | 'first-branch' | 'none';
-    branches: Array<(ctx: Context) => Promise<T>>;
-    onSchemaConflict?: 'warn' | 'error' | 'allow'; // Anthropic-specific
-  }
-  ```
-- [x] Define `ForkResult<T>`:
-  ```typescript
-  interface ForkResult<T> {
-    results: T[];
-    cacheStats: {
-      warmupCost: number;
-      branchCacheHits: number[];
-      totalSaved: number;
-    };
-    warnings: string[];
-  }
-  ```
+- [x] Define `ForkStrategy`
+- [x] Define `ForkOptions`
+- [x] Define `ForkResult<T>`
 - [x] Export types
 
-### 8.2 Fork Implementation
+### 8.2 Fork Implementation ✅
 
 - [x] Create `packages/core/src/fork/fork.ts`
 - [x] Implement `fork(ctx, options)` function
-- [x] **fast-parallel strategy:**
-  - Execute all branches with `Promise.all()`
-  - No warmup, branches don't share cache
-  - Fastest latency, highest token cost
-- [x] **cache-optimized strategy:**
-  - Warmup step: minimal call to prime cache with segments
-  - Wait for warmup completion
-  - Then execute branches in parallel
-  - Branches benefit from cached prefix
+- [x] **fast-parallel strategy**
+- [x] **cache-optimized strategy**
 - [x] Create isolated child contexts for each branch
 - [x] Collect results with proper typing
 - [x] Write unit tests
 
-### 8.3 Warmup Implementation
+### 8.3 Warmup Implementation ✅
 
 - [x] Create `packages/ai-sdk/src/cache/warmup.ts`
-- [x] Implement warmup strategies:
-
-  ```typescript
-  // 'explicit' - separate minimal call just to prime cache
-  async function explicitWarmup(ctx: Context): Promise<WarmupResult>;
-
-  // 'first-branch' - first branch primes, others wait
-  async function firstBranchWarmup(branches): Promise<void>;
-  ```
-
+- [x] Implement warmup strategies
 - [x] Track warmup token cost separately
-- [x] Warmup uses cached segments but minimal output
 - [x] Write tests verifying cache is primed
 
-### 8.4 Schema Conflict Detection (Anthropic)
+### 8.4 Schema Conflict Detection ✅
 
 - [x] Create `packages/ai-sdk/src/cache/schema-conflict.ts`
-- [x] Detect when fork branches have different tool schemas:
-  ```typescript
-  function detectSchemaConflict(branches): ConflictResult {
-    // Extract schema from each branch's infer() call
-    // Compare tool definitions
-    // Return conflict info
-  }
-  ```
-- [x] Warn message: "Different schemas in fork branches break Anthropic cache reuse. Consider: (1) universal schema, (2) generateText + post-process, (3) accept no cache sharing"
-- [x] Behavior based on `onSchemaConflict`:
-  - `'warn'`: console.warn + continue
-  - `'error'`: throw Error
-  - `'allow'`: silent continue
+- [x] Detect when fork branches have different tool schemas
+- [x] Behavior based on `onSchemaConflict`
 - [x] Write tests
 
 ### 8.5 Fork API (Final Design) ✅
 
-- [x] Create comprehensive integration example (`examples/basic/fork-example.js`)
+- [x] Create comprehensive integration example
 - [x] Verify all fork components work together
 - [x] Document API usage patterns
-
-```typescript
-// Example usage with explicit segments (Variant B)
-await ctx.cache.segment('document', longDocument, { ttl: '5m' });
-await ctx.cache.system(systemPrompt, { ttl: '1h' });
-
-const result = await fork(ctx, {
-  strategy: 'cache-optimized',
-  warmup: 'explicit',
-  onSchemaConflict: 'warn',
-  branches: [
-    (c) => c.infer(RiskSchema, 'Analyze risk factors'),
-    (c) => c.infer(OpportunitySchema, 'Find opportunities'),
-    (c) => c.infer(SummarySchema, 'Provide executive summary'),
-  ],
-});
-
-console.log(result.results); // [risk, opportunity, summary]
-console.log(result.cacheStats); // { warmupCost, branchCacheHits, totalSaved }
-console.log(result.warnings); // schema conflict warnings if any
-```
 
 ### 8.6 Fork Tests ✅
 
 - [x] Test: `fast-parallel` executes all branches concurrently
-- [x] Test: `cache-optimized` with warmup shows cache hits (Anthropic)
+- [x] Test: `cache-optimized` with warmup shows cache hits
 - [x] Test: without warmup, no cross-branch cache hits
 - [x] Test: schema conflict warning fires when schemas differ
 - [x] Test: `onSchemaConflict: 'error'` throws
 - [x] Test: cache metrics correctly aggregate across branches
 - [x] Test: child contexts are properly isolated
 
-**Test Files Created:**
-
-- `packages/core/src/fork/fork.test.ts` - 28 core fork tests
-- `packages/ai-sdk/src/fork-integration.test.ts` - 25 integration tests
-
 ---
 
-## Task 9: Merge Strategies
+## Task 9: Merge Strategies ✅
 
 **Goal:** Type-safe result aggregation with provenance tracking
 
-### 9.1 Merge Types
+### 9.1 Merge Types ✅
 
 - [x] Create `packages/core/src/merge/types.ts`
-- [x] Define `MergeStrategy`:
-  ```typescript
-  type MergeStrategy<T, R> = {
-    name: string;
-    merge(results: Array<Owned<T, any>>): MergeResult<R>;
-  };
-  ```
-- [x] Define `MergeResult`:
+- [x] Define `MergeStrategy`
+- [x] Define `MergeResult`
 
-  ```typescript
-  interface MergeResult<T> {
-    value: Owned<T, 'merged'>;
-    provenance: {
-      contributingBranches: number[];
-      rejectedValues: Array<{ branch: number; value: unknown; reason: string }>;
-      consensusLevel: number; // 0-1, how much agreement
-    };
-    conflicts: MergeConflict[];
-  }
-
-  interface MergeConflict {
-    field?: string;
-    values: unknown[];
-    resolution: 'voted' | 'averaged' | 'first' | 'rejected';
-  }
-  ```
-
-### 9.2 Built-in Strategies
+### 9.2 Built-in Strategies ✅
 
 - [x] Create `packages/core/src/merge/strategies/`
 - [x] **categorical.weightedVote()**
-  ```typescript
-  // Votes on discrete values, weighted by confidence
-  // Returns most voted value, confidence = vote share
-  merge.categorical.weightedVote<T>(): MergeStrategy<T, T>
-  ```
 - [x] **continuous.weightedAverage()**
-  ```typescript
-  // Averages numeric values, weighted by confidence
-  // Also returns dispersion (stddev) as uncertainty indicator
-  merge.continuous.weightedAverage(): MergeStrategy<number, {
-    value: number;
-    dispersion: number;
-  }>
-  ```
 - [x] **object.fieldwise()**
-  ```typescript
-  // Merges objects field by field
-  // Detects conflicts per field
-  // Does NOT silently overwrite - flags conflicts
-  merge.object.fieldwise<T extends object>(): MergeStrategy<T, T>
-  ```
 - [x] **array.concat()**
-  ```typescript
-  // Concatenates array results, removes duplicates
-  merge.array.concat<T>(): MergeStrategy<T[], T[]>
-  ```
 - [x] **custom(fn)**
-  ```typescript
-  // User-provided merge function
-  merge.custom<T, R>(fn: (results: Owned<T>[]) => R): MergeStrategy<T, R>
-  ```
 - [x] Write unit tests for each strategy
 
-### 9.3 Consensus Requirements
+### 9.3 Consensus Requirements ✅
 
-- [x] Implement `merge.requireConsensus(k)`:
-  ```typescript
-  // Requires k out of n branches to agree
-  // If not met: returns low confidence OR throws
-  merge.requireConsensus<T>(k: number, options?: {
-    onFailure: 'low-confidence' | 'error';
-  }): MergeStrategy<T, T>
-  ```
-- [x] Consensus calculation: agreement on value within tolerance
+- [x] Implement `merge.requireConsensus(k)`
+- [x] Consensus calculation
 - [x] Write tests for consensus scenarios
 
-### 9.4 Merge Integration
+### 9.4 Merge Integration ✅
 
 - [x] Create `packages/core/src/merge/merge.ts`
-- [x] Implement main `merge()` function:
-  ```typescript
-  function merge<T, R>(
-    results: Array<Owned<T, any>>,
-    strategy: MergeStrategy<T, R>
-  ): MergeResult<R>;
-  ```
-- [x] Integrate with fork:
-  ```typescript
-  const forkResult = await fork(ctx, { ... });
-  const merged = merge(forkResult.results, merge.categorical.weightedVote());
-  ```
+- [x] Implement main `merge()` function
+- [x] Integrate with fork
 - [x] Write integration tests
 
-### 9.5 Merge Tests
+### 9.5 Merge Tests ✅
 
 - [x] Test: weightedVote with clear winner
-- [x] Test: weightedVote with tie (uses confidence as tiebreaker)
+- [x] Test: weightedVote with tie
 - [x] Test: weightedAverage calculation correctness
 - [x] Test: fieldwise conflict detection
 - [x] Test: requireConsensus passes when met
@@ -608,212 +371,215 @@ console.log(result.warnings); // schema conflict warnings if any
 
 ---
 
-## Task 10: Cost Estimation
+## Task 10: Cost Estimation ✅
 
 **Goal:** Help developers understand and control costs
 
 ### 10.1 Token Estimation ✅
 
 - [x] Create `packages/ai-sdk/src/cost/tokens.ts`
-- [x] Implement `estimateTokens(text, model?)`:
-
-  ```typescript
-  interface TokenEstimate {
-    count: number;
-    method: 'tiktoken' | 'approximate' | 'exact';
-    model?: string;
-  }
-
-  function estimateTokens(text: string, model?: string): TokenEstimate;
-  ```
-
+- [x] Implement `estimateTokens(text, model?)`
 - [x] Use tiktoken for OpenAI models
-- [x] Approximate for Claude (chars/4 or similar heuristic)
+- [x] Approximate for Claude
 - [x] Mark estimation method clearly
 - [x] Write tests
 
 ### 10.2 Pricing Tables ✅
 
 - [x] Create `packages/ai-sdk/src/cost/pricing.ts`
-- [x] Define pricing structure:
-  ```typescript
-  interface ModelPricing {
-    model: string;
-    provider: 'anthropic' | 'openai';
-    inputPer1M: number; // USD per 1M input tokens
-    outputPer1M: number; // USD per 1M output tokens
-    cachedInputPer1M?: number; // USD per 1M cached input
-    cacheWritePer1M?: number; // USD per 1M cache write
-    asOfDate: string; // ISO date
-  }
-  ```
-- [x] Include current pricing (as of knowledge cutoff)
-- [x] Anthropic cache economics:
-  - 5m cache write: +25% of input price
-  - 1h cache write: +100% of input price
-  - Cache read: ~10% of input price
-- [x] Allow override via config/env:
-  ```typescript
-  function getPricing(
-    model: string,
-    overrides?: Partial<ModelPricing>
-  ): ModelPricing;
-  ```
-- [x] Export pricing data as JSON for easy updates
+- [x] Define pricing structure
+- [x] Include current pricing
+- [x] Anthropic cache economics
+- [x] Allow override via config/env
+- [x] Export pricing data as JSON
 
 ### 10.3 Cost Calculation ✅
 
 - [x] Create `packages/ai-sdk/src/cost/calculator.ts`
-- [x] Implement `calculateCost()`:
-
-  ```typescript
-  interface CostBreakdown {
-    inputCost: number;
-    outputCost: number;
-    cacheWriteCost: number;
-    cacheReadCost: number;
-    totalCost: number;
-    savings: number; // vs no cache
-    savingsPercent: number;
-  }
-
-  function calculateCost(
-    usage: TokenUsage,
-    cacheStats: CacheStats,
-    model: string
-  ): CostBreakdown;
-  ```
-
-- [x] Net savings calculation: `savings = (cacheReadTokens * inputPrice * 0.9) - (cacheWriteTokens * writeMultiplier)`
+- [x] Implement `calculateCost()`
+- [x] Net savings calculation
 - [x] Write tests
 
 ### 10.4 Context Cost Integration ✅
 
-- [x] Add to context:
-  ```typescript
-  interface Context {
-    // ... existing
-    getLastCallCost(): CostBreakdown; // actual, from usage
-    estimateNextCallCost(prompt: string): CostBreakdown; // pre-call estimate
-  }
-  ```
+- [x] Add `getLastCallCost()` to context
+- [x] Add `estimateNextCallCost()` to context
 - [x] Include cost in trace data
-- [x] Comparison: estimate vs actual (for debugging)
+- [x] Comparison: estimate vs actual
 - [x] Write integration tests
 
 ---
 
-## Task 11: Trace & Observability
+## Task 11: Trace Export (OpenTelemetry)
 
-**Goal:** Make debugging and monitoring first-class
+**Goal:** Export Mullion-specific trace data to existing observability platforms
 
-### 11.1 Trace Schema
+### Philosophy
+
+> ❌ **NOT building:** own UI, dashboards, trace storage, LangSmith/Langfuse competitor
+> ✅ **Building:** OpenTelemetry-compatible exporters with Mullion-specific attributes
+
+This follows the "Minimal Runtime" philosophy — integrate into existing ecosystems without friction.
+
+### 11.1 Trace Schema (OTel-Compatible)
 
 - [ ] Create `packages/core/src/trace/types.ts`
-- [ ] Define `TraceEntry`:
-
+- [ ] Define `MullionSpan` following OTel conventions:
   ```typescript
-  interface TraceEntry {
-    id: string;
-    timestamp: number;
-    scope: string;
-    operation: 'infer' | 'bridge' | 'fork' | 'merge';
+  interface MullionSpan {
+    // Standard OTel fields
+    traceId: string;
+    spanId: string;
+    parentSpanId?: string;
+    name: string;
+    startTime: number;
+    endTime: number;
 
-    // Input/Output
-    input?: {
-      prompt?: string;
-      schema?: string;
-      segments?: string[];
-    };
-    output?: {
-      value?: unknown;
-      confidence?: number;
-    };
-
-    // Performance
-    duration: number;
-    tokens: {
-      input: number;
-      output: number;
-      cached: number;
-    };
-
-    // Cost
-    cost: CostBreakdown;
-
-    // Cache
-    cache: {
-      hits: number;
-      misses: number;
-      segments: string[];
-    };
-
-    // Provenance (for merge)
-    provenance?: {
-      sources: string[];
-      conflicts: number;
-    };
-
-    // Errors
-    error?: {
-      message: string;
-      code?: string;
+    // Mullion-specific attributes (our unique value)
+    attributes: {
+      'mullion.scope.id': string;
+      'mullion.scope.name': string;
+      'mullion.operation': 'infer' | 'bridge' | 'fork' | 'merge';
+      'mullion.confidence'?: number;
+      'mullion.bridge.source'?: string;
+      'mullion.bridge.target'?: string;
+      'mullion.fork.strategy'?: string;
+      'mullion.fork.branch_count'?: number;
+      'mullion.merge.consensus_level'?: number;
+      'mullion.cache.hit_rate'?: number;
+      'mullion.cache.saved_tokens'?: number;
+      'mullion.cost.usd'?: number;
+      // GenAI semantic conventions (industry standard)
+      'gen_ai.system': string;
+      'gen_ai.request.model': string;
+      'gen_ai.usage.input_tokens': number;
+      'gen_ai.usage.output_tokens': number;
     };
   }
   ```
+- [ ] Follow [OpenTelemetry Semantic Conventions for GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
+- [ ] Export types
 
-- [ ] Define `Trace` as collection of entries
-- [ ] Export schema as JSON Schema for tooling
-
-### 11.2 Trace Collection
+### 11.2 Trace Collector (Minimal, In-Memory)
 
 - [ ] Create `packages/core/src/trace/collector.ts`
-- [ ] Implement `TraceCollector`:
-
+- [ ] Implement lightweight `TraceCollector`:
   ```typescript
   class TraceCollector {
-    entries: TraceEntry[];
+    private spans: MullionSpan[] = [];
 
-    record(entry: Partial<TraceEntry>): void;
-    getTrace(): Trace;
-    toJSON(): string;
+    startSpan(name: string, attributes: MullionAttributes): SpanContext;
+    endSpan(context: SpanContext): void;
+    getSpans(): MullionSpan[];
     clear(): void;
   }
   ```
+- [ ] Auto-instrument: `infer()`, `bridge()`, `fork()`, `merge()`
+- [ ] Propagate trace context through child scopes
+- [ ] **Zero overhead by default** — tracing disabled until exporter attached
+- [ ] Write unit tests
 
-- [ ] Integrate with Context
-- [ ] Auto-record on infer(), bridge(), fork(), merge()
+### 11.3 OpenTelemetry Exporter (Primary)
 
-### 11.3 Exporter Hooks
+- [ ] Create `packages/core/src/trace/exporters/otel.ts`
+- [ ] Implement `MullionOTelExporter`:
 
-- [ ] Create `packages/core/src/trace/exporters.ts`
-- [ ] Define exporter interface:
   ```typescript
-  interface TraceExporter {
-    name: string;
-    export(trace: Trace): Promise<void>;
+  import { SpanExporter, ReadableSpan } from '@opentelemetry/sdk-trace-base';
+
+  class MullionOTelExporter implements SpanExporter {
+    export(
+      spans: ReadableSpan[],
+      resultCallback: (result: ExportResult) => void
+    ): void;
+    shutdown(): Promise<void>;
+  }
+
+  // Converts MullionSpan → OTel ReadableSpan
+  function toOTelSpan(span: MullionSpan): ReadableSpan;
+  ```
+
+- [ ] Map all Mullion attributes to OTel attributes
+- [ ] Preserve `mullion.*` namespace for our unique data
+- [ ] Use `gen_ai.*` namespace for standard LLM attributes
+- [ ] Write tests
+
+### 11.4 OTel Integration Helper
+
+- [ ] Create `packages/core/src/trace/otel-integration.ts`
+- [ ] Helper to wire up with any OTel backend:
+
+  ```typescript
+  import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+  import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+
+  // One-liner setup for common backends
+  function setupMullionTracing(options: {
+    endpoint?: string; // OTLP endpoint
+    serviceName?: string; // defaults to 'mullion'
+    exporter?: SpanExporter; // custom exporter
+  }): void;
+
+  // Example usage:
+  setupMullionTracing({
+    endpoint: 'https://otel.datadog.com/v1/traces',
+  });
+  ```
+
+- [ ] Document common backends: Datadog, Jaeger, Honeycomb, Grafana Tempo
+- [ ] Write integration tests
+
+### 11.5 Platform-Specific Exporters (Optional Convenience)
+
+> These are thin wrappers for users who don't want to set up OTel themselves.
+> Not a priority — OTel exporter covers most cases.
+
+- [ ] Create `packages/core/src/trace/exporters/langfuse.ts` (optional)
+  ```typescript
+  // Uses Langfuse SDK directly
+  class LangfuseExporter {
+    constructor(config: {
+      publicKey: string;
+      secretKey: string;
+      baseUrl?: string;
+    });
+    export(spans: MullionSpan[]): Promise<void>;
   }
   ```
-- [ ] Implement `ConsoleExporter` (default, for debugging)
-- [ ] Implement `JsonFileExporter` (for CI/testing)
-- [ ] Document integration patterns for:
-  - Langfuse
-  - LangSmith
-  - OpenTelemetry
-- [ ] Provide example exporter implementations
+- [ ] Create `packages/core/src/trace/exporters/langsmith.ts` (optional)
+- [ ] Mark as `@mullion/trace-langfuse`, `@mullion/trace-langsmith` (separate packages)
 
-### 11.4 Context Integration
+### 11.6 Context Integration
 
-- [ ] Add to context:
+- [ ] Add tracing methods to context:
   ```typescript
   interface Context {
-    // ... existing
-    getTrace(): Trace;
-    exportTrace(exporter?: TraceExporter): Promise<void>;
+    // ... existing methods
+
+    // Tracing (opt-in, zero overhead when disabled)
+    readonly traceId: string;
+    readonly currentSpanId: string | null;
   }
   ```
-- [ ] Include estimate vs actual comparison in trace
-- [ ] Write tests
+- [ ] Tracing enabled via client setup, not per-context:
+  ```typescript
+  const client = createMullionClient(provider, {
+    tracing: {
+      exporter: new OTLPTraceExporter({ url: '...' }),
+      // or
+      endpoint: 'https://otel-collector.example.com/v1/traces',
+    },
+  });
+  ```
+- [ ] Write integration tests
+
+### 11.7 Documentation
+
+- [ ] Guide: "Exporting Traces to Datadog"
+- [ ] Guide: "Exporting Traces to Jaeger (local development)"
+- [ ] Guide: "Exporting Traces to Langfuse"
+- [ ] Example: Custom exporter implementation
+- [ ] Reference: Mullion attribute schema
 
 ---
 
@@ -863,8 +629,7 @@ console.log(result.warnings); // schema conflict warnings if any
 ### Tooling
 
 - [ ] VSCode extension (scope visualization)
-- [ ] Chrome DevTools integration
-- [ ] CLI for trace analysis
+- [ ] CLI for trace analysis (reads OTel exports)
 
 ### Documentation
 
@@ -921,4 +686,21 @@ pnpm version
 # 1. Run fork with strategy: 'fast-parallel' - note cache stats
 # 2. Run fork with strategy: 'cache-optimized' - compare cache stats
 # Expect: cache-optimized shows higher cacheReadTokens
+```
+
+### Trace Testing Tips
+
+```bash
+# Local development with Jaeger:
+docker run -d --name jaeger \
+  -p 16686:16686 \
+  -p 4318:4318 \
+  jaegertracing/all-in-one:latest
+
+# Configure Mullion:
+setupMullionTracing({
+  endpoint: 'http://localhost:4318/v1/traces'
+});
+
+# View traces at http://localhost:16686
 ```
