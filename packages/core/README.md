@@ -132,19 +132,110 @@ if (result.confidence > 0.8) {
 }
 ```
 
+## Tracing & Observability
+
+Mullion includes production-ready OpenTelemetry-compatible tracing for LLM workflow observability.
+
+### Quick Start
+
+```typescript
+import { TracingPresets } from '@mullion/core';
+
+// Enable tracing with one line
+TracingPresets.jaeger(); // Local development
+
+// Or for production
+TracingPresets.honeycomb(process.env.HONEYCOMB_API_KEY!);
+```
+
+### Features
+
+- ✅ Zero-dependency OTLP exporter
+- ✅ One-liner setup for major backends (Jaeger, Honeycomb, Datadog, New Relic, Grafana)
+- ✅ Mullion-specific attributes (scope, confidence, cost, cache metrics)
+- ✅ Zero overhead by default (disabled until exporter attached)
+- ✅ Full OpenTelemetry compatibility
+
+### Manual Instrumentation
+
+```typescript
+import { getGlobalTraceCollector, setupMullionTracing } from '@mullion/core';
+
+setupMullionTracing({
+  endpoint: 'http://localhost:4318/v1/traces',
+});
+
+const collector = getGlobalTraceCollector();
+
+const spanCtx = collector.startSpan({
+  name: 'mullion.infer',
+  kind: 'client',
+  attributes: {
+    'mullion.scope.id': 'admin',
+    'mullion.operation': 'infer',
+  },
+});
+
+try {
+  // Your operation
+  await performOperation();
+  await collector.endSpan(spanCtx, { status: 'ok' });
+} catch (error) {
+  await collector.endSpan(spanCtx, {
+    status: 'error',
+    statusMessage: error.message,
+  });
+  throw error;
+}
+```
+
+### Learn More
+
+See [TRACING.md](./TRACING.md) for complete guide including:
+
+- Production setup for all major backends
+- Configuration options
+- Mullion attribute schema
+- Manual instrumentation patterns
+- Performance tuning
+- Troubleshooting
+
 ## API Reference
 
-### Types
+### Core Types
 
 - `Owned<T, S>` - Scoped value wrapper
 - `Context<S>` - Execution context interface
 - `Schema<T>` - Schema interface (usually Zod)
 - `InferOptions` - Options for inference operations
 
-### Functions
+### Tracing Types
+
+- `MullionSpan` - OpenTelemetry-compatible span
+- `SpanContext` - Active span context
+- `SpanExporter` - Exporter interface
+- `MullionAttributes` - Span attributes
+
+### Core Functions
 
 - `createOwned(params)` - Create Owned value
 - `isOwned(value)` - Type guard for Owned values
+
+### Tracing Functions
+
+- `setupMullionTracing(options)` - One-liner tracing setup
+- `TracingPresets.jaeger()` - Jaeger preset
+- `TracingPresets.honeycomb(apiKey)` - Honeycomb preset
+- `TracingPresets.datadog(apiKey)` - Datadog preset
+- `TracingPresets.newRelic(key)` - New Relic preset
+- `TracingPresets.grafana(instanceId, apiKey)` - Grafana preset
+- `getGlobalTraceCollector()` - Get global collector
+- `disableMullionTracing()` - Graceful shutdown
+
+### Tracing Classes
+
+- `TraceCollector` - Span collection and export
+- `OTLPHttpExporter` - OTLP/HTTP exporter
 
 ## License
 
