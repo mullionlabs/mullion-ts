@@ -5,5 +5,5 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @scopestack/core@0.1.0
-  - @scopestack/ai-sdk@0.1.0
+  - @mullion/core@0.1.0
+  - @mullion/ai-sdk@0.1.0

@@ -4,13 +4,13 @@
 
 ### Minor Changes
 
-- # ScopeStack 0.1.0 - Initial Release
+- # Mullion 0.1.0 - Initial Release
 
-  This is the first public release of ScopeStack, a TypeScript library for type-safe LLM context management.
+  This is the first public release of Mullion, a TypeScript library for type-safe LLM context management.
 
-  ## 🎯 **What is ScopeStack?**
+  ## 🎯 **What is Mullion?**
 
-  ScopeStack provides compile-time safety for LLM workflows, preventing context leaks and enforcing confidence checking. Think of it as "ESLint + TypeScript for LLM workflows."
+  Mullion provides compile-time safety for LLM workflows, preventing context leaks and enforcing confidence checking. Think of it as "ESLint + TypeScript for LLM workflows."
 
   **Core philosophy:** Compile-time safety, not runtime orchestration.
 
@@ -25,16 +25,16 @@
   - `isOwned()` - Type guard for Owned values
   - Complete TypeScript integration with branded types
 
-  ### @scopestack/ai-sdk
+  ### @mullion/ai-sdk
 
   Seamless integration with Vercel AI SDK:
-  - `createScopeStackClient()` - Wrap any AI SDK model
+  - `createMullionClient()` - Wrap any AI SDK model
   - Automatic confidence extraction from finish reasons
   - Support for OpenAI, Anthropic, Google, and custom providers
   - Full Zod schema integration
   - Type-safe scope bridging between contexts
 
-  ### eslint-plugin-scopestack
+  ### @mullion/eslint-plugin
 
   Static analysis for context leak detection:
   - `no-context-leak` rule - Prevents accidental scope violations
@@ -93,20 +93,20 @@
 
   ```bash
   # Core library
-  npm install @scopestack/core
+  npm install @mullion/core
 
   # AI SDK integration
-  npm install @scopestack/ai-sdk ai zod
+  npm install @mullion/ai-sdk ai zod
 
   # ESLint plugin
-  npm install eslint-plugin-scopestack --save-dev
+  npm install @mullion/eslint-plugin --save-dev
   ```
 
   ```typescript
-  import { createScopeStackClient } from '@scopestack/ai-sdk';
+  import { createMullionClient } from '@mullion/ai-sdk';
   import { openai } from '@ai-sdk/openai';
 
-  const client = createScopeStackClient(openai('gpt-4'));
+  const client = createMullionClient(openai('gpt-4'));
 
   const result = await client.scope('analysis', async (ctx) => {
     const data = await ctx.infer(Schema, input);
