@@ -13,6 +13,9 @@ import {
 import type { Provider } from './cache/capabilities.js';
 import type { CacheStats } from './cache/metrics.js';
 import { CacheMetricsCollector } from './cache/metrics.js';
+import type { CostBreakdown, TokenUsage } from './cost/calculator.js';
+import { calculateCost, estimateCost } from './cost/calculator.js';
+import { estimateTokens } from './cost/tokens.js';
 
 /**
  * Confidence scores mapped to LLM finish reasons.
@@ -203,7 +206,7 @@ export interface CacheOptions {
 export interface MullionInferOptions extends InferOptions, CacheOptions {}
 
 /**
- * Extended Context interface that includes cache segments API.
+ * Extended Context interface that includes cache segments API and cost tracking.
  */
 export interface MullionContext<S extends string> extends Context<S> {
   /** Cache segments manager for this context */
@@ -218,6 +221,64 @@ export interface MullionContext<S extends string> extends Context<S> {
 
   /** Get aggregated cache statistics for this context */
   getCacheStats(): CacheStats;
+
+  /**
+   * Get cost breakdown for the last API call made in this context.
+   *
+   * Returns detailed cost information including input/output costs,
+   * cache costs, and savings analysis. Returns null if no calls have
+   * been made yet.
+   *
+   * @returns Cost breakdown from last infer() call or null
+   *
+   * @example
+   * ```typescript
+   * await ctx.infer(schema, prompt);
+   * const cost = ctx.getLastCallCost();
+   * if (cost) {
+   *   console.log(`Total: $${cost.totalCost.toFixed(4)}`);
+   *   console.log(`Savings: ${cost.savingsPercent.toFixed(1)}%`);
+   * }
+   * ```
+   */
+  getLastCallCost(): CostBreakdown | null;
+
+  /**
+   * Estimate cost for a potential API call before making it.
+   *
+   * Provides pre-call cost estimation based on token count estimation
+   * and current model pricing. Useful for cost-aware decision making.
+   *
+   * @param prompt - The prompt text to estimate cost for
+   * @param estimatedOutputTokens - Expected output tokens (default: 500)
+   * @returns Estimated cost breakdown
+   *
+   * @example
+   * ```typescript
+   * const estimate = ctx.estimateNextCallCost(longDocument);
+   * if (estimate.totalCost > 0.10) {
+   *   console.warn('This call will be expensive!');
+   * }
+   * await ctx.infer(schema, longDocument);
+   * ```
+   *
+   * @example
+   * ```typescript
+   * // Compare estimate vs actual
+   * const estimate = ctx.estimateNextCallCost(prompt, 200);
+   * await ctx.infer(schema, prompt);
+   * const actual = ctx.getLastCallCost();
+   *
+   * if (actual) {
+   *   const diff = actual.totalCost - estimate.totalCost;
+   *   console.log(`Estimation error: $${Math.abs(diff).toFixed(4)}`);
+   * }
+   * ```
+   */
+  estimateNextCallCost(
+    prompt: string,
+    estimatedOutputTokens?: number
+  ): CostBreakdown;
 }
 
 export function createMullionClient(
@@ -250,10 +311,18 @@ export function createMullionClient(
             )
           : undefined;
 
+      // Cost tracking state
+      let lastCallCost: CostBreakdown | null = null;
+
       // Create context with working infer implementation and cache manager
       const ctx: Context<S> & {
         cache?: CacheSegmentManager;
         getCacheStats?: () => CacheStats;
+        getLastCallCost?: () => CostBreakdown | null;
+        estimateNextCallCost?: (
+          prompt: string,
+          estimatedOutputTokens?: number
+        ) => CostBreakdown;
       } = {
         scope: name,
 
@@ -363,6 +432,29 @@ export function createMullionClient(
             );
           }
 
+          // Calculate cost for this call
+          if (result.usage && clientOptions.model) {
+            const usage: TokenUsage = {
+              inputTokens: result.usage.inputTokens ?? 0,
+              outputTokens: result.usage.outputTokens ?? 0,
+            };
+
+            // Get the most recent cache stats (last item in the array)
+            const individualStats = metricsCollector
+              ? metricsCollector.getIndividualStats()
+              : [];
+            const cacheStats =
+              individualStats.length > 0
+                ? individualStats[individualStats.length - 1]
+                : null;
+
+            lastCallCost = calculateCost(
+              usage,
+              cacheStats,
+              clientOptions.model
+            );
+          }
+
           // Generate trace ID with cache information
           const traceId = `${name}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
@@ -426,6 +518,43 @@ export function createMullionClient(
               estimatedSavingsUsd: 0,
               raw: { noMetrics: true },
             }
+          );
+        },
+
+        /**
+         * Get cost breakdown for the last API call made in this context.
+         */
+        getLastCallCost(): CostBreakdown | null {
+          return lastCallCost;
+        },
+
+        /**
+         * Estimate cost for a potential API call before making it.
+         */
+        estimateNextCallCost(
+          prompt: string,
+          estimatedOutputTokens = 500
+        ): CostBreakdown {
+          if (!clientOptions.model) {
+            throw new Error(
+              'Cannot estimate cost: model identifier not provided in client options'
+            );
+          }
+
+          // Estimate input tokens from prompt
+          const tokenEstimate = estimateTokens(prompt, clientOptions.model);
+
+          // Use cache info if available
+          const useCache =
+            clientOptions.enableCache &&
+            cacheManager &&
+            cacheManager.getSegments().length > 0;
+
+          return estimateCost(
+            tokenEstimate.count,
+            estimatedOutputTokens,
+            clientOptions.model,
+            useCache
           );
         },
       };

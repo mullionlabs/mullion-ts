@@ -94,5 +94,29 @@ export type {
   DetailedSchemaConflictResult,
 } from './cache/schema-conflict.js';
 
+// Cost estimation and tracking
+export { estimateTokens, estimateTokensForSegments } from './cost/tokens.js';
+export type { TokenEstimate } from './cost/tokens.js';
+
+export {
+  getPricing,
+  getAllPricing,
+  getPricingByProvider,
+  calculateCacheWritePricing,
+  exportPricingAsJSON,
+  importPricingFromJSON,
+  PRICING_DATA,
+} from './cost/pricing.js';
+export type { ModelPricing } from './cost/pricing.js';
+
+export {
+  calculateCost,
+  estimateCost,
+  calculateBatchCost,
+  formatCostBreakdown,
+  compareCosts,
+} from './cost/calculator.js';
+export type { CostBreakdown, TokenUsage } from './cost/calculator.js';
+
 // Re-export core types for convenience
 export type { Context, Owned, Schema, InferOptions } from '@mullion/core';

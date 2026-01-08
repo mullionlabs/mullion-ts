@@ -612,10 +612,10 @@ console.log(result.warnings); // schema conflict warnings if any
 
 **Goal:** Help developers understand and control costs
 
-### 10.1 Token Estimation
+### 10.1 Token Estimation ✅
 
-- [ ] Create `packages/ai-sdk/src/cost/tokens.ts`
-- [ ] Implement `estimateTokens(text, model?)`:
+- [x] Create `packages/ai-sdk/src/cost/tokens.ts`
+- [x] Implement `estimateTokens(text, model?)`:
 
   ```typescript
   interface TokenEstimate {
@@ -627,15 +627,15 @@ console.log(result.warnings); // schema conflict warnings if any
   function estimateTokens(text: string, model?: string): TokenEstimate;
   ```
 
-- [ ] Use tiktoken for OpenAI models
-- [ ] Approximate for Claude (chars/4 or similar heuristic)
-- [ ] Mark estimation method clearly
-- [ ] Write tests
+- [x] Use tiktoken for OpenAI models
+- [x] Approximate for Claude (chars/4 or similar heuristic)
+- [x] Mark estimation method clearly
+- [x] Write tests
 
-### 10.2 Pricing Tables
+### 10.2 Pricing Tables ✅
 
-- [ ] Create `packages/ai-sdk/src/cost/pricing.ts`
-- [ ] Define pricing structure:
+- [x] Create `packages/ai-sdk/src/cost/pricing.ts`
+- [x] Define pricing structure:
   ```typescript
   interface ModelPricing {
     model: string;
@@ -647,24 +647,24 @@ console.log(result.warnings); // schema conflict warnings if any
     asOfDate: string; // ISO date
   }
   ```
-- [ ] Include current pricing (as of knowledge cutoff)
-- [ ] Anthropic cache economics:
+- [x] Include current pricing (as of knowledge cutoff)
+- [x] Anthropic cache economics:
   - 5m cache write: +25% of input price
   - 1h cache write: +100% of input price
   - Cache read: ~10% of input price
-- [ ] Allow override via config/env:
+- [x] Allow override via config/env:
   ```typescript
   function getPricing(
     model: string,
     overrides?: Partial<ModelPricing>
   ): ModelPricing;
   ```
-- [ ] Export pricing data as JSON for easy updates
+- [x] Export pricing data as JSON for easy updates
 
-### 10.3 Cost Calculation
+### 10.3 Cost Calculation ✅
 
-- [ ] Create `packages/ai-sdk/src/cost/calculator.ts`
-- [ ] Implement `calculateCost()`:
+- [x] Create `packages/ai-sdk/src/cost/calculator.ts`
+- [x] Implement `calculateCost()`:
 
   ```typescript
   interface CostBreakdown {
@@ -684,12 +684,12 @@ console.log(result.warnings); // schema conflict warnings if any
   ): CostBreakdown;
   ```
 
-- [ ] Net savings calculation: `savings = (cacheReadTokens * inputPrice * 0.9) - (cacheWriteTokens * writeMultiplier)`
-- [ ] Write tests
+- [x] Net savings calculation: `savings = (cacheReadTokens * inputPrice * 0.9) - (cacheWriteTokens * writeMultiplier)`
+- [x] Write tests
 
-### 10.4 Context Cost Integration
+### 10.4 Context Cost Integration ✅
 
-- [ ] Add to context:
+- [x] Add to context:
   ```typescript
   interface Context {
     // ... existing
@@ -697,9 +697,9 @@ console.log(result.warnings); // schema conflict warnings if any
     estimateNextCallCost(prompt: string): CostBreakdown; // pre-call estimate
   }
   ```
-- [ ] Include cost in trace data
-- [ ] Comparison: estimate vs actual (for debugging)
-- [ ] Write integration tests
+- [x] Include cost in trace data
+- [x] Comparison: estimate vs actual (for debugging)
+- [x] Write integration tests
 
 ---
 
