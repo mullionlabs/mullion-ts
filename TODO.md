@@ -501,15 +501,15 @@ console.log(result.warnings); // schema conflict warnings if any
 
 ### 9.1 Merge Types
 
-- [ ] Create `packages/core/src/merge/types.ts`
-- [ ] Define `MergeStrategy`:
+- [x] Create `packages/core/src/merge/types.ts`
+- [x] Define `MergeStrategy`:
   ```typescript
   type MergeStrategy<T, R> = {
     name: string;
     merge(results: Array<Owned<T, any>>): MergeResult<R>;
   };
   ```
-- [ ] Define `MergeResult`:
+- [x] Define `MergeResult`:
 
   ```typescript
   interface MergeResult<T> {
@@ -531,14 +531,14 @@ console.log(result.warnings); // schema conflict warnings if any
 
 ### 9.2 Built-in Strategies
 
-- [ ] Create `packages/core/src/merge/strategies/`
-- [ ] **categorical.weightedVote()**
+- [x] Create `packages/core/src/merge/strategies/`
+- [x] **categorical.weightedVote()**
   ```typescript
   // Votes on discrete values, weighted by confidence
   // Returns most voted value, confidence = vote share
   merge.categorical.weightedVote<T>(): MergeStrategy<T, T>
   ```
-- [ ] **continuous.weightedAverage()**
+- [x] **continuous.weightedAverage()**
   ```typescript
   // Averages numeric values, weighted by confidence
   // Also returns dispersion (stddev) as uncertainty indicator
@@ -547,28 +547,28 @@ console.log(result.warnings); // schema conflict warnings if any
     dispersion: number;
   }>
   ```
-- [ ] **object.fieldwise()**
+- [x] **object.fieldwise()**
   ```typescript
   // Merges objects field by field
   // Detects conflicts per field
   // Does NOT silently overwrite - flags conflicts
   merge.object.fieldwise<T extends object>(): MergeStrategy<T, T>
   ```
-- [ ] **array.concat()**
+- [x] **array.concat()**
   ```typescript
   // Concatenates array results, removes duplicates
   merge.array.concat<T>(): MergeStrategy<T[], T[]>
   ```
-- [ ] **custom(fn)**
+- [x] **custom(fn)**
   ```typescript
   // User-provided merge function
   merge.custom<T, R>(fn: (results: Owned<T>[]) => R): MergeStrategy<T, R>
   ```
-- [ ] Write unit tests for each strategy
+- [x] Write unit tests for each strategy
 
 ### 9.3 Consensus Requirements
 
-- [ ] Implement `merge.requireConsensus(k)`:
+- [x] Implement `merge.requireConsensus(k)`:
   ```typescript
   // Requires k out of n branches to agree
   // If not met: returns low confidence OR throws
@@ -576,35 +576,35 @@ console.log(result.warnings); // schema conflict warnings if any
     onFailure: 'low-confidence' | 'error';
   }): MergeStrategy<T, T>
   ```
-- [ ] Consensus calculation: agreement on value within tolerance
-- [ ] Write tests for consensus scenarios
+- [x] Consensus calculation: agreement on value within tolerance
+- [x] Write tests for consensus scenarios
 
 ### 9.4 Merge Integration
 
-- [ ] Create `packages/core/src/merge/merge.ts`
-- [ ] Implement main `merge()` function:
+- [x] Create `packages/core/src/merge/merge.ts`
+- [x] Implement main `merge()` function:
   ```typescript
   function merge<T, R>(
     results: Array<Owned<T, any>>,
     strategy: MergeStrategy<T, R>
   ): MergeResult<R>;
   ```
-- [ ] Integrate with fork:
+- [x] Integrate with fork:
   ```typescript
   const forkResult = await fork(ctx, { ... });
   const merged = merge(forkResult.results, merge.categorical.weightedVote());
   ```
-- [ ] Write integration tests
+- [x] Write integration tests
 
 ### 9.5 Merge Tests
 
-- [ ] Test: weightedVote with clear winner
-- [ ] Test: weightedVote with tie (uses confidence as tiebreaker)
-- [ ] Test: weightedAverage calculation correctness
-- [ ] Test: fieldwise conflict detection
-- [ ] Test: requireConsensus passes when met
-- [ ] Test: requireConsensus fails/lowers confidence when not met
-- [ ] Test: provenance correctly tracks contributing branches
+- [x] Test: weightedVote with clear winner
+- [x] Test: weightedVote with tie (uses confidence as tiebreaker)
+- [x] Test: weightedAverage calculation correctness
+- [x] Test: fieldwise conflict detection
+- [x] Test: requireConsensus passes when met
+- [x] Test: requireConsensus fails/lowers confidence when not met
+- [x] Test: provenance correctly tracks contributing branches
 
 ---
 
