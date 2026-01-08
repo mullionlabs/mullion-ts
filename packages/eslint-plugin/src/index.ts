@@ -1,9 +1,9 @@
 /**
- * eslint-plugin-scopestack
+ * @mullion/eslint-plugin
  *
- * ESLint rules for type-safe LLM context management with ScopeStack.
+ * ESLint rules for type-safe LLM context management with Mullion.
  *
- * @see https://github.com/scopestack/scopestack-ts
+ * @see https://github.com/mullionlabs/mullion-ts
  */
 
 import noContextLeak from './rules/no-context-leak.js';
@@ -15,7 +15,7 @@ const rules = {
 };
 
 /**
- * Recommended configuration for ScopeStack ESLint rules.
+ * Recommended configuration for Mullion ESLint rules.
  *
  * Enables all rules with sensible defaults:
  * - no-context-leak: error - Prevents accidental context leaks
@@ -23,11 +23,11 @@ const rules = {
  */
 const recommended = {
   plugins: {
-    scopestack: { rules },
+    '@mullion': { rules },
   },
   rules: {
-    'scopestack/no-context-leak': 'error',
-    'scopestack/require-confidence-check': 'warn',
+    '@mullion/no-context-leak': 'error',
+    '@mullion/require-confidence-check': 'warn',
   },
 };
 
@@ -36,11 +36,11 @@ const recommended = {
  */
 const strict = {
   plugins: {
-    scopestack: { rules },
+    '@mullion': { rules },
   },
   rules: {
-    'scopestack/no-context-leak': 'error',
-    'scopestack/require-confidence-check': 'error',
+    '@mullion/no-context-leak': 'error',
+    '@mullion/require-confidence-check': 'error',
   },
 };
 

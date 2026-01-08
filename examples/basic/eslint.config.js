@@ -1,4 +1,4 @@
-import scopestack from 'eslint-plugin-scopestack';
+import mullion from '@mullion/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
 export default [
@@ -25,24 +25,24 @@ export default [
       },
     },
     plugins: {
-      scopestack: scopestack,
+      '@mullion': mullion,
     },
     rules: {
-      // ScopeStack rules - these are what we want to demonstrate
-      'scopestack/no-context-leak': 'error',
-      'scopestack/require-confidence-check': 'warn',
+      // Mullion rules - these are what we want to demonstrate
+      '@mullion/no-context-leak': 'error',
+      '@mullion/require-confidence-check': 'warn',
 
       // Turn off standard rules for demo purposes
       'no-unused-vars': 'off',
       'no-undef': 'off',
     },
   },
-  // Special config for bad-example.js - disable ScopeStack rules since they're intentionally violated
+  // Special config for bad-example.js - disable Mullion rules since they're intentionally violated
   {
     files: ['bad-example.js'],
     rules: {
-      'scopestack/no-context-leak': 'off',
-      'scopestack/require-confidence-check': 'off',
+      '@mullion/no-context-leak': 'off',
+      '@mullion/require-confidence-check': 'off',
     },
   },
 ];

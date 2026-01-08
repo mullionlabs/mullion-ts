@@ -1,16 +1,16 @@
-# @scopestack/core
+# @mullion/core
 
 > Core types and utilities for type-safe LLM context management
 
 ## Installation
 
 ```bash
-npm install @scopestack/core
+npm install @mullion/core
 ```
 
 ## Overview
 
-The core package provides fundamental types and utilities for ScopeStack's type-safe context management system. Use this package if you want to build custom integrations or don't need the Vercel AI SDK wrapper.
+The core package provides fundamental types and utilities for Mullion's type-safe context management system. Use this package if you want to build custom integrations or don't need the Vercel AI SDK wrapper.
 
 ## Key Types
 
@@ -19,7 +19,7 @@ The core package provides fundamental types and utilities for ScopeStack's type-
 Wraps LLM-generated values with scope tracking and metadata:
 
 ```typescript
-import type { Owned } from '@scopestack/core';
+import type { Owned } from '@mullion/core';
 
 interface Owned<T, S extends string> {
   value: T; // The actual data
@@ -34,7 +34,7 @@ interface Owned<T, S extends string> {
 Provides scoped execution environment for LLM operations:
 
 ```typescript
-import type { Context } from '@scopestack/core';
+import type { Context } from '@mullion/core';
 
 interface Context<S extends string> {
   readonly scope: S;
@@ -61,7 +61,7 @@ interface Context<S extends string> {
 Factory function for creating Owned values:
 
 ```typescript
-import { createOwned } from '@scopestack/core';
+import { createOwned } from '@mullion/core';
 
 const data = createOwned({
   value: { name: 'John', age: 30 },
@@ -78,7 +78,7 @@ console.log(data.__scope); // 'user-data'
 Type guard for checking if a value is Owned:
 
 ```typescript
-import { isOwned } from '@scopestack/core';
+import { isOwned } from '@mullion/core';
 
 if (isOwned(someValue)) {
   // TypeScript knows someValue is Owned<unknown, string>
@@ -89,8 +89,8 @@ if (isOwned(someValue)) {
 ## Example: Custom Integration
 
 ```typescript
-import { createOwned, isOwned } from '@scopestack/core';
-import type { Context, Owned } from '@scopestack/core';
+import { createOwned, isOwned } from '@mullion/core';
+import type { Context, Owned } from '@mullion/core';
 
 // Create a custom context implementation
 class MyContext<S extends string> implements Context<S> {

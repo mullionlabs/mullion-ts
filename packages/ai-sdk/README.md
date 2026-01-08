@@ -1,28 +1,28 @@
-# @scopestack/ai-sdk
+# @mullion/ai-sdk
 
-> ScopeStack integration with Vercel AI SDK for type-safe LLM context management
+> Mullion integration with Vercel AI SDK for type-safe LLM context management
 
 ## Installation
 
 ```bash
-npm install @scopestack/ai-sdk ai zod
+npm install @mullion/ai-sdk ai zod
 ```
 
 ## Overview
 
-This package provides a seamless integration between ScopeStack and the Vercel AI SDK, enabling type-safe context management for LLM operations with automatic confidence tracking.
+This package provides a seamless integration between Mullion and the Vercel AI SDK, enabling type-safe context management for LLM operations with automatic confidence tracking.
 
 ## Quick Start
 
 ### Basic Usage
 
 ```typescript
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
 // Create a client with your preferred model
-const client = createScopeStackClient(openai('gpt-4'));
+const client = createMullionClient(openai('gpt-4'));
 
 // Define your data schema
 const EmailSchema = z.object({
@@ -71,9 +71,9 @@ Works with all Vercel AI SDK providers:
 ```typescript
 import { openai } from '@ai-sdk/openai';
 
-const client = createScopeStackClient(openai('gpt-4'));
+const client = createMullionClient(openai('gpt-4'));
 // or
-const client = createScopeStackClient(openai('gpt-3.5-turbo'));
+const client = createMullionClient(openai('gpt-3.5-turbo'));
 ```
 
 ### Anthropic
@@ -81,7 +81,7 @@ const client = createScopeStackClient(openai('gpt-3.5-turbo'));
 ```typescript
 import { anthropic } from '@ai-sdk/anthropic';
 
-const client = createScopeStackClient(anthropic('claude-3-5-sonnet-20241022'));
+const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 ```
 
 ### Google
@@ -89,7 +89,7 @@ const client = createScopeStackClient(anthropic('claude-3-5-sonnet-20241022'));
 ```typescript
 import { google } from '@ai-sdk/google';
 
-const client = createScopeStackClient(google('gemini-1.5-pro'));
+const client = createMullionClient(google('gemini-1.5-pro'));
 ```
 
 ### Custom Providers
@@ -102,7 +102,7 @@ const customProvider = createOpenAI({
   baseURL: 'https://your-custom-endpoint.com/v1',
 });
 
-const client = createScopeStackClient(customProvider('your-model'));
+const client = createMullionClient(customProvider('your-model'));
 ```
 
 ## Features
@@ -221,9 +221,9 @@ const pipeline = await client.scope('ingestion', async (ingestCtx) => {
 
 ## API Reference
 
-### `createScopeStackClient(model)`
+### `createMullionClient(model)`
 
-Creates a ScopeStack client with AI SDK integration.
+Creates a Mullion client with AI SDK integration.
 
 **Parameters:**
 
@@ -231,9 +231,9 @@ Creates a ScopeStack client with AI SDK integration.
 
 **Returns:**
 
-- `ScopeStackClient` - Client with `scope()` method
+- `MullionClient` - Client with `scope()` method
 
-### `ScopeStackClient.scope<S, R>(name, fn)`
+### `MullionClient.scope<S, R>(name, fn)`
 
 Creates a scoped execution context.
 
@@ -290,22 +290,22 @@ Extract raw value (scope-safe).
 
 ## Integration with ESLint
 
-Use with `eslint-plugin-scopestack` for compile-time leak detection:
+Use with `@mullion/eslint-plugin` for compile-time leak detection:
 
 ```bash
-npm install eslint-plugin-scopestack --save-dev
+npm install @mullion/eslint-plugin --save-dev
 ```
 
 ```javascript
 // eslint.config.js
-import scopestack from 'eslint-plugin-scopestack';
+import mullion from '@mullion/eslint-plugin';
 
 export default [
   {
-    plugins: { scopestack },
+    plugins: { '@mullion': mullion },
     rules: {
-      'scopestack/no-context-leak': 'error',
-      'scopestack/require-confidence-check': 'warn',
+      '@mullion/no-context-leak': 'error',
+      '@mullion/require-confidence-check': 'warn',
     },
   },
 ];

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { z } from 'zod';
 import {
-  createScopeStackClient,
+  createMullionClient,
   extractConfidenceFromFinishReason,
 } from './client.js';
 import type { LanguageModel, FinishReason } from 'ai';
@@ -19,14 +19,14 @@ import { generateObject } from 'ai';
 
 const mockGenerateObject = vi.mocked(generateObject);
 
-describe('createScopeStackClient', () => {
+describe('createMullionClient', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('should create a client with scope method', () => {
     const mockModel = {} as LanguageModel;
-    const client = createScopeStackClient(mockModel);
+    const client = createMullionClient(mockModel);
 
     expect(client).toBeDefined();
     expect(typeof client.scope).toBe('function');
@@ -34,7 +34,7 @@ describe('createScopeStackClient', () => {
 
   it('should execute scoped function with context', async () => {
     const mockModel = {} as LanguageModel;
-    const client = createScopeStackClient(mockModel);
+    const client = createMullionClient(mockModel);
 
     const result = await client.scope('test-scope', async (ctx) => {
       expect(ctx.scope).toBe('test-scope');
@@ -46,7 +46,7 @@ describe('createScopeStackClient', () => {
 
   it('should call generateObject when ctx.infer is used', async () => {
     const mockModel = {} as LanguageModel;
-    const client = createScopeStackClient(mockModel);
+    const client = createMullionClient(mockModel);
 
     const TestSchema = z.object({
       name: z.string(),
@@ -85,7 +85,7 @@ describe('createScopeStackClient', () => {
 
   it('should pass inference options to generateObject', async () => {
     const mockModel = {} as LanguageModel;
-    const client = createScopeStackClient(mockModel);
+    const client = createMullionClient(mockModel);
 
     const TestSchema = z.object({
       category: z.string(),
@@ -121,7 +121,7 @@ describe('createScopeStackClient', () => {
 
   it('should bridge values between scopes', async () => {
     const mockModel = {} as LanguageModel;
-    const client = createScopeStackClient(mockModel);
+    const client = createMullionClient(mockModel);
 
     const TestSchema = z.object({ data: z.string() });
 
@@ -154,7 +154,7 @@ describe('createScopeStackClient', () => {
 
   it('should throw error when using value from wrong scope', async () => {
     const mockModel = {} as LanguageModel;
-    const client = createScopeStackClient(mockModel);
+    const client = createMullionClient(mockModel);
 
     const TestSchema = z.object({ data: z.string() });
 
@@ -182,7 +182,7 @@ describe('createScopeStackClient', () => {
 
   it('should allow using value in correct scope', async () => {
     const mockModel = {} as LanguageModel;
-    const client = createScopeStackClient(mockModel);
+    const client = createMullionClient(mockModel);
 
     const TestSchema = z.object({ data: z.string() });
 
@@ -210,7 +210,7 @@ describe('createScopeStackClient', () => {
   describe('confidence extraction', () => {
     it('should extract confidence 1.0 for finishReason "stop"', async () => {
       const mockModel = {} as LanguageModel;
-      const client = createScopeStackClient(mockModel);
+      const client = createMullionClient(mockModel);
 
       const TestSchema = z.object({ data: z.string() });
 
@@ -233,7 +233,7 @@ describe('createScopeStackClient', () => {
 
     it('should extract confidence 0.75 for finishReason "length"', async () => {
       const mockModel = {} as LanguageModel;
-      const client = createScopeStackClient(mockModel);
+      const client = createMullionClient(mockModel);
 
       const TestSchema = z.object({ data: z.string() });
 
@@ -256,7 +256,7 @@ describe('createScopeStackClient', () => {
 
     it('should extract confidence 0.6 for finishReason "content-filter"', async () => {
       const mockModel = {} as LanguageModel;
-      const client = createScopeStackClient(mockModel);
+      const client = createMullionClient(mockModel);
 
       const TestSchema = z.object({ data: z.string() });
 
@@ -279,7 +279,7 @@ describe('createScopeStackClient', () => {
 
     it('should extract confidence 0.3 for finishReason "error"', async () => {
       const mockModel = {} as LanguageModel;
-      const client = createScopeStackClient(mockModel);
+      const client = createMullionClient(mockModel);
 
       const TestSchema = z.object({ data: z.string() });
 

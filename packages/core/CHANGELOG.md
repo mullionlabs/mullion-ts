@@ -1,4 +1,4 @@
-# @scopestack/core
+# @mullion/core
 
 ## 0.1.0
 
@@ -16,7 +16,7 @@
 
   ## 📦 **New Packages**
 
-  ### @scopestack/core
+  ### @mullion/core
 
   Core types and utilities for type-safe context management:
   - `Owned<T, S>` - Scoped value wrapper with confidence tracking

@@ -1,6 +1,6 @@
-# ScopeStack Basic Example
+# Mullion Basic Example
 
-This example demonstrates the core concepts of ScopeStack: type-safe LLM context management that prevents data leaks at compile time.
+This example demonstrates the core concepts of Mullion: type-safe LLM context management that prevents data leaks at compile time.
 
 ## What You'll See
 
@@ -34,7 +34,7 @@ npm run lint
 
 ## Files
 
-- **`demo.js`** - Interactive demo showing proper ScopeStack usage
+- **`demo.js`** - Interactive demo showing proper Mullion usage
 - **`bad-example.js`** - Intentional violations for ESLint demonstration
 - **`index.js`** - Entry point with help information
 
@@ -101,4 +101,4 @@ npm run demo
 
 ---
 
-**💡 Key Insight**: ScopeStack makes context leaks impossible by design, not just detectable after the fact.
+**💡 Key Insight**: Mullion makes context leaks impossible by design, not just detectable after the fact.

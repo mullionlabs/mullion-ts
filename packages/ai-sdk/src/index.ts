@@ -1,14 +1,14 @@
-// @scopestack/ai-sdk - Vercel AI SDK integration for ScopeStack
+// @mullion/ai-sdk - Vercel AI SDK integration for Mullion
 
 export {
-  createScopeStackClient,
+  createMullionClient,
   extractConfidenceFromFinishReason,
 } from './client.js';
 export type {
-  ScopeStackClient,
-  ScopeStackClientOptions,
-  ScopeStackContext,
-  ScopeStackInferOptions,
+  MullionClient,
+  MullionClientOptions,
+  MullionContext,
+  MullionInferOptions,
   CacheOptions,
 } from './client.js';
 
@@ -70,4 +70,4 @@ export type {
 } from './cache/metrics.js';
 
 // Re-export core types for convenience
-export type { Context, Owned, Schema, InferOptions } from '@scopestack/core';
+export type { Context, Owned, Schema, InferOptions } from '@mullion/core';

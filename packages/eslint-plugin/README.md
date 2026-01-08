@@ -1,16 +1,16 @@
-# eslint-plugin-scopestack
+# @mullion/eslint-plugin
 
-> ESLint plugin for detecting ScopeStack context leaks and enforcing best practices
+> ESLint plugin for detecting Mullion context leaks and enforcing best practices
 
 ## Installation
 
 ```bash
-npm install eslint-plugin-scopestack --save-dev
+npm install @mullion/eslint-plugin --save-dev
 ```
 
 ## Overview
 
-This ESLint plugin provides static analysis rules to catch context leaks and enforce confidence checking in ScopeStack applications. It helps prevent security vulnerabilities by detecting when LLM-generated values cross scope boundaries without proper bridging.
+This ESLint plugin provides static analysis rules to catch context leaks and enforce confidence checking in Mullion applications. It helps prevent security vulnerabilities by detecting when LLM-generated values cross scope boundaries without proper bridging.
 
 ## Quick Setup
 
@@ -18,16 +18,16 @@ This ESLint plugin provides static analysis rules to catch context leaks and enf
 
 ```javascript
 // eslint.config.js
-import scopestack from 'eslint-plugin-scopestack';
+import mullion from '@mullion/eslint-plugin';
 
 export default [
   {
     plugins: {
-      scopestack,
+      '@mullion': mullion,
     },
     rules: {
-      'scopestack/no-context-leak': 'error',
-      'scopestack/require-confidence-check': 'warn',
+      '@mullion/no-context-leak': 'error',
+      '@mullion/require-confidence-check': 'warn',
     },
   },
 ];
@@ -37,10 +37,10 @@ export default [
 
 ```javascript
 {
-  "plugins": ["scopestack"],
+  "plugins": ["@mullion"],
   "rules": {
-    "scopestack/no-context-leak": "error",
-    "scopestack/require-confidence-check": "warn"
+    "@mullion/no-context-leak": "error",
+    "@mullion/require-confidence-check": "warn"
   }
 }
 ```
@@ -49,15 +49,15 @@ export default [
 
 ```javascript
 // Use recommended configuration
-import scopestack from 'eslint-plugin-scopestack';
+import mullion from '@mullion/eslint-plugin';
 
 export default [
-  ...scopestack.configs.recommended
+  ...mullion.configs.recommended
 ];
 
 // Or use strict configuration
 export default [
-  ...scopestack.configs.strict
+  ...mullion.configs.strict
 ];
 ```
 
@@ -154,7 +154,7 @@ await client.scope('processing', async (ctx) => {
 
 ```javascript
 {
-  "scopestack/no-context-leak": ["error", {
+  "@mullion/no-context-leak": ["error", {
     "allowBridge": true,    // Allow ctx.bridge() calls (default: true)
     "strictMode": false     // Stricter checking (default: false)
   }]
@@ -165,7 +165,7 @@ await client.scope('processing', async (ctx) => {
 
 ```javascript
 {
-  "scopestack/require-confidence-check": ["warn", {
+  "@mullion/require-confidence-check": ["warn", {
     "minConfidence": 0.8,      // Minimum confidence threshold
     "requireExplicit": false,  // Require explicit .confidence checks
     "allowHandlers": true      // Allow functions that handle Owned values
@@ -180,8 +180,8 @@ await client.scope('processing', async (ctx) => {
 ```javascript
 {
   rules: {
-    'scopestack/no-context-leak': 'error',
-    'scopestack/require-confidence-check': 'warn'
+    '@mullion/no-context-leak': 'error',
+    '@mullion/require-confidence-check': 'warn'
   }
 }
 ```
@@ -191,8 +191,8 @@ await client.scope('processing', async (ctx) => {
 ```javascript
 {
   rules: {
-    'scopestack/no-context-leak': 'error',
-    'scopestack/require-confidence-check': 'error' // More strict
+    '@mullion/no-context-leak': 'error',
+    '@mullion/require-confidence-check': 'error' // More strict
   }
 }
 ```
@@ -328,7 +328,7 @@ If you get false positives, you might need to:
 
 2. **Ensure proper imports:**
    ```typescript
-   import type { Owned, Context } from '@scopestack/core';
+   import type { Owned, Context } from '@mullion/core';
    ```
 
 #### Missing Violations
@@ -344,7 +344,7 @@ If leaks aren't being caught:
 Enable debug mode to see what the plugin is detecting:
 
 ```bash
-DEBUG=eslint-plugin-scopestack eslint your-file.ts
+DEBUG=@mullion/eslint-plugin eslint your-file.ts
 ```
 
 ## Examples in Action

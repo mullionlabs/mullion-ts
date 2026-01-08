@@ -1,4 +1,4 @@
-# scopestack-basic-example
+# mullion-basic-example
 
 ## 1.0.1
 

@@ -9,7 +9,7 @@ import type { Owned } from './owned.js';
  * enabling compile-time detection of context leaks.
  *
  * This is the primary entry point for creating isolated execution contexts
- * in ScopeStack applications.
+ * in Mullion applications.
 
  *
  * @template S - The scope identifier (string literal type)
@@ -84,7 +84,7 @@ export async function scope<S extends string, R>(
 
     /**
      * Infer method - placeholder that throws
-     * (actual implementation provided by integration packages like @scopestack/ai-sdk)
+     * (actual implementation provided by integration packages like @mullion/ai-sdk)
      */
     infer<T>(
       _schema: Schema<T>,
@@ -94,8 +94,8 @@ export async function scope<S extends string, R>(
       return Promise.reject(
         new Error(
           'Context.infer() is not implemented. ' +
-            'This method is a placeholder provided by @scopestack/core. ' +
-            'To use LLM inference, install an integration package like @scopestack/ai-sdk ' +
+            'This method is a placeholder provided by @mullion/core. ' +
+            'To use LLM inference, install an integration package like @mullion/ai-sdk ' +
             'which provides a working implementation.'
         )
       );

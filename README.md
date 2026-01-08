@@ -1,4 +1,4 @@
-# ScopeStack
+# Mullion
 
 > **TypeScript library for type-safe LLM context management**
 
@@ -6,7 +6,7 @@
 
 **One-liner:** "Catch context leaks and confidence issues before runtime"
 
-[![npm version](https://badge.fury.io/js/%40scopestack%2Fcore.svg)](https://www.npmjs.com/package/@scopestack/core)
+[![npm version](https://badge.fury.io/js/%40mullion%2Fcore.svg)](https://www.npmjs.com/package/@mullion/core)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -16,23 +16,23 @@
 
 ```bash
 # Core library
-npm install @scopestack/core
+npm install @mullion/core
 
 # AI SDK integration
-npm install @scopestack/ai-sdk ai zod
+npm install @mullion/ai-sdk ai zod
 
 # ESLint plugin (recommended)
-npm install eslint-plugin-scopestack --save-dev
+npm install @mullion/eslint-plugin --save-dev
 ```
 
 ### Basic Example
 
 ```typescript
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
-const client = createScopeStackClient(openai('gpt-4'));
+const client = createMullionClient(openai('gpt-4'));
 
 const EmailSchema = z.object({
   intent: z.enum(['support', 'sales', 'billing']),
@@ -89,7 +89,7 @@ const safe = customerCtx.bridge(adminNotes);
 await customerCtx.respond(safe.value); // ✅ Tracked!
 ```
 
-ScopeStack makes these leaks **impossible by design**, not just detectable after the fact.
+Mullion makes these leaks **impossible by design**, not just detectable after the fact.
 
 ## Core Concepts
 
@@ -147,11 +147,11 @@ if (result.confidence < 0.8) {
 
 ## Packages
 
-| Package                                                | Description                     | Status    |
-| ------------------------------------------------------ | ------------------------------- | --------- |
-| [`@scopestack/core`](./packages/core)                  | Core types and utilities        | ✅ Stable |
-| [`@scopestack/ai-sdk`](./packages/ai-sdk)              | Vercel AI SDK integration       | ✅ Stable |
-| [`eslint-plugin-scopestack`](./packages/eslint-plugin) | ESLint rules for leak detection | ✅ Stable |
+| Package                                              | Description                     | Status    |
+| ---------------------------------------------------- | ------------------------------- | --------- |
+| [`@mullion/core`](./packages/core)                   | Core types and utilities        | ✅ Stable |
+| [`@mullion/ai-sdk`](./packages/ai-sdk)               | Vercel AI SDK integration       | ✅ Stable |
+| [`@mullion/eslint-plugin`](./packages/eslint-plugin) | ESLint rules for leak detection | ✅ Stable |
 
 ## Examples
 
@@ -167,11 +167,11 @@ if (result.confidence < 0.8) {
 #### Customer Support Pipeline
 
 ```typescript
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
-const client = createScopeStackClient(openai('gpt-4'));
+const client = createMullionClient(openai('gpt-4'));
 
 const TicketSchema = z.object({
   priority: z.enum(['low', 'medium', 'high', 'urgent']),
@@ -212,7 +212,7 @@ const response = await client.scope('support-response', async (ctx) => {
 #### Multi-Tenant Data Processing
 
 ```typescript
-// Safe tenant isolation with ScopeStack
+// Safe tenant isolation with Mullion
 async function processTenantData(tenants: Tenant[]) {
   const results = [];
 
@@ -271,28 +271,30 @@ async function classifyDocument(content: string) {
 
 ## ESLint Setup
 
-Add to your `.eslintrc.js`:
+Add to your `eslint.config.js`:
 
 ```javascript
+import mullion from '@mullion/eslint-plugin';
+
 export default [
   {
     plugins: {
-      scopestack: require('eslint-plugin-scopestack')
+      '@mullion': mullion
     },
     rules: {
-      'scopestack/no-context-leak': 'error',
-      'scopestack/require-confidence-check': 'warn'
+      '@mullion/no-context-leak': 'error',
+      '@mullion/require-confidence-check': 'warn'
     }
   }
 ];
-````
+```
 
 Or use the recommended config:
 
 ```javascript
-import scopestack from 'eslint-plugin-scopestack';
+import mullion from '@mullion/eslint-plugin';
 
-export default [...scopestack.configs.recommended];
+export default [...mullion.configs.recommended];
 ```
 
 ## Features
@@ -351,7 +353,7 @@ export default [...scopestack.configs.recommended];
 
 ### **Compile-time Safety Over Runtime Orchestration**
 
-ScopeStack is **not** a workflow engine. We don't compete with LangChain or other orchestration frameworks. Instead, we provide:
+Mullion is **not** a workflow engine. We don't compete with LangChain or other orchestration frameworks. Instead, we provide:
 
 - **Static analysis** for context leak detection
 - **Type-level** scope tracking
@@ -435,9 +437,10 @@ MIT - see [LICENSE](./LICENSE) for details.
 ## Support
 
 - 📖 [Documentation](./packages/core/README.md)
-- 🐛 [Issues](https://github.com/scopestack/scopestack-ts/issues)
-- 💬 [Discussions](https://github.com/scopestack/scopestack-ts/discussions)
+- 🐛 [Issues](https://github.com/mullionlabs/mullion-ts/issues)
+- 💬 [Discussions](https://github.com/mullionlabs/mullion-ts/discussions)
 
 ---
 
 **Made with ❤️ for safer LLM applications**
+````

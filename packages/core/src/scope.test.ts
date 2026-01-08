@@ -183,7 +183,7 @@ describe('scope', () => {
           await ctx.infer({} as never, 'input');
         } catch (error) {
           expect(error).toBeInstanceOf(Error);
-          expect((error as Error).message).toContain('@scopestack/ai-sdk');
+          expect((error as Error).message).toContain('@mullion/ai-sdk');
         }
       });
     });

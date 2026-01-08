@@ -1,7 +1,7 @@
 {
-  "name": "@scopestack/ai-sdk",
+  "name": "@mullion/ai-sdk",
   "version": "0.1.0",
-  "description": "ScopeStack integration with Vercel AI SDK",
+  "description": "Mullion integration with Vercel AI SDK",
   "keywords": [
     "llm",
     "ai-sdk",
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/scopestack/scopestack-ts.git",
+    "url": "https://github.com/mullionlabs/mullion-ts.git",
     "directory": "packages/ai-sdk"
   },
   "license": "MIT",
@@ -42,7 +42,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@scopestack/core": "workspace:*"
+    "@mullion/core": "workspace:*"
   },
   "peerDependencies": {
     "ai": ">=3.0.0",

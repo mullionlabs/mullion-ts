@@ -53,7 +53,7 @@ type Options = [
 
 const createRule = ESLintUtils.RuleCreator(
   (name) =>
-    `https://github.com/scopestack/scopestack-ts/blob/main/packages/eslint-plugin/docs/rules/${name}.md`
+    `https://github.com/mullionlabs/mullion-ts/blob/main/packages/eslint-plugin/docs/rules/${name}.md`
 );
 
 export default createRule<Options, MessageIds>({

@@ -10,7 +10,7 @@ export default defineConfig({
   minify: false,
   external: [
     '@typescript-eslint/utils',
-    '@scopestack/core',
+    '@mullion/core',
     'eslint',
     'typescript',
   ],

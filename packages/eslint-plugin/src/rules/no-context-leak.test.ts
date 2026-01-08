@@ -26,7 +26,7 @@ ruleTester.run('no-context-leak', rule, {
     {
       name: 'Owned value used in same scope',
       code: `
-        import type { Context, Owned } from '@scopestack/core';
+        import type { Context, Owned } from '@mullion/core';
 
         async function handleAdmin(ctx: Context<'admin'>) {
           const notes: Owned<string, 'admin'> = {
@@ -44,7 +44,7 @@ ruleTester.run('no-context-leak', rule, {
     {
       name: 'Owned value bridged with ctx.bridge()',
       code: `
-        import type { Context, Owned } from '@scopestack/core';
+        import type { Context, Owned } from '@mullion/core';
 
         const adminNotes: Owned<string, 'admin'> = {
           value: 'data',
@@ -64,8 +64,8 @@ ruleTester.run('no-context-leak', rule, {
     {
       name: 'Owned value bridged with standalone bridge()',
       code: `
-        import { bridge } from '@scopestack/core';
-        import type { Context, Owned } from '@scopestack/core';
+        import { bridge } from '@mullion/core';
+        import type { Context, Owned } from '@mullion/core';
 
         const adminData: Owned<string, 'admin'> = {
           value: 'data',
@@ -85,8 +85,8 @@ ruleTester.run('no-context-leak', rule, {
     {
       name: 'SemanticValue bridged with bridgeSemantic()',
       code: `
-        import { bridgeSemantic } from '@scopestack/core';
-        import type { Context, SemanticValue } from '@scopestack/core';
+        import { bridgeSemantic } from '@mullion/core';
+        import type { Context, SemanticValue } from '@mullion/core';
 
         const analysis: SemanticValue<string, 'ai'> = {
           value: 'positive',
@@ -108,7 +108,7 @@ ruleTester.run('no-context-leak', rule, {
     {
       name: 'Owned value used outside any scope context',
       code: `
-        import type { Owned } from '@scopestack/core';
+        import type { Owned } from '@mullion/core';
 
         const data: Owned<string, 'test'> = {
           value: 'data',
@@ -127,7 +127,7 @@ ruleTester.run('no-context-leak', rule, {
     {
       name: 'Scope pairs in allowedPairs list',
       code: `
-        import type { Context, Owned } from '@scopestack/core';
+        import type { Context, Owned } from '@mullion/core';
 
         const internalData: Owned<string, 'internal'> = {
           value: 'data',
@@ -147,7 +147,7 @@ ruleTester.run('no-context-leak', rule, {
     {
       name: 'Type references are ignored',
       code: `
-        import type { Context, Owned } from '@scopestack/core';
+        import type { Context, Owned } from '@mullion/core';
 
         function test(ctx: Context<'test'>) {
           type MyType = Owned<string, 'admin'>;
@@ -166,7 +166,7 @@ ruleTester.run('no-context-leak', rule, {
     {
       name: 'Nested scopes with proper isolation',
       code: `
-        import type { Context, Owned } from '@scopestack/core';
+        import type { Context, Owned } from '@mullion/core';
 
         async function outer(outerCtx: Context<'outer'>) {
           const outerData: Owned<string, 'outer'> = {

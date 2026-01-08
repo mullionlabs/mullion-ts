@@ -2,7 +2,7 @@
  * Provider capability matrix for cache optimization
  *
  * This module provides information about caching capabilities of different
- * LLM providers and models, enabling ScopeStack to optimize cache usage
+ * LLM providers and models, enabling Mullion to optimize cache usage
  * based on provider-specific constraints and features.
  *
  * IMPORTANT: These constraints are based on real provider limitations discovered during research.
@@ -227,7 +227,7 @@ const DEFAULT_CAPABILITIES: CacheCapabilities = {
  *
  * @example
  * ```typescript
- * import { getCacheCapabilities } from '@scopestack/ai-sdk';
+ * import { getCacheCapabilities } from '@mullion/ai-sdk';
  *
  * // Anthropic Claude
  * const claudeCaps = getCacheCapabilities('anthropic', 'claude-3-5-sonnet-20241022');

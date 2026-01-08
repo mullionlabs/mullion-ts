@@ -1,5 +1,5 @@
 /**
- * Provider-agnostic cache configuration types for ScopeStack
+ * Provider-agnostic cache configuration types for Mullion
  *
  * This module defines the new cache configuration system with cleaner
  * abstractions and provider-specific adapters as specified in Task 7.2.

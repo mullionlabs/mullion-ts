@@ -1,8 +1,8 @@
-# ScopeStack Development Guide
+# Mullion Development Guide
 
 ## Project Overview
 
-**ScopeStack** — TypeScript library for type-safe LLM context management.
+**Mullion** — TypeScript library for type-safe LLM context management.
 
 **Core philosophy:** Compile-time safety, not runtime orchestration. We are ESLint + TypeScript for LLM workflows, not a new LangChain.
 
@@ -19,9 +19,9 @@
 ## Project Structure
 
 ```
-scopestack/
+mullion/
 ├── packages/
-│   ├── core/                 # @scopestack/core
+│   ├── core/                 # @mullion/core
 │   │   ├── src/
 │   │   │   ├── types.ts      # Owned, Context, SemanticValue
 │   │   │   ├── scope.ts      # scope() function
@@ -31,7 +31,7 @@ scopestack/
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   │
-│   ├── eslint-plugin/        # eslint-plugin-scopestack
+│   ├── eslint-plugin/        # @mullion/eslint-plugin
 │   │   ├── src/
 │   │   │   ├── rules/
 │   │   │   │   ├── no-context-leak.ts
@@ -39,7 +39,7 @@ scopestack/
 │   │   │   └── index.ts
 │   │   └── ...
 │   │
-│   └── ai-sdk/               # @scopestack/ai-sdk
+│   └── ai-sdk/               # @mullion/ai-sdk
 │       ├── src/
 │       │   ├── client.ts
 │       │   └── index.ts
@@ -67,7 +67,7 @@ pnpm install
 pnpm build
 
 # Build specific package
-pnpm --filter @scopestack/core build
+pnpm --filter @mullion/core build
 
 # Run tests
 pnpm test
@@ -107,12 +107,12 @@ pnpm release
 ## Package Dependencies
 
 ```
-@scopestack/core (standalone)
+@mullion/core (standalone)
      ↑
      │ peerDependency
      │
-eslint-plugin-scopestack ←── peerDep: @typescript-eslint/parser, eslint
-@scopestack/ai-sdk ←─────── peerDep: ai (Vercel AI SDK), zod
+@mullion/eslint-plugin ←── peerDep: @typescript-eslint/parser, eslint
+@mullion/ai-sdk ←─────── peerDep: ai (Vercel AI SDK), zod
 ```
 
 ## Key Concepts

@@ -8,5 +8,5 @@ export default defineConfig({
   sourcemap: true,
   treeshake: true,
   minify: false,
-  external: ['@scopestack/core', 'ai', 'zod'],
+  external: ['@mullion/core', 'ai', 'zod'],
 });

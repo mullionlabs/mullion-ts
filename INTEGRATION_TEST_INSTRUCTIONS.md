@@ -1,6 +1,6 @@
 # AI SDK Integration Test Instructions
 
-This document provides instructions for manually testing the @scopestack/ai-sdk package with real API providers to complete **Task 5.3** from the TODO.
+This document provides instructions for manually testing the @mullion/ai-sdk package with real API providers to complete **Task 5.3** from the TODO.
 
 ## Prerequisites
 
@@ -55,7 +55,7 @@ pnpm add @ai-sdk/google
 Create a test file `test-openai.js` in the project root:
 
 ```javascript
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
@@ -79,7 +79,7 @@ Can someone please help me understand what went wrong?
 async function testOpenAI() {
   console.log('🧪 Testing OpenAI Integration...\n');
 
-  const client = createScopeStackClient(openai('gpt-4'));
+  const client = createMullionClient(openai('gpt-4'));
 
   try {
     const result = await client.scope('email-processing', async (ctx) => {
@@ -127,7 +127,7 @@ testOpenAI().catch(console.error);
 Create `test-anthropic.js`:
 
 ```javascript
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { anthropic } from '@ai-sdk/anthropic';
 import { z } from 'zod';
 
@@ -148,9 +148,7 @@ Overall, definitely worth the investment. 5 stars!
 async function testAnthropic() {
   console.log('🧪 Testing Anthropic Integration...\n');
 
-  const client = createScopeStackClient(
-    anthropic('claude-3-5-sonnet-20241022')
-  );
+  const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 
   try {
     const result = await client.scope('review-analysis', async (ctx) => {
@@ -183,7 +181,7 @@ testAnthropic().catch(console.error);
 Create `test-bridging.js`:
 
 ```javascript
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
@@ -200,7 +198,7 @@ const ProcessedSchema = z.object({
 async function testScopeBridging() {
   console.log('🧪 Testing Scope Bridging...\n');
 
-  const client = createScopeStackClient(openai('gpt-4'));
+  const client = createMullionClient(openai('gpt-4'));
 
   try {
     const result = await client.scope('admin', async (adminCtx) => {
@@ -256,7 +254,7 @@ testScopeBridging().catch(console.error);
 Create `test-edge-cases.js`:
 
 ```javascript
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
@@ -268,7 +266,7 @@ const StrictSchema = z.object({
 async function testEdgeCases() {
   console.log('🧪 Testing Edge Cases...\n');
 
-  const client = createScopeStackClient(openai('gpt-4'));
+  const client = createMullionClient(openai('gpt-4'));
 
   // Test 1: Invalid input that might cause low confidence
   console.log('Test 1: Ambiguous input...');
@@ -416,7 +414,7 @@ Mark Task 5.3 complete when ALL of these work:
    - Try a different model (e.g., `gpt-3.5-turbo` instead of `gpt-4`)
 
 2. **Type errors:**
-   - Ensure `@scopestack/core` is built: `pnpm --filter @scopestack/core build`
+   - Ensure `@mullion/core` is built: `pnpm --filter @mullion/core build`
    - Check TypeScript version compatibility
 
 3. **Network/API errors:**
@@ -433,11 +431,11 @@ Mark Task 5.3 complete when ALL of these work:
 
 ```bash
 # Check build status
-pnpm --filter @scopestack/ai-sdk build
-pnpm --filter @scopestack/ai-sdk typecheck
+pnpm --filter @mullion/ai-sdk build
+pnpm --filter @mullion/ai-sdk typecheck
 
 # Run existing unit tests
-pnpm --filter @scopestack/ai-sdk test
+pnpm --filter @mullion/ai-sdk test
 
 # Check dependencies
 pnpm list ai zod @ai-sdk/openai

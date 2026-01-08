@@ -1,7 +1,7 @@
 {
-  "name": "scopestack-basic-example",
+  "name": "mullion-basic-example",
   "version": "1.0.1",
-  "description": "Basic ScopeStack example demonstrating core concepts",
+  "description": "Basic Mullion example demonstrating core concepts",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,8 +11,8 @@
     "lint:fix": "eslint *.js --fix"
   },
   "dependencies": {
-    "@scopestack/core": "workspace:*",
-    "@scopestack/ai-sdk": "workspace:*"
+    "@mullion/core": "workspace:*",
+    "@mullion/ai-sdk": "workspace:*"
   },
   "devDependencies": {
     "@ai-sdk/openai": "catalog:",
@@ -20,7 +20,7 @@
     "@types/node": "catalog:",
     "ai": "catalog:",
     "eslint": "catalog:",
-    "eslint-plugin-scopestack": "workspace:*",
+    "@mullion/eslint-plugin": "workspace:*",
     "typescript": "catalog:",
     "zod": "catalog:"
   }

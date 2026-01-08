@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
 /**
- * ScopeStack Basic Demo
+ * Mullion Basic Demo
  *
- * This demo showcases the core concepts of ScopeStack:
+ * This demo showcases the core concepts of Mullion:
  * 1. Scoped execution contexts
  * 2. Owned values with confidence tracking
  * 3. Safe bridging between scopes
  * 4. Type-safe LLM integration
  */
 
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
-import { createOwned } from '@scopestack/core';
+import { createOwned } from '@mullion/core';
 
 // Schemas for our demo
 const UserQuerySchema = z.object({
@@ -34,7 +34,7 @@ const ResponseSchema = z.object({
   escalate: z.boolean().describe('Whether this needs human escalation'),
 });
 
-console.log('🚀 ScopeStack Basic Demo\n');
+console.log('🚀 Mullion Basic Demo\n');
 
 async function runDemo() {
   // Check if we have an API key
@@ -46,7 +46,7 @@ async function runDemo() {
   }
 
   console.log('🤖 Running with OpenAI API integration\n');
-  const client = createScopeStackClient(openai('gpt-4'));
+  const client = createMullionClient(openai('gpt-4'));
 
   const userInput =
     "Hi, I'm having trouble with my billing. My last invoice shows charges I don't recognize and I need this fixed urgently!";
