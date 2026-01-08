@@ -26,7 +26,7 @@ git checkout -b feature/new-eslint-rule
 
 # Add a changeset describing the change
 pnpm changeset
-# Select: eslint-plugin-scopestack
+# Select: @mullion/eslint-plugin
 # Bump type: minor
 # Summary: "Add new rule 'no-unhandled-alternatives'"
 
@@ -59,13 +59,13 @@ pnpm release
 We use **independent versioning**:
 
 - Each package has its own version
-- Changes to `@scopestack/core` don't auto-bump other packages
+- Changes to `@mullion/core` don't auto-bump other packages
 - Peer dependency updates are handled automatically
 
 ### Peer Dependencies
 
-- `eslint-plugin-scopestack` has `@scopestack/core` as peer dependency
-- `@scopestack/ai-sdk` has `@scopestack/core` as peer dependency
+- `@mullion/eslint-plugin` has `@mullion/core` as peer dependency
+- `@mullion/ai-sdk` has `@mullion/core` as peer dependency
 
 When releasing a breaking change to `core`, you may need to update peer dep ranges in other packages.
 

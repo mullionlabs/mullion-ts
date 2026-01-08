@@ -8,7 +8,7 @@
  * This is for demonstration purposes only.
  */
 
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
@@ -18,7 +18,7 @@ const Schema = z.object({
 });
 
 // Mock client for demonstration
-const client = createScopeStackClient(openai('gpt-4'));
+const client = createMullionClient(openai('gpt-4'));
 
 export async function demonstrateContextLeaks() {
   let leakedData; // This will hold data from admin scope

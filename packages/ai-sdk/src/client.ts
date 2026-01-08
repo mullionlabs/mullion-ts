@@ -1,8 +1,8 @@
 import type { LanguageModel, FinishReason } from 'ai';
 import { generateObject } from 'ai';
 import type { z } from 'zod';
-import { createOwned } from '@scopestack/core';
-import type { Context, InferOptions, Owned } from '@scopestack/core';
+import { createOwned } from '@mullion/core';
+import type { Context, InferOptions, Owned } from '@mullion/core';
 import type { CacheSegmentManager } from './cache/segments.js';
 import { createCacheSegmentManager } from './cache/segments.js';
 import {
@@ -59,7 +59,7 @@ export function extractConfidenceFromFinishReason(
 }
 
 /**
- * ScopeStack client for Vercel AI SDK integration.
+ * Mullion client for Vercel AI SDK integration.
  *
  * Provides a scoped execution environment with LLM inference capabilities.
  * The client wraps a language model and provides type-safe context management
@@ -67,10 +67,10 @@ export function extractConfidenceFromFinishReason(
  *
  * @example
  * ```typescript
- * import { createScopeStackClient } from '@scopestack/ai-sdk';
+ * import { createMullionClient } from '@mullion/ai-sdk';
  * import { openai } from '@ai-sdk/openai';
  *
- * const client = createScopeStackClient(openai('gpt-4'));
+ * const client = createMullionClient(openai('gpt-4'));
  *
  * const result = await client.scope('user-query', async (ctx) => {
  *   const intent = await ctx.infer(IntentSchema, userMessage);
@@ -78,7 +78,7 @@ export function extractConfidenceFromFinishReason(
  * });
  * ```
  */
-export interface ScopeStackClient {
+export interface MullionClient {
   /**
    * Create a scoped execution context for LLM operations.
    *
@@ -133,7 +133,7 @@ export interface ScopeStackClient {
 }
 
 /**
- * Creates a ScopeStack client with Vercel AI SDK integration.
+ * Creates a Mullion client with Vercel AI SDK integration.
  *
  * This function wraps a Vercel AI SDK language model to provide type-safe
  * context management for LLM operations. The returned client can create
@@ -142,19 +142,19 @@ export interface ScopeStackClient {
  *
  * @param model - A Vercel AI SDK language model instance
  * @param options - Optional client configuration
- * @returns A ScopeStack client with scope() method
+ * @returns A Mullion client with scope() method
  *
  * @example
  * ```typescript
- * import { createScopeStackClient } from '@scopestack/ai-sdk';
+ * import { createMullionClient } from '@mullion/ai-sdk';
  * import { openai } from '@ai-sdk/openai';
  * import { anthropic } from '@ai-sdk/anthropic';
  *
  * // With OpenAI
- * const client = createScopeStackClient(openai('gpt-4'));
+ * const client = createMullionClient(openai('gpt-4'));
  *
  * // With Anthropic
- * const client = createScopeStackClient(anthropic('claude-3-5-sonnet-20241022'));
+ * const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
  *
  * // Use the client
  * const result = await client.scope('analysis', async (ctx) => {
@@ -172,13 +172,13 @@ export interface ScopeStackClient {
  *   apiKey: process.env.OPENAI_API_KEY,
  * });
  *
- * const client = createScopeStackClient(model);
+ * const client = createMullionClient(model);
  * ```
  */
 /**
- * Configuration options for ScopeStack client.
+ * Configuration options for Mullion client.
  */
-export interface ScopeStackClientOptions {
+export interface MullionClientOptions {
   /** LLM provider name for cache optimization */
   readonly provider?: Provider;
 
@@ -200,12 +200,12 @@ export interface CacheOptions {
 /**
  * Extended InferOptions that includes cache configuration.
  */
-export interface ScopeStackInferOptions extends InferOptions, CacheOptions {}
+export interface MullionInferOptions extends InferOptions, CacheOptions {}
 
 /**
  * Extended Context interface that includes cache segments API.
  */
-export interface ScopeStackContext<S extends string> extends Context<S> {
+export interface MullionContext<S extends string> extends Context<S> {
   /** Cache segments manager for this context */
   readonly cache: CacheSegmentManager;
 
@@ -213,17 +213,17 @@ export interface ScopeStackContext<S extends string> extends Context<S> {
   infer<T>(
     schema: z.ZodType<T> & { _type?: T },
     input: string,
-    options?: ScopeStackInferOptions
+    options?: MullionInferOptions
   ): Promise<Owned<T, S>>;
 
   /** Get aggregated cache statistics for this context */
   getCacheStats(): CacheStats;
 }
 
-export function createScopeStackClient(
+export function createMullionClient(
   model: LanguageModel,
-  clientOptions: ScopeStackClientOptions = {}
-): ScopeStackClient {
+  clientOptions: MullionClientOptions = {}
+): MullionClient {
   return {
     async scope<S extends string, R>(
       name: S,
@@ -282,7 +282,7 @@ export function createScopeStackClient(
         async infer<T>(
           schema: z.ZodType<T> & { _type?: T },
           input: string,
-          options?: ScopeStackInferOptions
+          options?: MullionInferOptions
         ): Promise<Owned<T, S>> {
           // Determine cache strategy (use client-level provider/model info)
           const cacheStrategy = options?.cache ?? 'use-segments';

@@ -1,12 +1,12 @@
 {
-  "name": "scopestack",
+  "name": "mullion",
   "version": "0.0.1",
   "private": true,
   "type": "module",
   "description": "Type-safe LLM context management for TypeScript",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scopestack/scopestack-ts.git"
+    "url": "https://github.com/mullionlabs/mullion-ts.git"
   },
   "author": {
     "name": "Oleksandr Huzei",

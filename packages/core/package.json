@@ -1,7 +1,7 @@
 {
-  "name": "@scopestack/core",
+  "name": "@mullion/core",
   "version": "0.1.0",
-  "description": "Core types and utilities for ScopeStack",
+  "description": "Core types and utilities for Mullion",
   "keywords": [
     "llm",
     "typescript",
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/scopestack/scopestack-ts.git",
+    "url": "https://github.com/mullionlabs/mullion-ts.git",
     "directory": "packages/core"
   },
   "license": "MIT",

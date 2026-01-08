@@ -1,5 +1,5 @@
 {
-  "name": "eslint-plugin-scopestack",
+  "name": "@mullion/eslint-plugin",
   "version": "1.0.0",
   "description": "ESLint rules for type-safe LLM context management",
   "keywords": [
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/scopestack/scopestack-ts.git",
+    "url": "https://github.com/mullionlabs/mullion-ts.git",
     "directory": "packages/eslint-plugin"
   },
   "license": "MIT",
@@ -44,18 +44,18 @@
     "@typescript-eslint/utils": "catalog:"
   },
   "peerDependencies": {
-    "@scopestack/core": ">=0.1.0",
+    "@mullion/core": ">=0.1.0",
     "@typescript-eslint/parser": ">=8.0.0",
     "eslint": ">=8.57.0",
     "typescript": ">=5.0.0"
   },
   "peerDependenciesMeta": {
-    "@scopestack/core": {
+    "@mullion/core": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@scopestack/core": "workspace:*",
+    "@mullion/core": "workspace:*",
     "@types/node": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "@typescript-eslint/rule-tester": "catalog:",

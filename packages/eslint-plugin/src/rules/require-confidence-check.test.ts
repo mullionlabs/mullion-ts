@@ -20,7 +20,7 @@ const ruleTester = new RuleTester({
   },
 });
 
-// Type definitions for tests (since we can't import from @scopestack/core in tests)
+// Type definitions for tests (since we can't import from @mullion/core in tests)
 const typeDefinitions = `
 interface Owned<T, S extends string> {
   value: T;

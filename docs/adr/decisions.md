@@ -5,7 +5,7 @@
 **Status:** Accepted
 
 **Context:**
-We need to choose between TypeScript and Python for ScopeStack. Python has a larger ML/AI ecosystem (LangChain, DSPy), but TypeScript has unique advantages for our use case.
+We need to choose between TypeScript and Python for Mullion. Python has a larger ML/AI ecosystem (LangChain, DSPy), but TypeScript has unique advantages for our use case.
 
 **Decision:**
 Use TypeScript as the primary and only language for v1.

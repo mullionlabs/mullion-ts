@@ -1,4 +1,4 @@
-# @scopestack/ai-sdk
+# @mullion/ai-sdk
 
 ## 0.1.0
 
@@ -25,7 +25,7 @@
   - `isOwned()` - Type guard for Owned values
   - Complete TypeScript integration with branded types
 
-  ### @scopestack/ai-sdk
+  ### @mullion/ai-sdk
 
   Seamless integration with Vercel AI SDK:
   - `createScopeStackClient()` - Wrap any AI SDK model

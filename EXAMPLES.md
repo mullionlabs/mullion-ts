@@ -1,6 +1,6 @@
-# ScopeStack Examples
+# Mullion Examples
 
-This document provides comprehensive examples demonstrating ScopeStack's capabilities for type-safe LLM context management.
+This document provides comprehensive examples demonstrating Mullion's capabilities for type-safe LLM context management.
 
 ## Table of Contents
 
@@ -16,11 +16,11 @@ This document provides comprehensive examples demonstrating ScopeStack's capabil
 ### Simple Scoped Execution
 
 ```typescript
-import { createScopeStackClient } from '@scopestack/ai-sdk';
+import { createMullionClient } from '@mullion/ai-sdk';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 
-const client = createScopeStackClient(openai('gpt-4'));
+const client = createMullionClient(openai('gpt-4'));
 
 // Basic schema for email analysis
 const EmailSchema = z.object({
@@ -322,7 +322,7 @@ async function badExample(adminToken: string, userQuery: string) {
   return await llm.respond(userQuery, adminData); // 🚨 LEAK!
 }
 
-// ✅ SAFE: ScopeStack boundary enforcement
+// ✅ SAFE: Mullion boundary enforcement
 async function safeExample(adminToken: string, userQuery: string) {
   const adminInsights = await client.scope('admin', async (adminCtx) => {
     const data = await adminCtx.infer(AdminDataSchema, adminToken);
@@ -588,7 +588,7 @@ await client.scope('scope-a', async (ctxA) => {
 
 ```javascript
 // eslint.config.js
-import scopestack from 'eslint-plugin-scopestack';
+import mullion from '@mullion/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
 export default [
@@ -601,14 +601,14 @@ export default [
       },
     },
     plugins: {
-      scopestack,
+      '@mullion': mullion,
     },
     rules: {
       // Catch context leaks
-      'scopestack/no-context-leak': 'error',
+      '@mullion/no-context-leak': 'error',
 
       // Warn about missing confidence checks
-      'scopestack/require-confidence-check': 'warn',
+      '@mullion/require-confidence-check': 'warn',
     },
   },
 ];
@@ -623,6 +623,6 @@ export default [
 
 For more examples and patterns, see the individual package documentation:
 
-- [@scopestack/core](./packages/core/README.md)
-- [@scopestack/ai-sdk](./packages/ai-sdk/README.md)
-- [eslint-plugin-scopestack](./packages/eslint-plugin/README.md)
+- [@mullion/core](./packages/core/README.md)
+- [@mullion/ai-sdk](./packages/ai-sdk/README.md)
+- [@mullion/eslint-plugin](./packages/eslint-plugin/README.md)

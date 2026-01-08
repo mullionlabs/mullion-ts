@@ -13,7 +13,7 @@ import type { Owned } from './owned.js';
 import type { SemanticValue } from './semantic-value.js';
 
 /**
- * Integration tests for ScopeStack
+ * Integration tests for Mullion
  *
  * These tests verify that scope(), bridge(), and other utilities work together
  * correctly in real-world scenarios.

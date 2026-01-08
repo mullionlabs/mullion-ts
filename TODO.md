@@ -1,4 +1,4 @@
-# ScopeStack TODO
+# Mullion TODO
 
 ## Current Sprint: Week 1-2 (Foundation) ✅ COMPLETED
 
@@ -24,7 +24,7 @@
 ### 0.2 First Changeset
 
 - [x] Run `pnpm changeset`
-- [x] Create a test changeset for @scopestack/core
+- [x] Create a test changeset for @mullion/core
 - [x] Run `pnpm version` to see version bump
 - [x] Revert test changeset
 
@@ -32,7 +32,7 @@
 
 ## Task 1: Core Types ✅
 
-**Goal:** Implement fundamental types in @scopestack/core
+**Goal:** Implement fundamental types in @mullion/core
 
 ### 1.1 Brand Types (`packages/core/src/brand.ts`)
 
@@ -68,9 +68,9 @@
 ### 1.5 Verify Core Package
 
 - [x] Update `packages/core/src/index.ts` with all exports
-- [x] Run `pnpm --filter @scopestack/core build`
-- [x] Run `pnpm --filter @scopestack/core test`
-- [x] Run `pnpm --filter @scopestack/core typecheck`
+- [x] Run `pnpm --filter @mullion/core build`
+- [x] Run `pnpm --filter @mullion/core test`
+- [x] Run `pnpm --filter @mullion/core typecheck`
 
 ---
 
@@ -161,7 +161,7 @@
 
 ### 5.1 Client (`packages/ai-sdk/src/client.ts`)
 
-- [x] `createScopeStackClient(provider)` function
+- [x] `createMullionClient(provider)` function
 - [x] Scope method on client
 - [x] Type inference
 
@@ -199,7 +199,7 @@
 - [x] Create changesets for all packages
 - [x] Prepare for 0.1.0 release
 
-**✅ MILESTONE COMPLETED: ScopeStack 0.1.0 Release Ready**
+**✅ MILESTONE COMPLETED: Mullion 0.1.0 Release Ready**
 
 ---
 
@@ -241,7 +241,7 @@
   - Claude Sonnet, Opus (others): 1024 tokens
 - [x] OpenAI: automatic caching, 1024 min, 128 increment
 - [x] Write unit tests
-- [x] Export from @scopestack/ai-sdk
+- [x] Export from @mullion/ai-sdk
 
 ### 7.2 CacheConfig Types
 
@@ -702,6 +702,7 @@ console.log(result.warnings); // schema conflict warnings if any
 
 - [ ] Create `packages/core/src/trace/types.ts`
 - [ ] Define `TraceEntry`:
+
   ```typescript
   interface TraceEntry {
     id: string;
@@ -751,6 +752,7 @@ console.log(result.warnings); // schema conflict warnings if any
     };
   }
   ```
+
 - [ ] Define `Trace` as collection of entries
 - [ ] Export schema as JSON Schema for tooling
 
@@ -758,6 +760,7 @@ console.log(result.warnings); // schema conflict warnings if any
 
 - [ ] Create `packages/core/src/trace/collector.ts`
 - [ ] Implement `TraceCollector`:
+
   ```typescript
   class TraceCollector {
     entries: TraceEntry[];
@@ -768,6 +771,7 @@ console.log(result.warnings); // schema conflict warnings if any
     clear(): void;
   }
   ```
+
 - [ ] Integrate with Context
 - [ ] Auto-record on infer(), bridge(), fork(), merge()
 
@@ -822,7 +826,7 @@ console.log(result.warnings); // schema conflict warnings if any
 > - Bulk data processing
 > - Background jobs
 
-- [ ] `@scopestack/batch` package (separate)
+- [ ] `@mullion/batch` package (separate)
 - [ ] Queue-based API
 - [ ] Webhook/polling for results
 - [ ] Integration with trace for batch job monitoring

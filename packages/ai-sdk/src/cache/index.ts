@@ -1,5 +1,5 @@
 /**
- * Cache module for ScopeStack AI SDK
+ * Cache module for Mullion AI SDK
  *
  * This module provides comprehensive caching capabilities for LLM interactions,
  * including provider-aware optimization, cost tracking, and safe-by-default policies.

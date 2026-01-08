@@ -1,4 +1,4 @@
-// @scopestack/core - Type-safe LLM context management
+// @mullion/core - Type-safe LLM context management
 
 // Brand types for nominal typing
 export type { Brand, ScopeId } from './brand.js';

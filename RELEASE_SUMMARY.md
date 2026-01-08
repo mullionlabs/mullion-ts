@@ -1,17 +1,17 @@
-# ScopeStack 0.1.0 Release Summary
+# Mullion 0.1.0 Release Summary
 
 ## 🎉 Release Status: **READY FOR PUBLICATION**
 
-All tasks completed successfully. ScopeStack 0.1.0 is ready for its first public release.
+All tasks completed successfully. Mullion 0.1.0 is ready for its first public release.
 
 ## 📦 Package Versions
 
-| Package                  | Version | Status   |
-| ------------------------ | ------- | -------- |
-| @scopestack/core         | 0.1.0   | ✅ Ready |
-| @scopestack/ai-sdk       | 0.1.0   | ✅ Ready |
-| eslint-plugin-scopestack | 1.0.0   | ✅ Ready |
-| scopestack-basic-example | 1.0.1   | ✅ Ready |
+| Package                | Version | Status   |
+| ---------------------- | ------- | -------- |
+| @mullion/core          | 0.1.0   | ✅ Ready |
+| @mullion/ai-sdk        | 0.1.0   | ✅ Ready |
+| @mullion/eslint-plugin | 1.0.0   | ✅ Ready |
+| mullion-basic-example  | 1.0.1   | ✅ Ready |
 
 ## ✅ Completion Checklist
 
@@ -49,7 +49,7 @@ All tasks completed successfully. ScopeStack 0.1.0 is ready for its first public
 
 ### Task 5: AI SDK Integration
 
-- [x] Client implementation with createScopeStackClient
+- [x] Client implementation with createMullionClient
 - [x] Inference wrapper for generateObject
 - [x] Mock provider tests (17 tests passing)
 - [x] Integration test instructions created
@@ -74,9 +74,9 @@ All tasks completed successfully. ScopeStack 0.1.0 is ready for its first public
 ## 📊 Test Results
 
 ```
-✅ @scopestack/core: 153 tests passing
-✅ @scopestack/ai-sdk: 17 tests passing
-✅ eslint-plugin-scopestack: 32 tests passing
+✅ @mullion/core: 153 tests passing
+✅ @mullion/ai-sdk: 17 tests passing
+✅ @mullion/eslint-plugin: 32 tests passing
 ✅ Total: 202 tests passing
 ```
 
@@ -96,11 +96,11 @@ All tasks completed successfully. ScopeStack 0.1.0 is ready for its first public
 
    ```bash
    git add .
-   git commit -m "feat: ScopeStack 0.1.0 initial release
+   git commit -m "feat: Mullion 0.1.0 initial release
 
-   - Add @scopestack/core with type-safe context management
-   - Add @scopestack/ai-sdk with Vercel AI SDK integration
-   - Add eslint-plugin-scopestack for context leak detection
+   - Add @mullion/core with type-safe context management
+   - Add @mullion/ai-sdk with Vercel AI SDK integration
+   - Add @mullion/eslint-plugin for context leak detection
    - Add comprehensive documentation and examples
    - Ready for first public release"
    ```

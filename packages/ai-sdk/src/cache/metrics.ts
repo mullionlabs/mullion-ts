@@ -1,5 +1,5 @@
 /**
- * Cache metrics collection and analysis for ScopeStack
+ * Cache metrics collection and analysis for Mullion
  *
  * This module provides provider-agnostic cache metrics collection,
  * parsing provider-specific response formats, and calculating

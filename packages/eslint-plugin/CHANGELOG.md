@@ -1,4 +1,4 @@
-# eslint-plugin-scopestack
+# @mullion/eslint-plugin
 
 ## 1.0.0
 
@@ -34,7 +34,7 @@
   - Full Zod schema integration
   - Type-safe scope bridging between contexts
 
-  ### eslint-plugin-scopestack
+  ### @mullion/eslint-plugin
 
   Static analysis for context leak detection:
   - `no-context-leak` rule - Prevents accidental scope violations
