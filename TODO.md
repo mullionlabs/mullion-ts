@@ -495,7 +495,7 @@ console.log(result.warnings); // schema conflict warnings if any
 
 ---
 
-## Task 9: Merge Strategies (Week 5-6)
+## Task 9: Merge Strategies
 
 **Goal:** Type-safe result aggregation with provenance tracking
 
@@ -608,7 +608,7 @@ console.log(result.warnings); // schema conflict warnings if any
 
 ---
 
-## Task 10: Cost Estimation (Week 6)
+## Task 10: Cost Estimation
 
 **Goal:** Help developers understand and control costs
 
@@ -703,7 +703,7 @@ console.log(result.warnings); // schema conflict warnings if any
 
 ---
 
-## Task 11: Trace & Observability (Week 6+)
+## Task 11: Trace & Observability
 
 **Goal:** Make debugging and monitoring first-class
 
