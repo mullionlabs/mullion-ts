@@ -343,15 +343,15 @@
 
 ### 7.5 Cache Integration with infer()
 
-- [ ] Update `ctx.infer()` to accept cache options:
+- [x] Update `ctx.infer()` to accept cache options:
   ```typescript
   ctx.infer(schema, prompt, {
     cache: 'use-segments' | 'none', // default: 'use-segments'
   });
   ```
-- [ ] Inject `providerOptions` for Anthropic based on segments
-- [ ] Track cache stats in context trace
-- [ ] Write integration tests
+- [x] Inject `providerOptions` for Anthropic based on segments
+- [x] Track cache stats in context trace
+- [x] Write integration tests
 
 ---
 
@@ -369,14 +369,14 @@
 
 ### 8.1 Fork Types
 
-- [ ] Create `packages/core/src/fork/types.ts`
-- [ ] Define `ForkStrategy`:
+- [x] Create `packages/core/src/fork/types.ts`
+- [x] Define `ForkStrategy`:
   ```typescript
   type ForkStrategy =
     | 'fast-parallel' // Promise.all, no warmup, no cross-branch cache
     | 'cache-optimized'; // warmup first, then parallel with cache reuse
   ```
-- [ ] Define `ForkOptions`:
+- [x] Define `ForkOptions`:
   ```typescript
   interface ForkOptions<T> {
     strategy: ForkStrategy;
@@ -385,7 +385,7 @@
     onSchemaConflict?: 'warn' | 'error' | 'allow'; // Anthropic-specific
   }
   ```
-- [ ] Define `ForkResult<T>`:
+- [x] Define `ForkResult<T>`:
   ```typescript
   interface ForkResult<T> {
     results: T[];
@@ -397,29 +397,29 @@
     warnings: string[];
   }
   ```
-- [ ] Export types
+- [x] Export types
 
 ### 8.2 Fork Implementation
 
-- [ ] Create `packages/core/src/fork/fork.ts`
-- [ ] Implement `fork(ctx, options)` function
-- [ ] **fast-parallel strategy:**
+- [x] Create `packages/core/src/fork/fork.ts`
+- [x] Implement `fork(ctx, options)` function
+- [x] **fast-parallel strategy:**
   - Execute all branches with `Promise.all()`
   - No warmup, branches don't share cache
   - Fastest latency, highest token cost
-- [ ] **cache-optimized strategy:**
+- [x] **cache-optimized strategy:**
   - Warmup step: minimal call to prime cache with segments
   - Wait for warmup completion
   - Then execute branches in parallel
   - Branches benefit from cached prefix
-- [ ] Create isolated child contexts for each branch
-- [ ] Collect results with proper typing
-- [ ] Write unit tests
+- [x] Create isolated child contexts for each branch
+- [x] Collect results with proper typing
+- [x] Write unit tests
 
 ### 8.3 Warmup Implementation
 
-- [ ] Create `packages/ai-sdk/src/cache/warmup.ts`
-- [ ] Implement warmup strategies:
+- [x] Create `packages/ai-sdk/src/cache/warmup.ts`
+- [x] Implement warmup strategies:
 
   ```typescript
   // 'explicit' - separate minimal call just to prime cache
@@ -429,14 +429,14 @@
   async function firstBranchWarmup(branches): Promise<void>;
   ```
 
-- [ ] Track warmup token cost separately
-- [ ] Warmup uses cached segments but minimal output
-- [ ] Write tests verifying cache is primed
+- [x] Track warmup token cost separately
+- [x] Warmup uses cached segments but minimal output
+- [x] Write tests verifying cache is primed
 
 ### 8.4 Schema Conflict Detection (Anthropic)
 
-- [ ] Create `packages/ai-sdk/src/cache/schema-conflict.ts`
-- [ ] Detect when fork branches have different tool schemas:
+- [x] Create `packages/ai-sdk/src/cache/schema-conflict.ts`
+- [x] Detect when fork branches have different tool schemas:
   ```typescript
   function detectSchemaConflict(branches): ConflictResult {
     // Extract schema from each branch's infer() call
@@ -444,14 +444,18 @@
     // Return conflict info
   }
   ```
-- [ ] Warn message: "Different schemas in fork branches break Anthropic cache reuse. Consider: (1) universal schema, (2) generateText + post-process, (3) accept no cache sharing"
-- [ ] Behavior based on `onSchemaConflict`:
+- [x] Warn message: "Different schemas in fork branches break Anthropic cache reuse. Consider: (1) universal schema, (2) generateText + post-process, (3) accept no cache sharing"
+- [x] Behavior based on `onSchemaConflict`:
   - `'warn'`: console.warn + continue
   - `'error'`: throw Error
   - `'allow'`: silent continue
-- [ ] Write tests
+- [x] Write tests
 
-### 8.5 Fork API (Final Design)
+### 8.5 Fork API (Final Design) ✅
+
+- [x] Create comprehensive integration example (`examples/basic/fork-example.js`)
+- [x] Verify all fork components work together
+- [x] Document API usage patterns
 
 ```typescript
 // Example usage with explicit segments (Variant B)
@@ -474,15 +478,20 @@ console.log(result.cacheStats); // { warmupCost, branchCacheHits, totalSaved }
 console.log(result.warnings); // schema conflict warnings if any
 ```
 
-### 8.6 Fork Tests
+### 8.6 Fork Tests ✅
 
-- [ ] Test: `fast-parallel` executes all branches concurrently
-- [ ] Test: `cache-optimized` with warmup shows cache hits (Anthropic)
-- [ ] Test: without warmup, no cross-branch cache hits
-- [ ] Test: schema conflict warning fires when schemas differ
-- [ ] Test: `onSchemaConflict: 'error'` throws
-- [ ] Test: cache metrics correctly aggregate across branches
-- [ ] Test: child contexts are properly isolated
+- [x] Test: `fast-parallel` executes all branches concurrently
+- [x] Test: `cache-optimized` with warmup shows cache hits (Anthropic)
+- [x] Test: without warmup, no cross-branch cache hits
+- [x] Test: schema conflict warning fires when schemas differ
+- [x] Test: `onSchemaConflict: 'error'` throws
+- [x] Test: cache metrics correctly aggregate across branches
+- [x] Test: child contexts are properly isolated
+
+**Test Files Created:**
+
+- `packages/core/src/fork/fork.test.ts` - 28 core fork tests
+- `packages/ai-sdk/src/fork-integration.test.ts` - 25 integration tests
 
 ---
 
