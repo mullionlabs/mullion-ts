@@ -61,3 +61,35 @@ export {
   getWarmupExecutor,
   clearWarmupExecutor,
 } from './fork/index.js';
+
+// Merge types and utilities for aggregating parallel inference results
+export type {
+  ConflictResolution,
+  MergeConflict,
+  MergeProvenance,
+  MergeResult,
+  MergeStrategy,
+  WeightedVoteOptions,
+  WeightedAverageOptions,
+  WeightedAverageResult,
+  FieldwiseOptions,
+  ConcatOptions,
+  CustomMergeFn,
+  CustomOptions,
+  ConsensusFailureBehavior,
+  RequireConsensusOptions,
+} from './merge/index.js';
+export {
+  merge,
+  mergeResults,
+  categorical,
+  continuous,
+  object,
+  array,
+  custom,
+  weightedVote,
+  weightedAverage,
+  fieldwise,
+  concat,
+  requireConsensus,
+} from './merge/index.js';

@@ -12,3 +12,4 @@ Process:
 2. Perform necessary file operations
 3. Execute commands as needed
 4. Provide execution summary
+5. Mark completed tasks in todo list if you complete a task from it
