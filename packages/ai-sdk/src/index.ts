@@ -69,5 +69,30 @@ export type {
   OpenAICacheMetrics,
 } from './cache/metrics.js';
 
+// Cache warmup for fork optimization
+export {
+  explicitWarmup,
+  firstBranchWarmup,
+  createWarmupExecutor,
+  setupWarmupExecutor,
+  estimateWarmupCost,
+  shouldWarmup,
+} from './cache/warmup.js';
+export type { WarmupConfig, FirstBranchWarmupResult } from './cache/warmup.js';
+
+// Schema conflict detection for fork optimization
+export {
+  computeSchemaSignature,
+  detectSchemaConflict,
+  handleSchemaConflict,
+  areSchemasCompatible,
+  describeSchemasDifference,
+} from './cache/schema-conflict.js';
+export type {
+  SchemaInfo,
+  DetectSchemaConflictOptions,
+  DetailedSchemaConflictResult,
+} from './cache/schema-conflict.js';
+
 // Re-export core types for convenience
 export type { Context, Owned, Schema, InferOptions } from '@mullion/core';

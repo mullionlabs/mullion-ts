@@ -41,3 +41,23 @@ export {
   isBridged,
   bridgeWithMetadata,
 } from './bridge.js';
+
+// Fork types and utilities for parallel execution with cache optimization
+export type {
+  ForkStrategy,
+  WarmupStrategy,
+  SchemaConflictBehavior,
+  ForkBranch,
+  ForkOptions,
+  ForkCacheStats,
+  ForkResult,
+  SchemaConflictResult,
+  WarmupResult,
+  WarmupExecutor,
+} from './fork/index.js';
+export {
+  fork,
+  registerWarmupExecutor,
+  getWarmupExecutor,
+  clearWarmupExecutor,
+} from './fork/index.js';

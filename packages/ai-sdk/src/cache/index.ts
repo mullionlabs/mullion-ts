@@ -37,6 +37,49 @@ export {
   type ValidationResult,
 } from './types.js';
 
-// TODO: Add other cache modules as they are implemented
-// export { ... } from './segments.js';
-// export { ... } from './metrics.js';
+// Cache segments API
+export {
+  createCacheSegmentManager,
+  CacheSegmentManager,
+  type CacheSegment,
+  type SegmentOptions,
+  type ValidationResult as SegmentValidationResult,
+} from './segments.js';
+
+// Cache metrics
+export {
+  parseAnthropicMetrics,
+  parseOpenAIMetrics,
+  parseCacheMetrics,
+  aggregateCacheMetrics,
+  estimateCacheSavings,
+  formatCacheStats,
+  CacheMetricsCollector,
+  type CacheStats,
+  type AnthropicCacheMetrics,
+  type OpenAICacheMetrics,
+} from './metrics.js';
+
+// Cache warmup for fork optimization
+export {
+  explicitWarmup,
+  firstBranchWarmup,
+  createWarmupExecutor,
+  setupWarmupExecutor,
+  estimateWarmupCost,
+  shouldWarmup,
+  type WarmupConfig,
+  type FirstBranchWarmupResult,
+} from './warmup.js';
+
+// Schema conflict detection for fork optimization
+export {
+  computeSchemaSignature,
+  detectSchemaConflict,
+  handleSchemaConflict,
+  areSchemasCompatible,
+  describeSchemasDifference,
+  type SchemaInfo,
+  type DetectSchemaConflictOptions,
+  type DetailedSchemaConflictResult,
+} from './schema-conflict.js';
