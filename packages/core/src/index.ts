@@ -93,3 +93,32 @@ export {
   concat,
   requireConsensus,
 } from './merge/index.js';
+
+// Trace types for OpenTelemetry-compatible observability
+export type {
+  MullionOperation,
+  MullionAttributes,
+  SpanStatus,
+  SpanKind,
+  MullionSpan,
+  SpanContext,
+  StartSpanOptions,
+  EndSpanOptions,
+  SpanExporter,
+  TraceCollectorOptions,
+  OTLPHttpExporterOptions,
+  SetupTracingOptions,
+} from './trace/index.js';
+export {
+  isMullionSpan,
+  isSpanContext,
+  TraceCollector,
+  getGlobalTraceCollector,
+  setGlobalTraceCollector,
+  clearGlobalTraceCollector,
+  OTLPHttpExporter,
+  OTLPExporters,
+  setupMullionTracing,
+  TracingPresets,
+  disableMullionTracing,
+} from './trace/index.js';
