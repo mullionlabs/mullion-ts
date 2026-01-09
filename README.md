@@ -1,446 +1,202 @@
-# Mullion
-
-> **TypeScript library for type-safe LLM context management**
-
-**Core philosophy:** Compile-time safety, not runtime orchestration. We are ESLint + TypeScript for LLM workflows, not a new LangChain.
-
-**One-liner:** "Catch context leaks and confidence issues before runtime"
-
-[![npm version](https://badge.fury.io/js/%40mullion%2Fcore.svg)](https://www.npmjs.com/package/@mullion/core)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## Quick Start
-
-### Installation
-
-```bash
-# Core library
-npm install @mullion/core
-
-# AI SDK integration
-npm install @mullion/ai-sdk ai zod
-
-# ESLint plugin (recommended)
-npm install @mullion/eslint-plugin --save-dev
-```
-
-### Basic Example
-
-```typescript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
-
-const client = createMullionClient(openai('gpt-4'));
-
-const EmailSchema = z.object({
-  intent: z.enum(['support', 'sales', 'billing']),
-  urgency: z.enum(['low', 'medium', 'high']),
-  summary: z.string(),
-});
-
-// ✅ Safe: Scoped execution
-const analysis = await client.scope('intake', async (ctx) => {
-  const email = await ctx.infer(EmailSchema, userInput);
-
-  // Check confidence before use
-  if (email.confidence < 0.8) {
-    throw new Error('Low confidence - needs human review');
-  }
-
-  return ctx.use(email); // ✅ Safe: same scope
-});
-
-// ✅ Safe: Explicit bridging between scopes
-const response = await client.scope('support', async (ctx) => {
-  const bridged = ctx.bridge(analysis); // ✅ Explicit transfer
-  // Process bridged data...
-  return result;
-});
-```
-
-### ESLint Protection
-
-```typescript
-// ❌ ESLint Error: Context leak detected
-let leaked;
-await client.scope('admin', async (ctx) => {
-  leaked = await ctx.infer(Schema, 'secret data');
-});
-
-await client.scope('public', async (ctx) => {
-  return leaked.value; // 🚨 ESLint catches this!
-});
-```
-
-## The Problem We Solve
-
-**Context leaks** are the #1 cause of LLM security vulnerabilities:
-
-```typescript
-// ❌ DANGEROUS: Admin data leaks to customer context
-const adminNotes = await adminCtx.infer(Notes, document);
-await customerCtx.respond(adminNotes.value); // 🚨 LEAK!
-
-// ✅ SAFE: Explicit bridge with full provenance
-const adminNotes = await adminCtx.infer(Notes, document);
-const safe = customerCtx.bridge(adminNotes);
-await customerCtx.respond(safe.value); // ✅ Tracked!
-```
-
-Mullion makes these leaks **impossible by design**, not just detectable after the fact.
-
-## Core Concepts
-
-### 🎯 Scoped Execution
-
-Every LLM operation runs in a named scope:
-
-```typescript
-await client.scope('user-query', async (ctx) => {
-  // All operations in this scope are tagged as 'user-query'
-  const result = await ctx.infer(Schema, input);
-  return ctx.use(result); // ✅ Safe within same scope
-});
-```
-
-### 🏷️ Owned Values
-
-LLM outputs are wrapped with metadata:
-
-```typescript
-interface Owned<T, S extends string> {
-  value: T; // The actual data
-  confidence: number; // 0-1 confidence score
-  __scope: S; // Compile-time scope tracking
-  traceId: string; // Audit trail
-}
-```
-
-### 🌉 Safe Bridging
-
-Explicit transfers between scopes:
-
-```typescript
-const adminData = await adminCtx.infer(Schema, secret);
-
-await userCtx.scope('processing', async (ctx) => {
-  const bridged = ctx.bridge(adminData); // ✅ Explicit
-  // bridged.__scope is now 'admin' | 'processing'
-  return bridged;
-});
-```
-
-### 📊 Confidence Tracking
-
-Automatic confidence extraction:
-
-```typescript
-const result = await ctx.infer(Schema, input);
-
-if (result.confidence < 0.8) {
-  // Handle low confidence
-  await escalateToHuman(result);
-}
-```
-
-## Packages
-
-| Package                                              | Description                     | Status    |
-| ---------------------------------------------------- | ------------------------------- | --------- |
-| [`@mullion/core`](./packages/core)                   | Core types and utilities        | ✅ Stable |
-| [`@mullion/ai-sdk`](./packages/ai-sdk)               | Vercel AI SDK integration       | ✅ Stable |
-| [`@mullion/eslint-plugin`](./packages/eslint-plugin) | ESLint rules for leak detection | ✅ Stable |
-
-## Examples
-
-| Example                                                             | Description                       |
-| ------------------------------------------------------------------- | --------------------------------- |
-| [Basic](./examples/basic)                                           | Core concepts demonstration       |
-| [Integration Test Instructions](./INTEGRATION_TEST_INSTRUCTIONS.md) | Manual API testing guide          |
-| [Comprehensive Examples](./EXAMPLES.md)                             | Real-world patterns and use cases |
-| [Next.js](./examples/nextjs)                                        | React integration _(coming soon)_ |
-
-### Quick Examples
-
-#### Customer Support Pipeline
-
-```typescript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
-
-const client = createMullionClient(openai('gpt-4'));
-
-const TicketSchema = z.object({
-  priority: z.enum(['low', 'medium', 'high', 'urgent']),
-  category: z.enum(['billing', 'technical', 'account']),
-  sentiment: z.enum(['positive', 'negative', 'neutral']),
-  summary: z.string(),
-});
-
-// Process customer ticket in isolated scope
-const ticket = await client.scope('customer-intake', async (ctx) => {
-  const analysis = await ctx.infer(TicketSchema, customerMessage);
-
-  if (analysis.confidence < 0.8) {
-    throw new Error('Uncertain analysis - route to human agent');
-  }
-
-  return ctx.use(analysis);
-});
-
-// Generate response in support scope with explicit bridging
-const response = await client.scope('support-response', async (ctx) => {
-  // Must explicitly bridge customer data to support scope
-  const bridgedTicket = ctx.bridge(ticket);
-
-  const reply = await ctx.infer(
-    z.object({
-      message: z.string(),
-      escalate: z.boolean(),
-      followUpActions: z.array(z.string()),
-    }),
-    `Respond to ${bridgedTicket.priority} priority ${bridgedTicket.category} ticket`
-  );
-
-  return ctx.use(reply);
-});
-```
-
-#### Multi-Tenant Data Processing
-
-```typescript
-// Safe tenant isolation with Mullion
-async function processTenantData(tenants: Tenant[]) {
-  const results = [];
-
-  for (const tenant of tenants) {
-    // Each tenant gets its own isolated scope
-    const result = await client.scope(`tenant-${tenant.id}`, async (ctx) => {
-      const analysis = await ctx.infer(AnalysisSchema, tenant.data);
-
-      // Data stays within tenant scope
-      return {
-        tenantId: tenant.id,
-        analysis: ctx.use(analysis),
-        processedAt: new Date(),
-      };
-    });
-
-    results.push(result);
-  }
-
-  return results; // ✅ No cross-tenant contamination
-}
-```
-
-#### Document Classification with Confidence
-
-````typescript
-const ClassificationSchema = z.object({
-  category: z.enum(['public', 'internal', 'confidential']),
-  topics: z.array(z.string()),
-  containsPII: z.boolean(),
-  riskLevel: z.number().min(0).max(10)
-});
-
-async function classifyDocument(content: string) {
-  return await client.scope('classification', async (ctx) => {
-    const result = await ctx.infer(ClassificationSchema, content);
-
-    // Different confidence thresholds for different risk levels
-    const minConfidence = result.value.riskLevel > 7 ? 0.95 : 0.8;
-
-    if (result.confidence < minConfidence) {
-      return {
-        status: 'needs_review',
-        reason: `Low confidence ${result.confidence.toFixed(2)} < ${minConfidence}`,
-        traceId: result.traceId
-      };
-    }
-
-    return {
-      status: 'classified',
-      classification: ctx.use(result),
-      confidence: result.confidence
-    };
-  });
-}
-
-## ESLint Setup
-
-Add to your `eslint.config.js`:
-
-```javascript
-import mullion from '@mullion/eslint-plugin';
-
-export default [
-  {
-    plugins: {
-      '@mullion': mullion
-    },
-    rules: {
-      '@mullion/no-context-leak': 'error',
-      '@mullion/require-confidence-check': 'warn'
-    }
-  }
-];
-```
-
-Or use the recommended config:
-
-```javascript
-import mullion from '@mullion/eslint-plugin';
-
-export default [...mullion.configs.recommended];
-```
-
-## Features
-
-### ✅ **Type Safety**
-
-- Compile-time scope tracking
-- TypeScript-first design
-- Zero runtime type checking overhead
-
-### ✅ **Leak Prevention**
-
-- ESLint rules catch context leaks
-- Runtime scope validation
-- Explicit bridging requirements
-
-### ✅ **Confidence System**
-
-- Automatic confidence extraction
-- Configurable thresholds
-- Handler-based validation
-
-### ✅ **Audit Trails**
-
-- Unique trace IDs
-- Full provenance tracking
-- Scope transition logging
-
-### ✅ **AI SDK Integration**
-
-- Works with Vercel AI SDK
-- OpenAI, Anthropic, Google support
-- Structured output parsing
-
-## Use Cases
-
-### 🛡️ **Security-Critical Applications**
-
-- Multi-tenant AI systems
-- Customer data processing
-- Admin/user boundary enforcement
-
-### 🏢 **Enterprise Workflows**
-
-- Document classification pipelines
-- Customer support automation
-- Content moderation systems
-
-### 🔍 **Data Processing**
-
-- ETL with LLM enrichment
-- Multi-stage analysis pipelines
-- Quality control workflows
-
-## Philosophy
-
-### **Compile-time Safety Over Runtime Orchestration**
-
-Mullion is **not** a workflow engine. We don't compete with LangChain or other orchestration frameworks. Instead, we provide:
-
-- **Static analysis** for context leak detection
-- **Type-level** scope tracking
-- **Compile-time** safety guarantees
-
-Think of us as the **ESLint for LLM workflows**.
-
-### **Explicit Over Implicit**
-
-```typescript
-// ❌ Implicit: Hard to audit, easy to leak
-function processDocument(doc: string, userRole: Role) {
-  const analysis = await llm.analyze(doc);
-  return await llm.respond(analysis, userRole);
-}
-
-// ✅ Explicit: Clear boundaries, full provenance
-async function processDocument(doc: string, userRole: Role) {
-  const analysis = await adminCtx.infer(AnalysisSchema, doc);
-
-  return await userCtx.scope(userRole, async (ctx) => {
-    const bridged = ctx.bridge(analysis);
-    return await ctx.infer(ResponseSchema, bridged.value);
-  });
-}
-```
-
-## Contributing
-
-This is a monorepo managed with:
-
-- **pnpm workspaces** for dependency management
-- **Turborepo** for build caching
-- **Changesets** for versioning
-
-```bash
-# Setup
-pnpm install
-pnpm build
-
-# Development
-pnpm dev
-pnpm test
-pnpm lint
-
-# Releases
-pnpm changeset
-pnpm version
-pnpm release
-```
-
-See [CLAUDE.md](./CLAUDE.md) for detailed development guidelines.
-
-## Roadmap
-
-### **Version 0.1** _(Current)_
-
-- ✅ Core types and scope management
-- ✅ ESLint rules for leak detection
-- ✅ Vercel AI SDK integration
-- ✅ Basic examples
-
-### **Version 0.2** _(Next)_
-
-- [ ] Next.js integration example
-- [ ] Advanced ESLint rules
-- [ ] Performance optimizations
-- [ ] Documentation site
-
-### **Version 0.3** _(Future)_
-
-- [ ] OpenAI Assistants API adapter
-- [ ] VSCode extension
-- [ ] `fork()` and `merge()` primitives
-- [ ] Advanced audit logging
-
-## License
-
-MIT - see [LICENSE](./LICENSE) for details.
-
-## Support
-
-- 📖 [Documentation](./packages/core/README.md)
-- 🐛 [Issues](https://github.com/mullionlabs/mullion-ts/issues)
-- 💬 [Discussions](https://github.com/mullionlabs/mullion-ts/discussions)
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./.github/images/logo-dark.png" />
+    <img alt="Mullion — Type-safe LLM context management for TypeScript" src="./.github/images/logo-light.png" width="180" />
+  </picture>
+
+  <h1>Mullion</h1>
+
+  <p><strong>Type-safe LLM context management for TypeScript</strong></p>
+  <p>Catch context leaks, enforce trust boundaries, and make LLM outputs auditable — before runtime.</p>
+
+  <p>
+    <a href="./LICENSE"><img alt="license" src="https://img.shields.io/github/license/mullionlabs/mullion-ts?style=flat-square"></a>
+    <img alt="TypeScript 5+" src="https://img.shields.io/badge/TypeScript-5%2B-3178C6?style=flat-square&logo=typescript&logoColor=white">
+    <img alt="monorepo" src="https://img.shields.io/badge/monorepo-pnpm%20%2B%20turborepo-111827?style=flat-square">
+  </p>
+</div>
 
 ---
 
-**Made with ❤️ for safer LLM applications**
-````
+## What is Mullion?
+
+**Mullion is a safety + correctness layer for LLM workflows in TypeScript.**  
+Not an orchestration engine. Not a graph runner. Think: **ESLint + TypeScript guardrails for LLM code**.
+
+It helps teams build production AI features where:
+
+- **Sensitive data** (admin/PII/secrets) must not “accidentally” reach public prompts
+- LLM outputs are treated as **probabilistic**, not deterministic JSON
+- You want **compile-time boundaries** + **static analysis** instead of runtime heroics
+- You need **auditability**: “where did this output come from?” / “what crossed which boundary?”
+
+**Keywords (SEO):** TypeScript LLM, AI safety, context leak prevention, trust boundaries, prompt safety, LLM provenance, ESLint rules for AI, Vercel AI SDK integration.
+
+---
+
+## The problem: context leaks (the #1 architectural footgun)
+
+When “context” is just strings/objects, it tends to leak across trust boundaries:
+
+```ts
+// ❌ DANGEROUS: privileged data can reach a public response path
+const adminNotes = await adminCtx.infer(NotesSchema, internalDoc);
+await publicCtx.respond(adminNotes.value); // leak risk
+```
+
+With Mullion, boundary crossing becomes explicit and traceable:
+
+```ts
+// ✅ SAFE: explicit boundary crossing with provenance
+const adminNotes = await adminCtx.infer(NotesSchema, internalDoc);
+
+await client.scope('public', async (ctx) => {
+  const safe = ctx.bridge(adminNotes);
+  return ctx.respond(safe.value);
+});
+```
+
+## Dataflow at a glance (unsafe vs safe)
+
+```mermaid
+flowchart LR
+  %% UNSAFE PATH
+  subgraph U[Unsafe: implicit context flow]
+    A1[Admin scope\n(privileged context)] --> O1[LLM output\nOwned<T> produced]
+    O1 --> X1[Public scope\n(user-facing prompt)]
+    X1 --> L1[❌ Context leak risk]
+  end
+
+  %% SAFE PATH
+  subgraph S[Safe: explicit boundary crossing]
+    A2[Admin scope\n(privileged context)] --> O2[LLM output\nOwned<T> produced]
+    O2 --> B[bridge()\nexplicit transfer + provenance]
+    B --> X2[Public scope\n(user-facing prompt)]
+    X2 --> OK[✅ Reviewable + auditable]
+  end
+```
+
+---
+
+## Quick start
+
+Mullion is modular — this root README is about the **whole repo**. Each package will have its own README.
+
+> **Pre-release:** packages are not published to npm yet.  
+> You can run the examples from this repo and consume workspace packages locally.
+
+### Install (from source)
+
+```bash
+pnpm install
+pnpm build
+```
+
+Then explore:
+
+- `examples/basic`
+- `EXAMPLES.md`
+- `docs/README.md`
+
+---
+
+## Why Mullion (in one screen)
+
+- **Prevent context leaks by design** (explicit boundary crossing)
+- **Type-safe LLM outputs** (`Owned<T>`, confidence, provenance)
+- **Static analysis for AI code** (ESLint rules that understand scopes/ownership)
+- **Auditability built in** (trace IDs + explicit bridging)
+- **Built for modern TS stacks** (works great with Vercel AI SDK)
+
+---
+
+## Mullion vs. raw AI SDK
+
+Vercel AI SDK (`ai`) is great for **model calls**. Mullion adds **guardrails for dataflow**:
+
+- **Raw AI SDK:** prompts/outputs are just values → trust boundaries are implicit.
+- **Mullion:** scopes + `Owned<T>` make boundaries explicit and reviewable.
+- **Raw AI SDK:** easy to accidentally mix privileged and public context.
+- **Mullion:** boundary crossing requires `bridge()` (lintable + auditable).
+- **Raw AI SDK:** output reliability is a convention.
+- **Mullion:** confidence/provenance are part of the contract (`traceId`, policies).
+
+**Mullion is designed to complement — not replace — AI SDK.**
+
+---
+
+## Use cases
+
+Mullion shines anywhere you have **multiple trust zones** and want **TypeScript-level safety** for LLM dataflow:
+
+- **Multi-tenant SaaS / copilots:** prevent cross-tenant context leaks, enforce per-tenant boundaries.
+- **Admin tooling + public UI:** keep privileged/admin context from influencing user-facing prompts by accident.
+- **RAG over sensitive docs:** control what retrieved chunks can cross into public scopes; keep provenance for audits.
+- **Compliance-heavy domains (fin/health/legal):** auditable provenance, explicit boundary crossing, policy enforcement.
+- **High-scale LLM ops:** cache-aware execution patterns, cost visibility hooks, fewer accidental regressions.
+
+See: `docs/guides/use-cases.md`
+
+---
+
+## Packages
+
+| Package                  | What it is                                                            | Use it when                |
+| ------------------------ | --------------------------------------------------------------------- | -------------------------- |
+| `@mullion/core`          | Fundamental primitives: scopes, `Owned<T>`, bridging, merge utilities | Always                     |
+| `@mullion/ai-sdk`        | Adapter layer for Vercel AI SDK (`ai`)                                | If you use Vercel AI SDK   |
+| `@mullion/eslint-plugin` | Static rules to prevent leaks + enforce safe patterns                 | Recommended for teams & CI |
+
+---
+
+## Documentation
+
+- Docs index: `docs/README.md`
+- Guides: `docs/guides/`
+- Reference: `docs/reference/`
+- Design notes: `docs/design/`
+- ADRs: `docs/adr/`
+
+Examples:
+
+- `examples/basic`
+- `EXAMPLES.md`
+
+Roadmap:
+
+- `TODO.md`
+
+---
+
+## Current status
+
+Mullion is under active development. Expect API refinements while we harden:
+
+- correctness + ergonomics
+- lint rules & developer experience
+- provider-facing integration surfaces
+- cost/observability features
+
+For the definitive plan and progress, see `TODO.md`.
+
+---
+
+## Contributing
+
+- Integration testing guide (contributors): `docs/contributing/integration-tests.md`
+
+```bash
+pnpm install
+pnpm build
+pnpm typecheck
+pnpm test
+```
+
+This repo uses pnpm workspaces + turborepo + changesets.  
+See `AGENTS.md` / `CLAUDE.md` for workflow notes.
+
+---
+
+<div align="center">
+  <p>Built by Mullion Labs — safety-first LLM engineering for TypeScript.</p>
+</div>
