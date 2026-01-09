@@ -4,6 +4,17 @@
 
 ### Minor Changes
 
+- 3c987a2: First release
+
+### Patch Changes
+
+- Updated dependencies [3c987a2]
+  - @mullion/core@0.2.0
+
+## 1.0.0
+
+### Minor Changes
+
 - # Mullion 0.1.0 - Initial Release
 
   This is the first public release of ScopeStack, a TypeScript library for type-safe LLM context management.
