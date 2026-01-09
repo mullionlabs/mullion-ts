@@ -1,6 +1,21 @@
-# @mullion/eslint-plugin
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/mullionlabs/mullion-ts/main/.github/images/logo-dark.png" />
+    <img alt="Mullion" src="https://raw.githubusercontent.com/mullionlabs/mullion-ts/main/.github/images/logo-light.png" width="180" />
+  </picture>
 
-> ESLint plugin for detecting Mullion context leaks and enforcing best practices
+  <h1>@mullion/eslint-plugin</h1>
+
+  <p><strong>ESLint rules for detecting context leaks and enforcing best practices</strong></p>
+
+  <p>
+    <a href="https://www.npmjs.com/package/@mullion/eslint-plugin"><img alt="npm version" src="https://img.shields.io/npm/v/@mullion/eslint-plugin?style=flat-square"></a>
+    <a href="https://github.com/mullionlabs/mullion-ts/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/github/license/mullionlabs/mullion-ts?style=flat-square"></a>
+    <img alt="TypeScript 5+" src="https://img.shields.io/badge/TypeScript-5%2B-3178C6?style=flat-square&logo=typescript&logoColor=white">
+  </p>
+</div>
+
+---
 
 ## Installation
 
@@ -11,6 +26,43 @@ npm install @mullion/eslint-plugin --save-dev
 ## Overview
 
 This ESLint plugin provides static analysis rules to catch context leaks and enforce confidence checking in Mullion applications. It helps prevent security vulnerabilities by detecting when LLM-generated values cross scope boundaries without proper bridging.
+
+## Why Use This?
+
+LLM applications deal with data that crosses trust boundaries. Without static analysis, it's easy to accidentally:
+
+- **Leak privileged data** into public scopes (admin → customer)
+- **Mix tenant data** in multi-tenant systems
+- **Use low-confidence outputs** for critical decisions without validation
+- **Lose audit trails** when data flows between contexts
+
+**This plugin catches these issues at compile-time** with zero runtime overhead.
+
+### What It Prevents
+
+| Risk                 | Without Plugin                    | With Plugin           |
+| -------------------- | --------------------------------- | --------------------- |
+| Context leaks        | Discovered in production          | Caught in IDE/CI      |
+| Low confidence usage | Runtime errors or silent failures | Compile-time warnings |
+| Audit trail gaps     | Manual code review needed         | Automatic enforcement |
+| Security review time | Hours per PR                      | Seconds (automated)   |
+
+### Real-World Impact
+
+```typescript
+// ❌ Without plugin: This compiles but leaks admin data
+let adminData;
+await client.scope('admin', async (ctx) => {
+  adminData = await ctx.infer(SecretSchema, sensitiveDoc);
+});
+
+await client.scope('public', async (ctx) => {
+  return adminData.value; // BUG: No warning!
+});
+
+// ✅ With plugin: ESLint error prevents compilation
+// "Context leak detected: 'adminData' crosses scope boundary"
+```
 
 ## Quick Setup
 
