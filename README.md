@@ -141,6 +141,9 @@ Then explore:
 - **Type-safe LLM outputs** (`Owned<T>`, confidence, provenance)
 - **Static analysis for AI code** (ESLint rules that understand scopes/ownership)
 - **Auditability built in** (trace IDs + explicit bridging)
+- **Production observability** (OpenTelemetry-compatible tracing)
+- **Cost transparency** (token estimation, cache savings tracking)
+- **Parallel execution with cache optimization** (fork/merge strategies)
 - **Built for modern TS stacks** (works great with Vercel AI SDK)
 
 ---
@@ -157,6 +160,139 @@ Vercel AI SDK (`ai`) is great for **model calls**. Mullion adds **guardrails for
 - **Mullion:** confidence/provenance are part of the contract (`traceId`, policies).
 
 **Mullion is designed to complement — not replace — AI SDK.**
+
+---
+
+## Core Features
+
+### 🔒 Type-Safe Context Management
+
+- **`Owned<T, S>`** - LLM outputs with compile-time scope tracking
+- **`SemanticValue<T, S>`** - Extended outputs with alternatives and reasoning chains
+- **Explicit bridging** - Traceable data flow across trust boundaries
+- **ESLint rules** - Static analysis prevents context leaks before runtime
+
+### 📊 Tracing & Observability
+
+- **Zero-dependency OTLP exporter** - Full OpenTelemetry compatibility
+- **One-liner setup** - Pre-configured for Jaeger, Honeycomb, Datadog, New Relic, Grafana
+- **Mullion-specific attributes** - Track scope, confidence, cost, cache metrics
+- **Zero overhead by default** - Disabled until exporter attached
+
+Example:
+
+```typescript
+import { TracingPresets } from '@mullion/core';
+
+// Enable tracing with one line
+TracingPresets.jaeger(); // Local dev
+TracingPresets.honeycomb(process.env.HONEYCOMB_API_KEY); // Production
+```
+
+See: `packages/core/TRACING.md`
+
+### 💰 Cost Estimation & Tracking
+
+- **Token estimation** - Predict costs before making API calls
+- **Real-time cost tracking** - Monitor actual spend per inference
+- **Cache savings calculation** - Measure cache effectiveness
+- **Multi-provider pricing** - OpenAI, Anthropic, with custom overrides
+
+Example:
+
+```typescript
+// Estimate before calling
+const estimate = await ctx.estimateNextCallCost(schema, input);
+console.log(`Estimated cost: $${estimate.totalCost}`);
+
+// Track actual cost
+const result = await ctx.infer(schema, input);
+const actual = await ctx.getLastCallCost();
+console.log(`Actual cost: $${actual.totalCost}`);
+console.log(`Cache saved: $${actual.cacheSavings}`);
+```
+
+### ⚡ Fork/Merge for Parallel Execution
+
+Run multiple inferences on the same context with intelligent cache reuse:
+
+```typescript
+const result = await ctx.fork({
+  branches: {
+    compliance: (c) => c.infer(ComplianceSchema, 'Check policy'),
+    quality: (c) => c.infer(QualitySchema, 'Check grammar'),
+    tags: (c) => c.infer(TagsSchema, 'Extract tags'),
+  },
+  strategy: 'cache-optimized', // or 'fast-parallel'
+  warmup: 'first-branch', // Prime cache for subsequent branches
+});
+
+// Merge results with type-safe strategies
+const merged = ctx.merge(result, {
+  strategy: categorical.weightedVote(), // or continuous.weightedAverage(), etc.
+});
+```
+
+**6 Built-in Merge Strategies:**
+
+- `categorical.weightedVote()` - Voting with confidence weights
+- `continuous.weightedAverage()` - Numeric aggregation
+- `object.fieldwise()` - Per-field merging with conflict detection
+- `array.concat()` - Array concatenation with deduplication
+- `custom(fn)` - Custom merge logic
+- `requireConsensus(k)` - Enforce k-of-n agreement
+
+### 💾 Provider-Aware Caching
+
+Safe-by-default caching with provider-specific optimizations:
+
+```typescript
+// Add cacheable segments
+ctx.cache.addSystemPrompt('You are a helpful assistant');
+ctx.cache.addDeveloperContent(largeContext, {
+  ttl: '5m',
+  scope: 'ephemeral',
+});
+
+// Automatic cache metrics
+const stats = await ctx.getCacheStats();
+console.log(`Cache hits: ${stats.cacheReadTokens}`);
+console.log(`Saved: $${stats.estimatedSavings}`);
+```
+
+**Features:**
+
+- Model-specific thresholds (Anthropic: 1024-4096 tokens, OpenAI: 1024 tokens)
+- TTL support ('5m', '1h', '1d')
+- Safe-by-default (never caches user content without explicit opt-in)
+- Automatic cache warmup for fork branches
+- Schema conflict detection
+
+### 🔧 Bridge Utilities
+
+Advanced bridging for complex dataflow scenarios:
+
+```typescript
+import {
+  bridgeMultiple,
+  bridgeWithMetadata,
+  getProvenance,
+  isBridged,
+} from '@mullion/core';
+
+// Bridge multiple values at once
+const [a, b, c] = ctx.bridgeMultiple([valueA, valueB, valueC]);
+
+// Add custom metadata to bridges
+const bridged = ctx.bridgeWithMetadata(value, {
+  reason: 'Approved for public display',
+  reviewedBy: 'admin-id',
+});
+
+// Inspect provenance
+const history = getProvenance(bridged);
+console.log(`Value crossed ${history.length} scope boundaries`);
+```
 
 ---
 
