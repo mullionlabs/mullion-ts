@@ -1,6 +1,6 @@
 {
   "name": "@mullion/eslint-plugin",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "ESLint rules for type-safe LLM context management",
   "keywords": [
     "eslint",
