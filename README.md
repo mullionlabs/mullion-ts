@@ -67,25 +67,30 @@ flowchart LR
 
   classDef danger fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
   classDef ok fill:#dcfce7,stroke:#16a34a,color:#052e16;
-
   classDef bridge fill:#ede9fe,stroke:#7c3aed,color:#2e1065;
-
-  %% ========== UNSAFE PATH ==========
-  subgraph U["Unsafe: implicit context flow"]
-    A1["Admin scope<br/>(privileged context)"]:::admin
-      --> O1["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
-    O1 --> X1["Public scope<br/>(user-facing prompt)"]:::public
-    X1 --> L1["❌ Context leak risk"]:::danger
-  end
 
   %% ========== SAFE PATH ==========
   subgraph S["Safe: explicit boundary crossing"]
-    A2["Admin scope<br/>(privileged context)"]:::admin
-      --> O2["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
-    O2 --> B["bridge()<br/>explicit transfer + provenance"]:::bridge
-    B --> X2["Public scope<br/>(user-facing prompt)"]:::public
-    X2 --> OK["✅ Reviewable + auditable"]:::ok
+    direction TB
+    SA["Admin scope<br/>(privileged context)"]:::admin
+      --> SO["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
+    SO --> SB["bridge()<br/>explicit transfer + provenance"]:::bridge
+    SB --> SX["Public scope<br/>(user-facing prompt)"]:::public
+    SX --> SOK["✅ Reviewable + auditable"]:::ok
   end
+
+  %% ========== UNSAFE PATH ==========
+  subgraph U["Unsafe: implicit context flow"]
+    direction TB
+    UA["Admin scope<br/>(privileged context)"]:::admin
+      --> UO["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
+    UO --> UX["Public scope<br/>(user-facing prompt)"]:::public
+    UX --> UL["❌ Context leak risk"]:::danger
+  end
+
+  %% Force horizontal layout between subgraphs
+  S --- U
+
 ```
 
 ---
