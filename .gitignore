@@ -45,3 +45,5 @@ yarn.lock
 # Misc
 *.tgz
 .npmrc.local
+.codex/
+.claude/
