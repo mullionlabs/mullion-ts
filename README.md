@@ -59,48 +59,55 @@ await client.scope('public', async (ctx) => {
 ## Dataflow at a glance (unsafe vs safe)
 
 ```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial",
+    "lineColor": "#94a3b8",
+    "textColor": "#0f172a"
+  }
+}}%%
+
 flowchart LR
-  %% ========== STYLES ==========
-  classDef admin fill:#f1f5f9,stroke:#334155,color:#020617;
-  classDef llm fill:#e0f2fe,stroke:#0284c7,color:#020617;
-  classDef public fill:#f8fafc,stroke:#475569,color:#020617;
+%% ========== NODE STYLES (solid fills) ==========
+    classDef admin  fill:#f8fafc,stroke:#64748b,color:#0f172a;
+    classDef llm    fill:#e0f2fe,stroke:#0284c7,color:#0f172a;
+    classDef public fill:#f8fafc,stroke:#64748b,color:#0f172a;
 
-  classDef danger fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
-  classDef ok fill:#dcfce7,stroke:#16a34a,color:#052e16;
-  classDef bridge fill:#ede9fe,stroke:#7c3aed,color:#2e1065;
+    classDef bridge fill:#ede9fe,stroke:#7c3aed,color:#2e1065;
+    classDef ok     fill:#dcfce7,stroke:#16a34a,color:#052e16;
+    classDef danger fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
-  classDef anchor fill:transparent,stroke:transparent,color:transparent;
+%% ========== SAFE ==========
+    subgraph S["SAFE: explicit boundary crossing"]
+        direction TB
+        SA["Admin scope   <br/>(privileged context)"]:::admin
+        SO["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
+        SB["bridge()<br/>explicit transfer + <br/>provenance"]:::bridge
+        SX["Public scope<br/>(user-facing <br/>prompt)"]:::public
+        SOK["✅ Reviewable + auditable"]:::ok
+    end
 
-  %% ========== SAFE (LEFT) ==========
-  subgraph S["Safe: explicit boundary crossing"]
-    direction TB
-    SA["Admin scope<br/>(privileged context)"]:::admin
-      --> SO["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
-    SO --> SB["bridge()<br/>explicit transfer + provenance"]:::bridge
-    SB --> SX["Public scope<br/>(user-facing prompt)"]:::public
-    SX --> SOK["✅ Reviewable + auditable"]:::ok
-  end
+%% ========== UNSAFE ==========
+    subgraph U["UNSAFE: implicit context flow"]
+        direction TB
+        UA["Admin scope<br/>(privileged context)"]:::admin
+        UO["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
+        UX["Public scope<br/>(user-facing prompt)"]:::public
+        UL["❌ Context leak risk"]:::danger
+    end
 
-  %% ========== UNSAFE (RIGHT) ==========
-  subgraph U["Unsafe: implicit context flow"]
-    direction TB
-    UA["Admin scope<br/>(privileged context)"]:::admin
-      --> UO["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
-    UO --> UX["Public scope<br/>(user-facing prompt)"]:::public
-    UX --> UL["❌ Context leak risk"]:::danger
-  end
+%% ========== SUBGRAPH BACKGROUNDS (solid, good on dark IDE) ==========
+    style S fill:#e1f7ca,stroke:#334155,stroke-width:1px,color:#222222;
+    style U fill:#ffeff7,stroke:#334155,stroke-width:1px,color:#222222;
 
-  %% ========== LAYOUT ANCHORS (no visible connection) ==========
-  AL["."]:::anchor
-  AR["."]:::anchor
-  AL --- AR
-  linkStyle 0 stroke:transparent,stroke-width:0;
+%% ========== ALIGN TOP-LEFT (hidden link) ==========
+    SA --- UA
+    linkStyle 0 stroke:transparent,stroke-width:0;
 
-  %% attach anchors to each subgraph to force LR placement
-  AL --- SA
-  AR --- UA
-  linkStyle 1 stroke:transparent,stroke-width:0;
-  linkStyle 2 stroke:transparent,stroke-width:0;
+%% ========== REAL EDGES ==========
+    SA --> SO --> SB --> SX --> SOK
+    UA --> UO --> UX --> UL
 
 ```
 
