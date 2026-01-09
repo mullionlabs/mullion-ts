@@ -69,7 +69,9 @@ flowchart LR
   classDef ok fill:#dcfce7,stroke:#16a34a,color:#052e16;
   classDef bridge fill:#ede9fe,stroke:#7c3aed,color:#2e1065;
 
-  %% ========== SAFE PATH ==========
+  classDef anchor fill:transparent,stroke:transparent,color:transparent;
+
+  %% ========== SAFE (LEFT) ==========
   subgraph S["Safe: explicit boundary crossing"]
     direction TB
     SA["Admin scope<br/>(privileged context)"]:::admin
@@ -79,7 +81,7 @@ flowchart LR
     SX --> SOK["✅ Reviewable + auditable"]:::ok
   end
 
-  %% ========== UNSAFE PATH ==========
+  %% ========== UNSAFE (RIGHT) ==========
   subgraph U["Unsafe: implicit context flow"]
     direction TB
     UA["Admin scope<br/>(privileged context)"]:::admin
@@ -88,8 +90,17 @@ flowchart LR
     UX --> UL["❌ Context leak risk"]:::danger
   end
 
-  %% Force horizontal layout between subgraphs
-  S --- U
+  %% ========== LAYOUT ANCHORS (no visible connection) ==========
+  AL["."]:::anchor
+  AR["."]:::anchor
+  AL --- AR
+  linkStyle 0 stroke:transparent,stroke-width:0;
+
+  %% attach anchors to each subgraph to force LR placement
+  AL --- SA
+  AR --- UA
+  linkStyle 1 stroke:transparent,stroke-width:0;
+  linkStyle 2 stroke:transparent,stroke-width:0;
 
 ```
 
