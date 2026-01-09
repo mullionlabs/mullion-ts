@@ -60,19 +60,31 @@ await client.scope('public', async (ctx) => {
 
 ```mermaid
 flowchart LR
-  %% UNSAFE PATH
-  subgraph U[Unsafe: implicit context flow]
-    A1[Admin scope\n(privileged context)] --> O1[LLM output\nOwned<T> produced]
-    O1 --> X1[Public scope\n(user-facing prompt)]
-    X1 --> L1[❌ Context leak risk]
+  %% ========== STYLES ==========
+  classDef admin fill:#f1f5f9,stroke:#334155,color:#020617;
+  classDef llm fill:#e0f2fe,stroke:#0284c7,color:#020617;
+  classDef public fill:#f8fafc,stroke:#475569,color:#020617;
+
+  classDef danger fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+  classDef ok fill:#dcfce7,stroke:#16a34a,color:#052e16;
+
+  classDef bridge fill:#ede9fe,stroke:#7c3aed,color:#2e1065;
+
+  %% ========== UNSAFE PATH ==========
+  subgraph U["Unsafe: implicit context flow"]
+    A1["Admin scope<br/>(privileged context)"]:::admin
+      --> O1["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
+    O1 --> X1["Public scope<br/>(user-facing prompt)"]:::public
+    X1 --> L1["❌ Context leak risk"]:::danger
   end
 
-  %% SAFE PATH
-  subgraph S[Safe: explicit boundary crossing]
-    A2[Admin scope\n(privileged context)] --> O2[LLM output\nOwned<T> produced]
-    O2 --> B[bridge()\nexplicit transfer + provenance]
-    B --> X2[Public scope\n(user-facing prompt)]
-    X2 --> OK[✅ Reviewable + auditable]
+  %% ========== SAFE PATH ==========
+  subgraph S["Safe: explicit boundary crossing"]
+    A2["Admin scope<br/>(privileged context)"]:::admin
+      --> O2["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
+    O2 --> B["bridge()<br/>explicit transfer + provenance"]:::bridge
+    B --> X2["Public scope<br/>(user-facing prompt)"]:::public
+    X2 --> OK["✅ Reviewable + auditable"]:::ok
   end
 ```
 
