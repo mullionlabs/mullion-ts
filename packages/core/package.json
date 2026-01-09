@@ -16,7 +16,10 @@
     "directory": "packages/core"
   },
   "license": "MIT",
-  "author": "Your Name <your@email.com>",
+  "author": {
+    "name": "Oleksandr Huzei",
+    "email": "alex.guzey@gmail.com"
+  },
   "type": "module",
   "exports": {
     ".": {

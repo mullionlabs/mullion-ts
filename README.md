@@ -115,23 +115,59 @@ flowchart LR
 
 ## Quick start
 
-Mullion is modular — this root README is about the **whole repo**. Each package will have its own README.
-
-> **Pre-release:** packages are not published to npm yet.  
-> You can run the examples from this repo and consume workspace packages locally.
-
-### Install (from source)
+### Install
 
 ```bash
-pnpm install
-pnpm build
+npm install @mullion/core @mullion/ai-sdk
+# or
+pnpm add @mullion/core @mullion/ai-sdk
 ```
 
-Then explore:
+### Basic Usage
 
-- `examples/basic`
-- `EXAMPLES.md`
-- `docs/README.md`
+```typescript
+import { createMullionClient } from '@mullion/ai-sdk';
+import { openai } from '@ai-sdk/openai';
+import { z } from 'zod';
+
+const client = createMullionClient(openai('gpt-4o'));
+
+const Schema = z.object({
+  intent: z.enum(['question', 'complaint', 'feedback']),
+  urgency: z.enum(['low', 'medium', 'high']),
+});
+
+const result = await client.scope('intake', async (ctx) => {
+  const analysis = await ctx.infer(Schema, userMessage);
+
+  if (analysis.confidence < 0.8) {
+    throw new Error('Low confidence - needs human review');
+  }
+
+  return ctx.use(analysis);
+});
+
+console.log(result.intent, result.urgency);
+```
+
+### Add ESLint Rules
+
+```bash
+npm install @mullion/eslint-plugin --save-dev
+```
+
+```javascript
+// eslint.config.js
+import mullion from '@mullion/eslint-plugin';
+
+export default [...mullion.configs.recommended];
+```
+
+### Explore More
+
+- [Examples](./examples/basic/) — Working code samples
+- [Documentation](./docs/) — Guides and API reference
+- [Package READMEs](./packages/) — Detailed per-package docs
 
 ---
 

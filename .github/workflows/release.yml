@@ -1,12 +1,5 @@
 name: Release
 
-# This workflow creates version PRs using Changesets.
-# Publishing to npm is currently disabled. To enable:
-# 1. Create/claim the @mullion scope on npm
-# 2. Generate an NPM token with publish access
-# 3. Add NPM_TOKEN to GitHub repository secrets
-# 4. Uncomment the publish lines in the workflow below
-
 on:
   push:
     branches:
@@ -14,18 +7,21 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write  # Required for OIDC npm publishing
+
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -33,9 +29,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Update npm to latest (for OIDC support)
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -43,16 +42,15 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Create Release Pull Request
+      - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
         with:
           version: pnpm version
+          publish: pnpm release
           commit: 'chore: version packages'
           title: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Note: Publishing to npm is disabled until ready for public release
-          # To enable publishing, uncomment the lines below and add NPM_TOKEN to GitHub secrets:
-          # publish: pnpm release
-          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Note: NO NPM_TOKEN needed after OIDC is configured!
+          # For first publish only, temporarily add NPM_TOKEN
