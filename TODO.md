@@ -458,7 +458,6 @@ This follows the "Minimal Runtime" philosophy — integrate into existing ecosys
 
 - [x] Create `packages/core/src/trace/exporters/otlp-http.ts`
 - [x] Implement `OTLPHttpExporter` - zero-dependency OTLP/HTTP exporter
-- [x] Map MullionSpan → OTLP JSON format
 - [x] Map span kinds (internal, client, server, producer, consumer)
 - [x] Map span status (ok, error, unset) with messages
 - [x] Map all Mullion attributes to OTLP attributes
@@ -618,6 +617,196 @@ All tracing functionality is documented and ready for users.
 
 ---
 
+## Task 12: Integration Tests (Real Providers)
+
+**Goal:** Test @mullion packages against real LLM providers in isolated consumer app
+
+### Philosophy
+
+> 🎯 **Test as a real consumer** — separate workspace app that imports @mullion packages via workspace protocol
+> 🔑 **Secrets isolation** — API keys only in integration tests, not in unit tests
+> 🚀 **CI-ready** — automated testing with provider APIs on every PR (optional) or release
+
+### Why in monorepo (not separate repo)
+
+- Packages not yet published to npm — workspace resolution required
+- Faster iteration during development
+- Single CI pipeline, one versioning system
+- **After first npm release** — consider adding canary repo for "real install" tests
+
+### 12.1 Workspace Setup
+
+- [ ] Create `apps/integration-tests/` directory
+- [ ] Create `apps/integration-tests/package.json`:
+  ```json
+  {
+    "name": "integration-tests",
+    "private": true,
+    "type": "module",
+    "scripts": {
+      "test": "vitest run",
+      "test:watch": "vitest",
+      "test:openai": "vitest run --grep openai",
+      "test:anthropic": "vitest run --grep anthropic"
+    },
+    "dependencies": {
+      "@mullion/core": "workspace:*",
+      "@mullion/ai-sdk": "workspace:*",
+      "@ai-sdk/openai": "catalog:",
+      "@ai-sdk/anthropic": "catalog:",
+      "ai": "catalog:",
+      "zod": "catalog:"
+    },
+    "devDependencies": {
+      "vitest": "catalog:",
+      "typescript": "catalog:",
+      "@types/node": "catalog:"
+    }
+  }
+  ```
+- [ ] Create `apps/integration-tests/tsconfig.json`
+- [ ] Create `apps/integration-tests/vitest.config.ts`
+- [ ] Add to `pnpm-workspace.yaml`: `- 'apps/*'`
+- [ ] Update root `turbo.json` to include integration-tests
+- [ ] Verify `pnpm install` resolves workspace packages
+- [ ] Verify `pnpm build` includes integration-tests
+
+### 12.2 Environment Setup
+
+- [ ] Create `apps/integration-tests/.env.example`:
+  ```bash
+  OPENAI_API_KEY=sk-proj-...
+  ANTHROPIC_API_KEY=sk-ant-...
+  # Optional
+  GOOGLE_GENERATIVE_AI_API_KEY=AI...
+  ```
+- [ ] Create `apps/integration-tests/.gitignore` (exclude .env)
+- [ ] Document env setup in README
+- [ ] Add timeout configuration for slow API calls
+
+### 12.3 Test: Basic Inference (OpenAI)
+
+- [ ] Create `apps/integration-tests/src/openai.test.ts`
+- [ ] Test: `createMullionClient()` with OpenAI provider
+- [ ] Test: `ctx.infer()` returns valid `Owned<T, S>`
+- [ ] Test: Confidence score in valid range (0.3-1.0)
+- [ ] Test: Scope tagged correctly
+- [ ] Test: Trace ID generated
+- [ ] Test: Complex schemas (nested objects, arrays, enums)
+- [ ] Test: Large text inputs handled correctly
+
+### 12.4 Test: Basic Inference (Anthropic)
+
+- [ ] Create `apps/integration-tests/src/anthropic.test.ts`
+- [ ] Test: `createMullionClient()` with Anthropic provider
+- [ ] Test: `ctx.infer()` returns valid `Owned<T, S>`
+- [ ] Test: Confidence extraction works
+- [ ] Test: Different models (claude-3-5-sonnet, claude-3-haiku)
+
+### 12.5 Test: Scope Bridging
+
+- [ ] Create `apps/integration-tests/src/bridging.test.ts`
+- [ ] Test: Data flows between scopes with `bridge()`
+- [ ] Test: Bridged data has combined scope type
+- [ ] Test: `use()` enforces scope boundaries at runtime
+- [ ] Test: Nested scopes work correctly
+
+### 12.6 Test: Caching (Anthropic)
+
+- [ ] Create `apps/integration-tests/src/caching.test.ts`
+- [ ] Test: Cache segments created correctly
+- [ ] Test: `cacheCreationInputTokens` reported on first call
+- [ ] Test: `cacheReadInputTokens` reported on second call (cache hit)
+- [ ] Test: Cache metrics in `ctx.getCacheStats()`
+- [ ] Test: System prompt caching
+- [ ] Test: TTL options ('5m', '1h')
+
+### 12.7 Test: Fork & Merge
+
+- [ ] Create `apps/integration-tests/src/fork-merge.test.ts`
+- [ ] Test: `fast-parallel` strategy executes all branches
+- [ ] Test: `cache-optimized` with warmup (verify cache hits)
+- [ ] Test: Schema conflict detection (different schemas warning)
+- [ ] Test: Merge strategies produce correct results
+- [ ] Test: Provenance tracking in merge results
+
+### 12.8 Test: Cost Estimation
+
+- [ ] Create `apps/integration-tests/src/cost.test.ts`
+- [ ] Test: `estimateNextCallCost()` before inference
+- [ ] Test: `getLastCallCost()` after inference
+- [ ] Test: Cache savings calculation accuracy
+- [ ] Test: Estimate vs actual comparison (reasonable delta)
+
+### 12.9 Test: Edge Cases & Errors
+
+- [ ] Create `apps/integration-tests/src/edge-cases.test.ts`
+- [ ] Test: Ambiguous input → low confidence
+- [ ] Test: Scope mismatch protection (use without bridge throws)
+- [ ] Test: Invalid schema handling
+- [ ] Test: API errors handled gracefully
+- [ ] Test: Rate limit handling (if possible to trigger)
+
+### 12.10 CI Integration
+
+- [ ] Create `.github/workflows/integration-tests.yml`:
+
+  ```yaml
+  name: Integration Tests
+  on:
+    push:
+      branches: [main]
+    pull_request:
+      branches: [main]
+    workflow_dispatch: # manual trigger
+
+  jobs:
+    integration:
+      runs-on: ubuntu-latest
+      # Only run if secrets are available (skip for forks)
+      if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+      steps:
+        - uses: actions/checkout@v4
+        - uses: pnpm/action-setup@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: '20'
+            cache: 'pnpm'
+        - run: pnpm install
+        - run: pnpm build
+        - run: pnpm --filter integration-tests test
+          env:
+            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+            ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  ```
+
+- [ ] Add secrets to GitHub repository settings
+- [ ] Test workflow locally with `act` (optional)
+- [ ] Document CI setup in contributing guide
+
+### 12.11 Documentation
+
+- [ ] Create `apps/integration-tests/README.md`:
+  - Setup instructions for contributors
+  - How to run tests locally
+  - How to add new test scenarios
+  - CI behavior explanation
+- [ ] Move `docs/contributing/integration-tests.md` content to app README
+- [ ] Update root CONTRIBUTING.md with reference to integration tests
+- [ ] Document test coverage expectations
+
+### Success Criteria
+
+Mark Task 12 complete when:
+
+- [ ] All test files created and passing with real providers
+- [ ] CI workflow runs on every push to main
+- [ ] At least OpenAI and Anthropic providers tested
+- [ ] Caching, fork/merge, cost estimation verified with real APIs
+- [ ] Documentation complete for contributors
+
+---
+
 ## Future Backlog
 
 ### ESLint Rules (High Value)
@@ -665,6 +854,15 @@ All tracing functionality is documented and ready for users.
 
 - [ ] VSCode extension (scope visualization)
 - [ ] CLI for trace analysis (reads OTel exports)
+
+### Post-Release Testing
+
+> After first npm publish, add canary testing
+
+- [ ] Create separate `mullion-canary` repository
+- [ ] Test real `npm install @mullion/core` experience
+- [ ] Verify exports, types, ESM/CJS compatibility
+- [ ] Run smoke tests on each release tag
 
 ### Documentation
 
@@ -738,4 +936,20 @@ setupMullionTracing({
 });
 
 # View traces at http://localhost:16686
+```
+
+### Integration Testing Tips
+
+```bash
+# Run all integration tests
+pnpm --filter integration-tests test
+
+# Run only OpenAI tests
+pnpm --filter integration-tests test:openai
+
+# Run only Anthropic tests
+pnpm --filter integration-tests test:anthropic
+
+# Watch mode for development
+pnpm --filter integration-tests test:watch
 ```

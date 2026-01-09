@@ -316,7 +316,7 @@ export default [
 See the [examples directory](../../examples/) for complete implementations:
 
 - [Basic Example](../../examples/basic/) - Core concepts demonstration
-- Integration test instructions in [INTEGRATION_TEST_INSTRUCTIONS.md](../../INTEGRATION_TEST_INSTRUCTIONS.md)
+- Integration test instructions in [docs/contributing/integration-tests.md](../../docs/contributing/integration-tests.md)
 
 ## License
 

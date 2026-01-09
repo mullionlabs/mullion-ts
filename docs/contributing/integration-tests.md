@@ -1,23 +1,28 @@
-# AI SDK Integration Test Instructions
+# AI SDK integration tests (manual, real providers)
 
-This document provides instructions for manually testing the @mullion/ai-sdk package with real API providers to complete **Task 5.3** from the TODO.
+This guide describes how to manually test `@mullion/ai-sdk` against **real** model providers
+to complete **Task 5.3** from `TODO.md`.
+
+> This is a **contributor doc**. It’s intentionally not part of the user-facing docs navigation.
+
+---
 
 ## Prerequisites
 
-### 1. Install Dependencies
+### 1) Install dependencies
 
-Ensure the project is properly set up:
+Ensure the repo is properly set up:
 
 ```bash
 pnpm install
 pnpm build
 ```
 
-### 2. API Keys Setup
+### 2) API keys setup
 
-You'll need API keys for at least one of these providers:
+You'll need API keys for at least one provider.
 
-#### OpenAI (Recommended)
+#### OpenAI (recommended)
 
 ```bash
 export OPENAI_API_KEY="sk-proj-..."
@@ -35,7 +40,9 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 export GOOGLE_GENERATIVE_AI_API_KEY="AI..."
 ```
 
-### 3. Install AI SDK Providers
+### 3) Install AI SDK providers
+
+From the repo root (or from a dedicated app workspace), install providers:
 
 ```bash
 # For OpenAI
@@ -48,11 +55,16 @@ pnpm add @ai-sdk/anthropic
 pnpm add @ai-sdk/google
 ```
 
-## Test Scenarios
+> Tip: for a clean setup, consider placing these under a dedicated workspace app
+> (e.g. `apps/integration-tests/`) so provider deps don’t leak into package deps.
 
-### Test 1: Basic Inference with OpenAI
+---
 
-Create a test file `test-openai.js` in the project root:
+## Test scenarios
+
+### Test 1: Basic inference with OpenAI
+
+Create `test-openai.js` in the repo root (or inside your test app):
 
 ```javascript
 import { createMullionClient } from '@mullion/ai-sdk';
@@ -77,7 +89,7 @@ Can someone please help me understand what went wrong?
 `;
 
 async function testOpenAI() {
-  console.log('🧪 Testing OpenAI Integration...\n');
+  console.log('🧪 Testing OpenAI integration...\n');
 
   const client = createMullionClient(openai('gpt-4'));
 
@@ -114,15 +126,17 @@ async function testOpenAI() {
 testOpenAI().catch(console.error);
 ```
 
-**Expected Results:**
+**Expected results:**
 
 - ✅ Email data extracted correctly
-- ✅ Confidence score between 0.3-1.0
-- ✅ Scope properly tagged as 'email-processing'
+- ✅ Confidence score between 0.3–1.0
+- ✅ Scope tagged as `email-processing`
 - ✅ Trace ID generated
 - ✅ No runtime errors
 
-### Test 2: Anthropic Integration
+---
+
+### Test 2: Anthropic integration
 
 Create `test-anthropic.js`:
 
@@ -146,7 +160,7 @@ Overall, definitely worth the investment. 5 stars!
 `;
 
 async function testAnthropic() {
-  console.log('🧪 Testing Anthropic Integration...\n');
+  console.log('🧪 Testing Anthropic integration...\n');
 
   const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 
@@ -176,7 +190,9 @@ async function testAnthropic() {
 testAnthropic().catch(console.error);
 ```
 
-### Test 3: Scope Bridging Test
+---
+
+### Test 3: Scope bridging test
 
 Create `test-bridging.js`:
 
@@ -196,7 +212,7 @@ const ProcessedSchema = z.object({
 });
 
 async function testScopeBridging() {
-  console.log('🧪 Testing Scope Bridging...\n');
+  console.log('🧪 Testing scope bridging...\n');
 
   const client = createMullionClient(openai('gpt-4'));
 
@@ -209,7 +225,7 @@ async function testScopeBridging() {
       );
 
       console.log(
-        '🔒 Admin Scope - Data classified as:',
+        '🔒 Admin scope classification:',
         adminData.value.classification
       );
       console.log('   Confidence:', adminData.confidence);
@@ -220,7 +236,7 @@ async function testScopeBridging() {
 
         // Must explicitly bridge to use admin data
         const bridged = processCtx.bridge(adminData);
-        console.log('   Bridged scope type:', bridged.__scope); // Should show union type
+        console.log('   Bridged scope type:', bridged.__scope);
 
         // Process the bridged data
         const processed = await processCtx.infer(
@@ -228,7 +244,7 @@ async function testScopeBridging() {
           `Summarize this: ${bridged.value.content}`
         );
 
-        console.log('⚙️  Processing Scope - Summary:', processed.value.summary);
+        console.log('⚙️  Processing scope summary:', processed.value.summary);
         console.log('   Action needed:', processed.value.action_needed);
 
         return {
@@ -239,6 +255,7 @@ async function testScopeBridging() {
     });
 
     console.log('\n✅ Scope bridging test completed successfully');
+    return result;
   } catch (error) {
     console.error('❌ Scope bridging test failed:', error.message);
     throw error;
@@ -249,7 +266,9 @@ async function testScopeBridging() {
 testScopeBridging().catch(console.error);
 ```
 
-### Test 4: Error Handling & Edge Cases
+---
+
+### Test 4: Error handling & edge cases
 
 Create `test-edge-cases.js`:
 
@@ -264,11 +283,11 @@ const StrictSchema = z.object({
 });
 
 async function testEdgeCases() {
-  console.log('🧪 Testing Edge Cases...\n');
+  console.log('🧪 Testing edge cases...\n');
 
   const client = createMullionClient(openai('gpt-4'));
 
-  // Test 1: Invalid input that might cause low confidence
+  // Test 1: Ambiguous input
   console.log('Test 1: Ambiguous input...');
   try {
     await client.scope('test-ambiguous', async (ctx) => {
@@ -279,18 +298,16 @@ async function testEdgeCases() {
       console.log('  Result:', result.value);
       console.log('  Confidence:', result.confidence);
 
-      if (result.confidence < 0.5) {
+      if (result.confidence < 0.5)
         console.log('  ⚠️  Low confidence as expected');
-      }
-
       return ctx.use(result);
     });
-    console.log('  ✅ Ambiguous input handled correctly\n');
+    console.log('  ✅ Ambiguous input handled\n');
   } catch (error) {
     console.log('  ✅ Error handling worked:', error.message, '\n');
   }
 
-  // Test 2: Scope mismatch error
+  // Test 2: Scope mismatch protection
   console.log('Test 2: Scope mismatch protection...');
   try {
     let leaked;
@@ -301,17 +318,17 @@ async function testEdgeCases() {
     });
 
     await client.scope('scope-b', async (ctxB) => {
-      // This should throw an error - using value from different scope without bridging
-      return ctxB.use(leaked); // Should fail!
+      // Using value from different scope without bridging should fail
+      return ctxB.use(leaked);
     });
 
-    console.log('  ❌ Scope protection failed - this should not happen');
+    console.log('  ❌ Scope protection failed (should not happen)');
   } catch (error) {
     console.log('  ✅ Scope mismatch correctly caught:', error.message, '\n');
   }
 
-  // Test 3: Different confidence levels based on finish reasons
-  console.log('Test 3: Confidence extraction testing...');
+  // Test 3: Confidence extraction
+  console.log('Test 3: Confidence extraction...');
   try {
     await client.scope('confidence-test', async (ctx) => {
       const result = await ctx.infer(
@@ -337,113 +354,117 @@ async function testEdgeCases() {
 testEdgeCases().catch(console.error);
 ```
 
-## Running the Tests
+---
 
-### Step-by-Step Execution
+## Running the tests
 
-1. **Set up environment:**
+1. **Set up env:**
 
-   ```bash
-   export OPENAI_API_KEY="your-key-here"
-   ```
+```bash
+export OPENAI_API_KEY="your-key-here"
+```
 
 2. **Run each test:**
 
-   ```bash
-   node test-openai.js
-   node test-anthropic.js  # if you have Anthropic key
-   node test-bridging.js
-   node test-edge-cases.js
-   ```
+```bash
+node test-openai.js
+node test-anthropic.js  # if you have Anthropic key
+node test-bridging.js
+node test-edge-cases.js
+```
 
 3. **Run all tests:**
-   ```bash
-   # Create a test runner
-   node -e "
-   import('./test-openai.js').then(() =>
-   import('./test-anthropic.js')).then(() =>
-   import('./test-bridging.js')).then(() =>
-   import('./test-edge-cases.js'))
-   .then(() => console.log('🎉 All integration tests passed!'))
-   .catch(err => { console.error('💥 Tests failed:', err); process.exit(1); })
-   "
-   ```
 
-## Success Criteria
+```bash
+node -e "
+import('./test-openai.js').then(() =>
+import('./test-anthropic.js')).then(() =>
+import('./test-bridging.js')).then(() =>
+import('./test-edge-cases.js'))
+.then(() => console.log('🎉 All integration tests passed!'))
+.catch(err => { console.error('💥 Tests failed:', err); process.exit(1); })
+"
+```
 
-Mark Task 5.3 complete when ALL of these work:
+---
 
-### ✅ Basic Functionality
+## Success criteria
 
-- [ ] Client creates successfully with real provider
+Mark Task 5.3 complete when **all** of these work:
+
+### ✅ Basic functionality
+
+- [ ] Client creates successfully with a real provider
 - [ ] `infer()` returns properly structured `Owned<T, S>` values
-- [ ] Confidence scores are reasonable (0.3-1.0 range)
+- [ ] Confidence scores are reasonable (0.3–1.0 range)
 - [ ] Trace IDs are unique and properly formatted
 
-### ✅ Type Safety
+### ✅ Type safety
 
 - [ ] TypeScript compilation passes
 - [ ] Scope types are correctly inferred (literal string types)
-- [ ] `use()` method enforces scope boundaries at runtime
+- [ ] `use()` enforces boundaries at runtime
 
-### ✅ Integration Features
+### ✅ Integration features
 
 - [ ] Multiple providers work (OpenAI, Anthropic, etc.)
 - [ ] Scope bridging preserves data and combines scope types
 - [ ] Error handling works for invalid inputs and scope mismatches
 
-### ✅ Confidence System
+### ✅ Confidence system
 
 - [ ] Different finish reasons produce different confidence scores
-- [ ] `stop` reason gives confidence = 1.0
-- [ ] `length` reason gives confidence = 0.75
-- [ ] `error` reason gives confidence = 0.3
+- [ ] `stop` ⇒ confidence = 1.0
+- [ ] `length` ⇒ confidence = 0.75
+- [ ] `error` ⇒ confidence = 0.3
 
-### ✅ Real-world Scenarios
+### ✅ Real-world scenarios
 
 - [ ] Complex schemas work (nested objects, arrays, enums)
 - [ ] Large text inputs are handled correctly
 - [ ] Edge cases don't crash the system
 
+---
+
 ## Troubleshooting
 
-### Common Issues
+### Common issues
 
-1. **"Model not found" errors:**
-   - Check API key is valid and has access to the specified model
-   - Try a different model (e.g., `gpt-3.5-turbo` instead of `gpt-4`)
+1. **"Model not found"**
 
-2. **Type errors:**
-   - Ensure `@mullion/core` is built: `pnpm --filter @mullion/core build`
-   - Check TypeScript version compatibility
+- Check API key permissions and model access
+- Try a different model (e.g. `gpt-3.5-turbo` instead of `gpt-4`)
 
-3. **Network/API errors:**
-   - Check internet connection
-   - Verify API key permissions and quota
-   - Try with a simpler prompt first
+2. **Type errors**
 
-4. **Low confidence scores:**
-   - This is expected for ambiguous inputs
-   - Try more specific prompts
-   - Check if the schema is too restrictive
+- Ensure packages are built: `pnpm build`
+- Check TypeScript version compatibility
 
-### Debug Commands
+3. **Network/API errors**
+
+- Verify API key permissions and quota
+- Try a simpler prompt to validate connectivity
+
+4. **Low confidence scores**
+
+- Expected for ambiguous inputs
+- Make prompts more specific
+- Check if schema is too restrictive
+
+### Debug commands
 
 ```bash
-# Check build status
 pnpm --filter @mullion/ai-sdk build
 pnpm --filter @mullion/ai-sdk typecheck
-
-# Run existing unit tests
 pnpm --filter @mullion/ai-sdk test
-
-# Check dependencies
 pnpm list ai zod @ai-sdk/openai
 ```
 
-## Completion Checklist
+---
 
-When all tests pass, update TODO.md:
+## Completion checklist
+
+When all tests pass, update `TODO.md`:
 
 ```markdown
 ### 5.3 Tests

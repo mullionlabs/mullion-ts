@@ -8,7 +8,7 @@ This is a pnpm + Turborepo monorepo. Core packages live under `packages/`:
 - `packages/eslint-plugin` for `@mullion/eslint-plugin`
 - `packages/ai-sdk` for `@mullion/ai-sdk`
 
-Examples and integration notes are in `examples/` and `INTEGRATION_TEST_INSTRUCTIONS.md`. Shared configs sit at the repo root (`tsconfig.base.json`, `turbo.json`, `eslint.config.mjs`, `commitlint.config.mjs`).
+Examples and integration notes are in `examples/` and `docs/contributing/integration-tests.md`. Shared configs sit at the repo root (`tsconfig.base.json`, `turbo.json`, `eslint.config.mjs`, `commitlint.config.mjs`).
 
 ## Build, Test, and Development Commands
 
@@ -36,4 +36,4 @@ Commit messages follow Conventional Commits with a required scope, e.g. `feat(co
 
 ## Configuration & Environment Notes
 
-Node.js >= 20 and pnpm >= 9 are required. Avoid introducing `any`; use `unknown` and narrow types. For manual API checks, follow `INTEGRATION_TEST_INSTRUCTIONS.md`.
+Node.js >= 20 and pnpm >= 9 are required. Avoid introducing `any`; use `unknown` and narrow types. For manual API checks, follow `docs/contributing/integration-tests.md`.
