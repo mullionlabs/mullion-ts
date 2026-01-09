@@ -1,5 +1,128 @@
 # @mullion/ai-sdk
 
+## 0.2.0
+
+### Minor Changes
+
+- ba88f7a: Add cost tracking integration to Mullion context
+
+  Implements Task 10.4: Context Cost Integration with the following features:
+  - `getLastCallCost()` - Returns cost breakdown from last API call
+  - `estimateNextCallCost()` - Pre-call cost estimation for decision making
+  - Automatic cost tracking for all `infer()` calls
+  - Integration with existing cache metrics system
+
+  New MullionContext methods:
+
+  ```typescript
+  interface MullionContext<S> extends Context<S> {
+    getLastCallCost(): CostBreakdown | null;
+    estimateNextCallCost(
+      prompt: string,
+      estimatedOutputTokens?: number
+    ): CostBreakdown;
+  }
+  ```
+
+  Features:
+  - Automatic cost calculation after each `infer()` call
+  - Uses actual token usage from API response
+  - Combines with cache stats for accurate savings analysis
+  - Token estimation based on prompt text
+  - Model-specific pricing support
+
+  Example usage:
+
+  ```typescript
+  const client = createMullionClient(model, {
+    provider: 'openai',
+    model: 'gpt-4',
+  });
+
+  await client.scope('test', async (ctx) => {
+    // Estimate before call
+    const estimate = ctx.estimateNextCallCost(longPrompt);
+    if (estimate.totalCost > 0.1) {
+      console.warn('Expensive call!');
+    }
+
+    // Make call
+    await ctx.infer(schema, longPrompt);
+
+    // Get actual cost
+    const actual = ctx.getLastCallCost();
+    console.log(`Cost: $${actual.totalCost.toFixed(4)}`);
+    console.log(`Savings: ${actual.savingsPercent.toFixed(1)}%`);
+  });
+  ```
+
+  Completes Task 10 (Cost Estimation) with full integration into the context API for real-time cost tracking and decision making.
+
+- ba88f7a: Add comprehensive cost calculation with cache savings analysis
+
+  Implements Task 10.3: Cost Calculation with the following features:
+  - `calculateCost(usage, cacheStats, model)` for actual API call cost analysis
+  - `estimateCost()` for pre-call cost estimation
+  - `calculateBatchCost()` for aggregating costs across multiple calls
+  - `formatCostBreakdown()` for human-readable cost display
+  - `compareCosts()` for comparing estimated vs actual costs
+
+  Cost breakdown includes:
+  - Input tokens cost (non-cached)
+  - Output tokens cost
+  - Cache write cost (Anthropic only)
+  - Cache read cost (10% of input for Anthropic, free for OpenAI)
+  - Total cost and savings analysis
+  - Savings percentage vs no-cache baseline
+
+  Key features:
+  - Supports both OpenAI (free cache) and Anthropic (paid cache)
+  - Correctly handles cache economics (write costs vs read savings)
+  - Can show negative savings when cache write cost exceeds immediate benefit
+  - Batch cost aggregation for multi-call workflows
+  - Cost comparison for estimate accuracy validation
+
+  Example: 10k tokens on Claude 3.5 Sonnet with 80% cache hit
+  - No cache: $0.0375
+  - With cache: $0.0159 (57.6% savings)
+
+  Comprehensive test suite with 30 test cases covering various scenarios including large-scale processing, batch operations, and cache cost analysis.
+
+- ba88f7a: Add comprehensive pricing tables for cost calculation
+
+  Implements Task 10.2: Pricing Tables with the following features:
+  - Complete pricing database for OpenAI and Anthropic models (14 models total)
+  - `getPricing(model, overrides?)` with fuzzy matching for model variants
+  - `getAllPricing()` and `getPricingByProvider()` for querying pricing data
+  - `calculateCacheWritePricing()` for Anthropic cache economics (5m/1h TTL)
+  - JSON export/import for easy pricing updates
+  - Override support for custom deployments
+
+  Pricing includes:
+  - OpenAI: GPT-4, GPT-4-turbo, GPT-3.5-turbo, O1 models (free automatic caching)
+  - Anthropic: Claude 3.5 Sonnet, Claude 4.5 (Opus/Sonnet/Haiku), Claude 3 models
+  - Cache economics: 10% cache read, +25% 5min write, +100% 1h write
+
+  Comprehensive test suite with 48 test cases covering exact matches, fuzzy matching, overrides, provider filtering, and cache economics validation.
+
+- 3c987a2: First release
+- ba88f7a: Add token estimation utilities for cost calculation
+
+  Implements Task 10.1: Token Estimation with the following features:
+  - `estimateTokens(text, model?)` function for estimating token counts
+  - Provider-aware estimation (OpenAI GPT models, Anthropic Claude models, generic)
+  - `estimateTokensForSegments()` for estimating multiple text segments
+  - Clear indication of estimation method (tiktoken, approximate, exact)
+  - Support for different models with appropriate character-to-token ratios
+  - Comprehensive test suite with 34 test cases
+
+  This enables developers to estimate token usage and costs before making API calls.
+
+### Patch Changes
+
+- Updated dependencies [3c987a2]
+  - @mullion/core@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes

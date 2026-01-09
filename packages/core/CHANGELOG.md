@@ -1,5 +1,11 @@
 # @mullion/core
 
+## 0.2.0
+
+### Minor Changes
+
+- 3c987a2: First release
+
 ## 0.1.0
 
 ### Minor Changes
