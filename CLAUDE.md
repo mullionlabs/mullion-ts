@@ -8,6 +8,9 @@
 
 **One-liner:** "Catch context leaks and confidence issues before runtime"
 
+**Current version:** 0.2.0 (all packages)
+**Repository:** https://github.com/mullionlabs/mullion-ts
+
 ## Tech Stack
 
 - **Monorepo:** pnpm workspaces + Turborepo
@@ -15,6 +18,10 @@
 - **Build:** tsup
 - **Testing:** Vitest
 - **CI/CD:** GitHub Actions
+- **Git hooks:** Husky + lint-staged
+- **Linting:** ESLint 9 (flat config) + TypeScript ESLint v8
+- **Formatting:** Prettier
+- **Schemas:** Zod v4.1.8+ (for AI SDK 5+ compatibility)
 
 ## Project Structure
 
@@ -23,9 +30,15 @@ mullion/
 ├── packages/
 │   ├── core/                 # @mullion/core
 │   │   ├── src/
-│   │   │   ├── types.ts      # Owned, Context, SemanticValue
+│   │   │   ├── owned.ts      # Owned<T, S> type
+│   │   │   ├── semantic-value.ts # SemanticValue type
+│   │   │   ├── context.ts    # Context implementation
 │   │   │   ├── scope.ts      # scope() function
 │   │   │   ├── bridge.ts     # bridge utilities
+│   │   │   ├── brand.ts      # nominal typing utilities
+│   │   │   ├── fork/         # fork/merge implementations
+│   │   │   ├── merge/        # merge strategies
+│   │   │   ├── trace/        # OpenTelemetry tracing
 │   │   │   └── index.ts
 │   │   ├── package.json
 │   │   ├── tsconfig.json
@@ -41,13 +54,22 @@ mullion/
 │   │
 │   └── ai-sdk/               # @mullion/ai-sdk
 │       ├── src/
-│       │   ├── client.ts
+│       │   ├── client.ts     # Mullion client implementation
+│       │   ├── cache/        # provider-aware caching
+│       │   ├── cost/         # cost estimation & tracking
 │       │   └── index.ts
 │       └── ...
 │
 ├── examples/
-│   ├── basic/
-│   └── nextjs/
+│   └── basic/                # Working examples
+│
+├── docs/
+│   ├── adr/                  # Architecture Decision Records
+│   ├── contributing/         # Contribution guides
+│   ├── design/               # Design documents
+│   ├── guides/               # User guides
+│   ├── reference/            # API reference
+│   └── README.md             # Documentation index
 │
 ├── .changeset/               # Changesets config
 ├── .github/workflows/        # CI/CD
@@ -56,6 +78,9 @@ mullion/
 ├── tsconfig.base.json
 └── package.json
 ```
+
+Root `README.md` is intentionally marketing + orientation.
+`docs/` folder contains detailed guides, API reference, and design documentation.
 
 ## Key Commands
 
@@ -72,14 +97,29 @@ pnpm --filter @mullion/core build
 # Run tests
 pnpm test
 
+# Test in watch mode
+pnpm test:watch
+
 # Type check
 pnpm typecheck
 
 # Lint
 pnpm lint
 
-# Clean all
+# Format code
+pnpm format
+
+# Check formatting
+pnpm format:check
+
+# Clean all (including node_modules)
 pnpm clean
+
+# Clean only node_modules
+pnpm clean:node_modules
+
+# Dev mode (watch mode for builds)
+pnpm dev
 ```
 
 ## Release Workflow
@@ -108,11 +148,13 @@ pnpm release
 
 ```
 @mullion/core (standalone)
+     ↓ dependency: zod
      ↑
      │ peerDependency
      │
-@mullion/eslint-plugin ←── peerDep: @typescript-eslint/parser, eslint
-@mullion/ai-sdk ←─────── peerDep: ai (Vercel AI SDK), zod
+@mullion/eslint-plugin ←── peerDep: @mullion/core (optional), @typescript-eslint/parser, eslint, typescript
+@mullion/ai-sdk ←─────── dependency: @mullion/core
+                          peerDep: ai (Vercel AI SDK v3+), zod
 ```
 
 ## Key Concepts
@@ -202,9 +244,10 @@ Break work into small tasks:
 ### Before Implementation
 
 1. Read relevant section of this CLAUDE.md
-2. Check TODO.md for current task
+2. Check TODO.md for current task (if exists)
 3. Look at existing code for patterns
-4. Write tests first when possible
+4. Review related documentation in `docs/` folder
+5. Write tests first when possible
 
 ### Turborepo Commands
 
@@ -219,15 +262,64 @@ turbo run build --dry-run
 turbo run build --force
 ```
 
+## Additional Features
+
+### Tracing & Observability
+
+- **Zero-dependency OTLP exporter** with OpenTelemetry compatibility
+- **Pre-configured presets** for Jaeger, Honeycomb, Datadog, New Relic, Grafana
+- **Mullion-specific attributes** tracking scope, confidence, cost, and cache metrics
+- Located in `packages/core/src/trace/`
+- See package READMEs for detailed usage
+
+### Cost Tracking & Estimation
+
+- **Token estimation** before API calls
+- **Real-time cost tracking** per inference
+- **Cache savings calculation**
+- **Multi-provider pricing** (OpenAI, Anthropic with custom overrides)
+- Located in `packages/ai-sdk/src/cost/`
+
+### Provider-Aware Caching
+
+- **Model-specific thresholds** (Anthropic: 1024-4096 tokens, OpenAI: 1024 tokens)
+- **TTL support** ('5m', '1h', '1d')
+- **Safe-by-default** (never caches user content without explicit opt-in)
+- **Automatic cache warmup** for fork branches
+- Located in `packages/ai-sdk/src/cache/`
+
+### Fork/Merge Patterns
+
+- **Parallel execution** with intelligent cache reuse
+- **6 Built-in merge strategies** (weighted vote, average, fieldwise, etc.)
+- **Warmup strategies** for optimal cache utilization
+- Located in `packages/core/src/fork/` and `packages/core/src/merge/`
+
 ## Decision Log
 
-| Date    | Decision               | Rationale                                                     |
-| ------- | ---------------------- | ------------------------------------------------------------- |
-| 2026-01 | TypeScript only        | Stronger type system, less competition                        |
-| 2026-01 | ESLint plugin first    | Lowest adoption friction                                      |
-| 2026-01 | Turborepo + Changesets | Independent releases, build caching                           |
-| 2026-01 | Integrate with AI SDK  | 2.7M weekly downloads                                         |
-| 2026-01 | Separate type imports  | Better tree-shaking, clearer code intent, enforced via ESLint |
+| Date    | Decision                  | Rationale                                                     |
+| ------- | ------------------------- | ------------------------------------------------------------- |
+| 2026-01 | TypeScript only           | Stronger type system, less competition                        |
+| 2026-01 | ESLint plugin first       | Lowest adoption friction                                      |
+| 2026-01 | Turborepo + Changesets    | Independent releases, build caching                           |
+| 2026-01 | Integrate with AI SDK     | 2.7M weekly downloads                                         |
+| 2026-01 | Separate type imports     | Better tree-shaking, clearer code intent, enforced via ESLint |
+| 2026-01 | Zod dependency in core    | Schema validation is fundamental to Owned<T> operations       |
+| 2026-01 | OpenTelemetry integration | Production observability without vendor lock-in               |
+| 2026-01 | Provider-aware caching    | Maximize cache efficiency across different LLM providers      |
+
+## Documentation Structure
+
+The project has comprehensive documentation in the `docs/` folder:
+
+- **`docs/README.md`** - Documentation index and navigation
+- **`docs/guides/`** - How-to guides and tutorials
+- **`docs/reference/`** - API reference documentation
+- **`docs/design/`** - Design documents and architecture
+- **`docs/adr/`** - Architecture Decision Records
+- **`docs/contributing/`** - Contribution guides (including integration tests)
+
+Each package also has its own README with specific implementation details.
 
 ## Links
 
@@ -235,3 +327,5 @@ turbo run build --force
 - [ESLint Plugin Development](https://eslint.org/docs/latest/extend/plugins)
 - [Turborepo](https://turbo.build/)
 - [Changesets](https://github.com/changesets/changesets)
+- [OpenTelemetry](https://opentelemetry.io/)
+- [Zod](https://zod.dev/)

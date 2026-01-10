@@ -350,9 +350,7 @@ export class OTLPHttpExporter implements SpanExporter {
    * @returns OTLP attributes array
    * @internal
    */
-  private mapAttributes(
-    attributes: MullionSpan['attributes']
-  ): {
+  private mapAttributes(attributes: MullionSpan['attributes']): {
     key: string;
     value: {
       stringValue?: string;

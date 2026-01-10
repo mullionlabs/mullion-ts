@@ -494,6 +494,10 @@ See [TRACING.md](./TRACING.md) for complete guide including:
 - [Tracing Guide](./TRACING.md) - Complete observability guide
 - [Examples](../../examples/) - Working examples
 
+## Contributing
+
+Found a bug or want to contribute? See [CONTRIBUTING.md](../../docs/contributing/CONTRIBUTING.md) for guidelines.
+
 ## License
 
 MIT - see [LICENSE](../../LICENSE) for details.

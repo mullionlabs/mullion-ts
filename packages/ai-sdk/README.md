@@ -590,6 +590,10 @@ See the [examples directory](../../examples/) for complete implementations:
 - [Basic Example](../../examples/basic/) - Core concepts demonstration
 - Integration test instructions in [docs/contributing/integration-tests.md](../../docs/contributing/integration-tests.md)
 
+## Contributing
+
+Found a bug or want to contribute? See [CONTRIBUTING.md](../../docs/contributing/CONTRIBUTING.md) for guidelines.
+
 ## License
 
 MIT - see [LICENSE](../../LICENSE) for details.

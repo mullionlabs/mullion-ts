@@ -415,7 +415,7 @@ npm run demo  # See proper usage
 
 ## Contributing
 
-Found a bug or want to add a rule? See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
+Found a bug or want to add a rule? See [CONTRIBUTING.md](../../docs/contributing/CONTRIBUTING.md) for guidelines.
 
 ## License
 
