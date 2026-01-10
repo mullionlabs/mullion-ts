@@ -10,6 +10,7 @@
 
   <p>
     <a href="https://www.npmjs.com/package/@mullion/core"><img alt="npm version" src="https://img.shields.io/npm/v/@mullion/core?style=flat-square"></a>
+    <a href="https://www.npmjs.com/package/@mullion/core"><img alt="npm downloads" src="https://img.shields.io/npm/dm/@mullion/core?style=flat-square"></a>
     <a href="https://github.com/mullionlabs/mullion-ts/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/github/license/mullionlabs/mullion-ts?style=flat-square"></a>
     <img alt="TypeScript 5+" src="https://img.shields.io/badge/TypeScript-5%2B-3178C6?style=flat-square&logo=typescript&logoColor=white">
   </p>

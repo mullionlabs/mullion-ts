@@ -10,9 +10,11 @@
   <p>Catch context leaks, enforce trust boundaries, and make LLM outputs auditable — before runtime.</p>
 
   <p>
+    <a href="https://www.npmjs.com/package/@mullion/core"><img alt="npm version" src="https://img.shields.io/npm/v/@mullion/core?style=flat-square"></a>
+    <a href="https://www.npmjs.com/package/@mullion/core"><img alt="npm downloads" src="https://img.shields.io/npm/dm/@mullion/core?style=flat-square"></a>
+    <a href="https://github.com/mullionlabs/mullion-ts/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/mullionlabs/mullion-ts/ci.yml?branch=main&style=flat-square&label=CI"></a>
     <a href="./LICENSE"><img alt="license" src="https://img.shields.io/github/license/mullionlabs/mullion-ts?style=flat-square"></a>
     <img alt="TypeScript 5+" src="https://img.shields.io/badge/TypeScript-5%2B-3178C6?style=flat-square&logo=typescript&logoColor=white">
-    <img alt="monorepo" src="https://img.shields.io/badge/monorepo-pnpm%20%2B%20turborepo-111827?style=flat-square">
   </p>
 </div>
 
