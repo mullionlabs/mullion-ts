@@ -124,7 +124,9 @@ pnpm dev
 
 ## Release Workflow
 
-### Adding a Changeset
+Mullion uses Changesets with GitHub Actions for automated releases.
+
+### Step 1: Create a Changeset
 
 When you make a change that should be released:
 
@@ -132,17 +134,62 @@ When you make a change that should be released:
 pnpm changeset
 ```
 
-Select packages, bump type (major/minor/patch), and write summary.
+- Select affected packages
+- Choose bump type (major/minor/patch)
+- Write a clear summary of changes
+- Commit the changeset file with your changes
 
-### Releasing
+### Step 2: Create PR and Merge
 
 ```bash
-# Update versions from changesets
-pnpm version
-
-# Publish to npm (CI does this automatically)
-pnpm release
+git add .changeset/*.md
+git commit -m "feat(core): Add new feature"
+git push origin your-branch
 ```
+
+Create a PR and merge it to `main`.
+
+### Step 3: Automated Release Process
+
+**After merging to main, GitHub Actions automatically:**
+
+1. ✅ Detects changeset files
+2. ✅ Creates a "Version Packages" PR with:
+   - Updated `package.json` versions
+   - Generated `CHANGELOG.md` entries
+   - Removed processed changeset files
+3. ⏸️ Waits for you to review and merge
+
+**When you merge the "Version Packages" PR:**
+
+4. ✅ Builds all packages
+5. ✅ Publishes to npm
+6. ✅ Creates GitHub releases
+
+### ⚠️ Important: Never Do This Manually
+
+```bash
+# ❌ DON'T run these manually - CI does it automatically!
+pnpm version          # Wrong: runs npm version, not changeset version
+pnpm changeset version # Only CI should run this
+pnpm release          # Only CI should run this
+```
+
+### Troubleshooting
+
+If the release workflow fails:
+
+1. Check `.github/workflows/release.yml` has correct config:
+
+   ```yaml
+   version: pnpm changeset version # ✅ Correct
+   # NOT: pnpm version              # ❌ Wrong - runs npm version
+   commit: 'chore(release): Version packages' # Must pass commitlint
+   ```
+
+2. Verify commitlint allows the commit message format
+3. Check that `changeset-release/main` branch isn't stuck
+4. Review GitHub Actions logs for errors
 
 ## Package Dependencies
 
@@ -307,6 +354,8 @@ turbo run build --force
 | 2026-01 | Zod dependency in core    | Schema validation is fundamental to Owned<T> operations       |
 | 2026-01 | OpenTelemetry integration | Production observability without vendor lock-in               |
 | 2026-01 | Provider-aware caching    | Maximize cache efficiency across different LLM providers      |
+| 2026-01 | Changesets automation     | Use `pnpm changeset version` in CI, not `pnpm version` (npm)  |
+| 2026-01 | Commitlint in CI          | Release commits must follow format: `chore(release): Message` |
 
 ## Documentation Structure
 
