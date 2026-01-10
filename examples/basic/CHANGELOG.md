@@ -1,5 +1,13 @@
 # mullion-basic-example
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [49cc49f]
+  - @mullion/ai-sdk@0.2.1
+  - @mullion/core@0.2.1
+
 ## 1.0.2
 
 ### Patch Changes
