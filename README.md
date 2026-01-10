@@ -81,7 +81,7 @@ flowchart LR
     classDef danger fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
 
 %% ========== SAFE ==========
-    subgraph S["SAFE: explicit boundary crossing"]
+    subgraph S["SAFE"]
         direction TB
         SA["Admin scope   <br/>(privileged context)"]:::admin
         SO["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
@@ -91,7 +91,7 @@ flowchart LR
     end
 
 %% ========== UNSAFE ==========
-    subgraph U["UNSAFE: implicit context flow"]
+    subgraph U["UNSAFE"]
         direction TB
         UA["Admin scope<br/>(privileged context)"]:::admin
         UO["LLM output<br/>Owned&lt;T&gt; produced"]:::llm
@@ -227,7 +227,7 @@ TracingPresets.jaeger(); // Local dev
 TracingPresets.honeycomb(process.env.HONEYCOMB_API_KEY); // Production
 ```
 
-See: `packages/core/TRACING.md`
+See: [TRACING.md](./packages/core/TRACING.md)
 
 ### 💰 Cost Estimation & Tracking
 
@@ -344,7 +344,7 @@ Mullion shines anywhere you have **multiple trust zones** and want **TypeScript-
 - **Compliance-heavy domains (fin/health/legal):** auditable provenance, explicit boundary crossing, policy enforcement.
 - **High-scale LLM ops:** cache-aware execution patterns, cost visibility hooks, fewer accidental regressions.
 
-See: `docs/guides/use-cases.md`
+See: [use-cases.md](./docs/guides/use-cases.md)
 
 ---
 
@@ -360,20 +360,20 @@ See: `docs/guides/use-cases.md`
 
 ## Documentation
 
-- Docs index: `docs/README.md`
-- Guides: `docs/guides/`
-- Reference: `docs/reference/`
-- Design notes: `docs/design/`
-- ADRs: `docs/adr/`
+- [Docs index](./docs/README.md)
+- [Guides](./docs/guides/)
+- [Reference](./docs/reference/)
+- [Design notes](./docs/design/)
+- [ADRs](./docs/adr/)
 
 Examples:
 
-- `examples/basic`
-- `EXAMPLES.md`
+- [examples/basic](./examples/basic)
+- [EXAMPLES.md](./EXAMPLES.md)
 
 Roadmap:
 
-- `TODO.md`
+- [TODO.md](./TODO.md)
 
 ---
 
@@ -386,7 +386,7 @@ Mullion is under active development. Expect API refinements while we harden:
 - provider-facing integration surfaces
 - cost/observability features
 
-For the definitive plan and progress, see `TODO.md`.
+For the definitive plan and progress, see [TODO.md](./TODO.md).
 
 ---
 
