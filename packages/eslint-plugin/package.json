@@ -1,6 +1,6 @@
 {
   "name": "@mullion/eslint-plugin",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "ESLint rules for type-safe LLM context management",
   "keywords": [
     "eslint",
@@ -47,7 +47,7 @@
     "@typescript-eslint/utils": "catalog:"
   },
   "peerDependencies": {
-    "@mullion/core": ">=0.2.0",
+    "@mullion/core": ">=0.2.1",
     "@typescript-eslint/parser": ">=8.0.0",
     "eslint": ">=8.57.0",
     "typescript": ">=5.0.0"

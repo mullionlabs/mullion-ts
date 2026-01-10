@@ -1,5 +1,15 @@
 # @mullion/ai-sdk
 
+## 0.2.1
+
+### Patch Changes
+
+- 49cc49f: - Update README badges (npm version, downloads, CI status)
+  - Fix markdown links in documentation
+  - Add contributing full guide
+- Updated dependencies [49cc49f]
+  - @mullion/core@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
