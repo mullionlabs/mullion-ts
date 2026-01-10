@@ -10,6 +10,7 @@
 
   <p>
     <a href="https://www.npmjs.com/package/@mullion/eslint-plugin"><img alt="npm version" src="https://img.shields.io/npm/v/@mullion/eslint-plugin?style=flat-square"></a>
+    <a href="https://www.npmjs.com/package/@mullion/eslint-plugin"><img alt="npm downloads" src="https://img.shields.io/npm/dm/@mullion/eslint-plugin?style=flat-square"></a>
     <a href="https://github.com/mullionlabs/mullion-ts/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/github/license/mullionlabs/mullion-ts?style=flat-square"></a>
     <img alt="TypeScript 5+" src="https://img.shields.io/badge/TypeScript-5%2B-3178C6?style=flat-square&logo=typescript&logoColor=white">
   </p>
@@ -414,7 +415,7 @@ npm run demo  # See proper usage
 
 ## Contributing
 
-Found a bug or want to add a rule? See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
+Found a bug or want to add a rule? See [CONTRIBUTING.md](../../docs/contributing/CONTRIBUTING.md) for guidelines.
 
 ## License
 

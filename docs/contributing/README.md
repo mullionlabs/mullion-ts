@@ -2,4 +2,10 @@
 
 This section contains contributor-facing documentation.
 
-- Integration tests (manual, real providers): `./integration-tests.md`
+## Getting Started
+
+- **[Contributing Guide](./CONTRIBUTING.md)** - Complete guide to contributing to Mullion (start here)
+
+## Specialized Guides
+
+- **[Integration Tests](./integration-tests.md)** - Manual testing with real LLM providers
