@@ -238,6 +238,35 @@ See: [`docs/guides/use-cases.md`](./docs/guides/use-cases.md)
 
 ---
 
+## Examples
+
+> 📚 **[Full examples guide →](./EXAMPLES.md)**
+
+### 🎯 Start Here
+
+**[Basic Example](./examples/basic/)** — Smallest runnable example
+Learn: scopes, `Owned<T>`, boundary crossing
+
+### 🚀 Production Scenarios
+
+**[Helpdesk Leak Prevention](./examples/helpdesk-leak-prevention/)** — Customer support system
+**Problem:** Admin notes leaking to customer responses
+**Solution:** Scope isolation (`admin` vs `public`) + explicit sanitization
+**See:** ESLint catching leaks at compile time
+
+**[RAG with Sensitive Data](./examples/rag-sensitive-data/)** — Document retrieval pipeline
+**Problem:** Users accessing confidential documents they shouldn't see
+**Solution:** Access-level enforcement + fork/merge classification
+**See:** Complete RAG pipeline with 3 access levels (public/internal/confidential)
+
+```bash
+# Run any example (works without API key):
+pnpm --filter mullion-example-helpdesk-leak-prevention start
+pnpm --filter mullion-example-rag-sensitive-data pipeline
+```
+
+---
+
 ## Packages
 
 | Package                  | What it is                                                            | Use it when                |

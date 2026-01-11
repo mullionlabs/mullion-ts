@@ -17,9 +17,11 @@ If you need details, look here [TODO.history.md](./TODO.history.md)
 
 ---
 
-## Task 12: Example Code Snippets
+## Task 12: Example Code Snippets ✅ COMPLETED
 
 **Goal:** Documentation-ready code examples for future docs site
+
+**Status:** All subtasks (12.1, 12.2, 12.3) complete. Examples are production-ready and fully documented.
 
 ### Philosophy
 
@@ -49,16 +51,18 @@ examples/
 
 **Files to create:**
 
-- [ ] Create \`examples/helpdesk-leak-prevention/\` directory
-- [ ] Create \`package.json\` with workspace deps
-- [ ] Create \`tsconfig.json\`
-- [ ] Create \`eslint.config.js\` with \`@mullion/eslint-plugin\`
-- [ ] Create \`.env.example\`
-- [ ] Create \`src/schemas.ts\` — TicketAnalysisSchema, CustomerResponseSchema
-- [ ] Create \`src/safe-flow.ts\` — correct implementation with bridge
-- [ ] Create \`src/unsafe-flow.ts\` — intentionally leaky (ESLint catches)
-- [ ] Create \`src/index.ts\` — main entry point
-- [ ] Create \`README.md\`
+- [x] Create \`examples/helpdesk-leak-prevention/\` directory
+- [x] Create \`package.json\` with workspace deps
+- [x] Create \`tsconfig.json\`
+- [x] Create \`eslint.config.js\` with \`@mullion/eslint-plugin\`
+- [x] Create \`.env.example\`
+- [x] Create \`src/schemas.ts\` — TicketAnalysisSchema, CustomerResponseSchema
+- [x] Create \`src/safe-flow.ts\` — correct implementation with bridge
+- [x] Create \`src/unsafe-flow.ts\` — intentionally leaky (ESLint catches)
+- [x] Create \`src/index.ts\` — main entry point
+- [x] Create \`README.md\`
+
+**Status:** ✅ COMPLETED
 
 ### 12.2 RAG Sensitive Data Example
 
@@ -74,29 +78,36 @@ examples/
 
 **Files to create:**
 
-- [ ] Create \`examples/rag-sensitive-data/\` directory
-- [ ] Create \`package.json\`, \`tsconfig.json\`, \`.env.example\`
-- [ ] Create \`src/schemas.ts\` — Classification, Query, Response schemas
-- [ ] Create \`src/data/sample-docs.ts\` — sample documents
-- [ ] Create \`src/classifier.ts\` — document classification scope
-- [ ] Create \`src/retriever.ts\` — retrieval with scope filtering
-- [ ] Create \`src/generator.ts\` — response generation with caching
-- [ ] Create \`src/pipeline.ts\` — full RAG orchestration
-- [ ] Create \`src/index.ts\` — main entry point
-- [ ] Create \`README.md\` with architecture diagram
+- [x] Create \`examples/rag-sensitive-data/\` directory
+- [x] Create \`package.json\`, \`tsconfig.json\`, \`.env.example\`, \`eslint.config.js\`
+- [x] Create \`src/schemas.ts\` — Classification, Query, Response schemas
+- [x] Create \`src/data/sample-docs.ts\` — sample documents (10 docs across 3 access levels)
+- [x] Create \`src/classifier.ts\` — document classification with fork/merge
+- [x] Create \`src/retriever.ts\` — retrieval with scope filtering
+- [x] Create \`src/generator.ts\` — response generation with caching
+- [x] Create \`src/pipeline.ts\` — full RAG orchestration
+- [x] Create \`src/index.ts\` — main entry point
+- [x] Create \`README.md\` with architecture diagram
+
+**Status:** ✅ COMPLETED
 
 ### 12.3 Documentation Integration
 
-- [ ] Add \`// @mullion-docs: section-name\` markers for extraction
-- [ ] Update root README with example links
-- [ ] Verify all examples run: \`pnpm --filter "example-\*" start\`
+- [x] Add \`// @mullion-docs: section-name\` markers for extraction (not needed - direct file links used)
+- [x] Update root README with example links
+- [x] Update EXAMPLES.md with all three examples
+- [x] Verify all examples run: \`pnpm --filter "mullion-example-\*" start\`
+
+**Status:** ✅ COMPLETED
 
 ### Success Criteria
 
-- [ ] Both example directories created with all files
-- [ ] Examples run without errors with valid API key
-- [ ] ESLint catches leak in unsafe-flow.ts
-- [ ] README files clearly explain each scenario
+- [x] Both example directories created with all files
+- [x] Examples run without errors (with and without API key)
+- [x] ESLint catches leak in unsafe-flow.ts (5 errors detected)
+- [x] README files clearly explain each scenario
+
+**All Success Criteria Met:** ✅
 
 ---
 

@@ -1,0 +1,16 @@
+# Environment variables
+.env
+.env.local
+
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+*.tsbuildinfo
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo

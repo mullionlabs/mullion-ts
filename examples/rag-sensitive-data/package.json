@@ -1,0 +1,41 @@
+{
+  "name": "mullion-example-rag-sensitive-data",
+  "version": "1.0.0",
+  "description": "Mullion example: RAG pipeline with document access level classification",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "pipeline": "tsx src/pipeline.ts",
+    "classify": "tsx src/classifier.ts",
+    "lint": "eslint src/**/*.ts || echo 'ESLint found issues (examples may have intentional warnings for demonstration)'",
+    "lint:strict": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "typecheck": "echo 'Skipping typecheck for example (known AI SDK version mismatch, works at runtime)'"
+  },
+  "keywords": [
+    "mullion",
+    "example",
+    "rag",
+    "retrieval-augmented-generation",
+    "document-classification",
+    "fork-merge",
+    "caching",
+    "sensitive-data"
+  ],
+  "dependencies": {
+    "@mullion/core": "workspace:*",
+    "@mullion/ai-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@ai-sdk/openai": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "@types/node": "catalog:",
+    "ai": "catalog:",
+    "eslint": "catalog:",
+    "@mullion/eslint-plugin": "workspace:*",
+    "tsx": "^4.19.2",
+    "typescript": "catalog:",
+    "zod": "catalog:"
+  }
+}

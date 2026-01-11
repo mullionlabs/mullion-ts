@@ -9,7 +9,8 @@
     },
     "typecheck": {
       "dependsOn": ["^build"],
-      "cache": true
+      "cache": true,
+      "outputLogs": "errors-only"
     },
     "lint": {
       "dependsOn": ["^build"],
