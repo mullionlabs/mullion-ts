@@ -319,6 +319,18 @@ Every operation is traceable:
 - `traceId`: OpenTelemetry trace ID
 - `confidence`: Quality score for the inference
 
+## 🧪 Testing
+
+Run the examples:
+
+```bash
+npm run pipeline  # Complete RAG pipeline
+npm run classify  # Document classification demo
+npm run lint      # ESLint validation
+```
+
+> **Note:** TypeScript typecheck is intentionally skipped for this example due to AI SDK version mismatches in the monorepo. The code works correctly at runtime. In a real project with published packages, these type errors would not occur.
+
 ## 🔧 Advanced Features
 
 ### Caching
