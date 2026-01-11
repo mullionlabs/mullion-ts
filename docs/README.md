@@ -1,30 +1,36 @@
 # Mullion Documentation
 
+Root `README.md` is intentionally marketing + orientation.  
+This `docs/` folder is the technical source of truth.
+
 ## Guides (start here)
 
-Guides are task-oriented and practical.
-
-- **Getting started:** [Getting started](./guides/getting-started.md)
-- **Use cases:** [Use cases](./guides/use-cases.md)
-- **Security model:** [Security model](./guides/security-model.md)
-- **Patterns & recipes:** [Patterns & recipes](./guides/patterns.md)
+- Getting started: [Getting started](./guides/getting-started.md)
+- Use cases: [Use cases](./guides/use-cases.md)
+- Security model: [Security model](./guides/security-model.md)
+- Patterns & recipes: [Patterns & recipes](./guides/patterns.md)
+- Positioning & comparisons: [Positioning & comparisons](./guides/positioning.md)
 
 ## Reference
 
-Reference is concept/API-oriented.
+- Core concepts: [Core concepts](./reference/concepts.md)
+- ESLint plugin: [ESLint plugin](./reference/eslint-plugin.md)
+- Caching: [Caching](./reference/caching.md)
+- Fork: [Fork](./reference/fork.md)
+- Merge strategies: [Merge strategies](./reference/merge-strategies.md)
+- Cost estimation: [Cost estimation](./reference/cost-estimation.md)
 
-- **Core concepts:** [Core concepts](./reference/concepts.md)
-- **ESLint plugin:** [ESLint plugin](./reference/eslint-plugin.md)
+## Tracing / Observability
+
+- Tracing (OpenTelemetry): [TRACING.md](../packages/core/TRACING.md)
 
 ## Design notes
 
-Design docs explain architecture and direction.
+- Architecture & mental model: [Architecture & mental model](./design/architecture.md)
+- Roadmap: [Roadmap](./design/roadmap.md)
+- ADRs: [ADRs](./adr/)
 
-- **Architecture & mental model:** [Architecture & mental model](./design/architecture.md)
-- **Roadmap:** [Roadmap](./design/roadmap.md)
-- **ADRs:** [ADRs](./adr/)
-
-## Other project references
+## Project references
 
 - Roadmap / progress (canonical): [TODO.md](../TODO.md)
 - Examples overview: [EXAMPLES.md](../EXAMPLES.md)
@@ -32,5 +38,5 @@ Design docs explain architecture and direction.
 
 ## Contributing
 
-- **Getting started**: [Contributing guide](./contributing/CONTRIBUTING.md)
-- **Integration tests**: [Integration tests](./contributing/integration-tests.md)
+- Contributor guide: [Contributing](./contributing/README.md)
+- Integration tests: [Integration tests](./contributing/integration-tests.md)
