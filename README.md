@@ -214,7 +214,7 @@ If you read only 3 pages:
 
 ---
 
-## Feature deep dives (everything removed from this README is here)
+## 🚀 Feature deep dives
 
 - Tracing / OpenTelemetry: [`packages/core/TRACING.md`](./packages/core/TRACING.md)
 - Cost estimation: [`docs/reference/cost-estimation.md`](./docs/reference/cost-estimation.md)
