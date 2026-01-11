@@ -22,7 +22,7 @@
     <a href="./docs/"><strong>Docs</strong></a> ·
     <a href="./examples/basic/"><strong>Examples</strong></a> ·
     <a href="./packages/"><strong>Packages</strong></a> ·
-    <a href="./TODO.md"><strong>Roadmap</strong></a>
+    <a href="TODO.history.md"><strong>Roadmap</strong></a>
   </p>
   <p>
     <a href="https://github.com/mullionlabs/mullion-ts/issues/new?title=%5Bpilot%5D%20%3Cyour%20use%20case%3E"><strong>Start a pilot</strong></a> ·
@@ -39,8 +39,6 @@ It helps you turn **probabilistic** model output into **deterministic, typed, au
 
 Mullion is **not** an orchestration engine and **not** a graph runtime.  
 Think: **TypeScript + ESLint guardrails for LLM code.**
-
-**Killer use case (1 sentence):** Stop admin notes, PII, and cross-tenant data from leaking into user-visible LLM prompts or replies — blocked before runtime, with an audit trail you can trace end-to-end.
 
 > Works great with Vercel AI SDK (`ai`) and provider SDKs — it complements them.  
 > See: [Positioning & comparisons](./docs/guides/positioning.md)
@@ -259,7 +257,7 @@ See: [`docs/guides/use-cases.md`](./docs/guides/use-cases.md)
 
 Roadmap:
 
-- [`TODO.md`](./TODO.md)
+- [`TODO.md`](TODO.history.md)
 
 Security:
 
@@ -276,7 +274,7 @@ Mullion is under active development. Expect API refinements while we harden:
 - provider-facing integration surfaces
 - cost/observability features
 
-For the definitive plan and progress, see [`TODO.md`](./TODO.md).
+For the definitive plan and progress, see [`TODO.md`](TODO.history.md).
 
 ---
 

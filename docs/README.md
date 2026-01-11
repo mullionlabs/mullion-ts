@@ -32,7 +32,7 @@ This `docs/` folder is the technical source of truth.
 
 ## Project references
 
-- Roadmap / progress (canonical): [TODO.md](../TODO.md)
+- Roadmap / progress (canonical): [TODO.md](../TODO.history.md)
 - Examples overview: [EXAMPLES.md](../EXAMPLES.md)
 - Runnable example: [basic example](../examples/basic)
 
