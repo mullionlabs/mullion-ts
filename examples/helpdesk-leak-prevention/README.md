@@ -75,13 +75,16 @@ npm run safe
 ### 4. Run ESLint to Catch Leaks
 
 ```bash
-npm run lint
+npm run lint        # Runs lint (won't fail build - for CI)
+npm run lint:strict # Shows all ESLint errors (for demonstration)
 ```
 
 **ESLint will flag violations in `unsafe-flow.ts`:**
 
-- `@mullion/no-context-leak`: Detects data crossing scope boundaries without bridge
-- `@mullion/require-confidence-check`: Warns about using data without confidence validation
+- `@mullion/no-context-leak`: Detects data crossing scope boundaries without bridge (5 errors)
+- `@mullion/require-confidence-check`: Warns about using data without confidence validation (19 warnings)
+
+> **Note:** `npm run lint` exits with 0 (success) even when finding issues, since these are intentional for demonstration. Use `npm run lint:strict` to see ESLint actually fail on violations.
 
 ## 📖 Example Walkthrough
 
