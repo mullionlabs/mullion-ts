@@ -9,6 +9,7 @@
   <p><strong>Type-safe LLM context management for TypeScript</strong></p>
   <p>Catch context leaks, enforce trust boundaries, and make LLM outputs auditable — <strong>before runtime</strong>.</p>
 
+  <p><strong>Killer use case:</strong> Stop admin notes, PII, and cross-tenant data from leaking into user-visible LLM prompts or replies — blocked <strong>before runtime</strong>, with an audit trail you can trace end-to-end.</p>
   <p>
     <a href="https://www.npmjs.com/package/@mullion/core"><img alt="npm version" src="https://img.shields.io/npm/v/@mullion/core?style=flat-square"></a>
     <a href="https://www.npmjs.com/package/@mullion/core"><img alt="npm downloads" src="https://img.shields.io/npm/dm/@mullion/core?style=flat-square"></a>
@@ -23,6 +24,10 @@
     <a href="./packages/"><strong>Packages</strong></a> ·
     <a href="./TODO.md"><strong>Roadmap</strong></a>
   </p>
+  <p>
+    <a href="https://github.com/mullionlabs/mullion-ts/issues/new?title=%5Bpilot%5D%20%3Cyour%20use%20case%3E"><strong>Start a pilot</strong></a> ·
+    <a href="https://github.com/mullionlabs/mullion-ts/issues/new?title=%5Bquestion%5D%20%3Ctopic%3E"><strong>Ask a question</strong></a>
+  </p>
 </div>
 
 ---
@@ -34,6 +39,8 @@ It helps you turn **probabilistic** model output into **deterministic, typed, au
 
 Mullion is **not** an orchestration engine and **not** a graph runtime.  
 Think: **TypeScript + ESLint guardrails for LLM code.**
+
+**Killer use case (1 sentence):** Stop admin notes, PII, and cross-tenant data from leaking into user-visible LLM prompts or replies — blocked before runtime, with an audit trail you can trace end-to-end.
 
 > Works great with Vercel AI SDK (`ai`) and provider SDKs — it complements them.  
 > See: [Positioning & comparisons](./docs/guides/positioning.md)
@@ -65,6 +72,9 @@ TypeScript LLM, AI safety, context leak prevention, trust boundaries, prompt saf
 ---
 
 ## The problem: context leaks (the #1 architectural footgun)
+
+> **⚡ Pilot-ready:** Trying to stop admin notes / PII / tenant data from leaking into user-visible LLM outputs?
+> [Open a **`[pilot]`** issue](https://github.com/mullionlabs/mullion-ts/issues/new?title=%5Bpilot%5D%20%3Cyour%20use%20case%3E) and we’ll help you validate Mullion in a real codebase (and prioritize pilot blockers).
 
 When “context” is just strings/objects, it tends to leak across trust boundaries:
 
