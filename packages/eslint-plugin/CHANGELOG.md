@@ -1,5 +1,13 @@
 # @mullion/eslint-plugin
 
+## 0.2.2
+
+### Patch Changes
+
+- 19dc963: Update package metadata (keywords, repository, homepage/bugs links) to improve npm discoverability
+- Updated dependencies [19dc963]
+  - @mullion/core@0.2.2
+
 ## 0.2.1
 
 ### Patch Changes

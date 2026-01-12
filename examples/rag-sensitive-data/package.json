@@ -1,6 +1,6 @@
 {
   "name": "mullion-example-rag-sensitive-data",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mullion example: RAG pipeline with document access level classification",
   "private": true,
   "type": "module",

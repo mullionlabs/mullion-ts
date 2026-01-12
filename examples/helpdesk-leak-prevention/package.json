@@ -1,6 +1,6 @@
 {
   "name": "mullion-example-helpdesk-leak-prevention",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mullion example: Preventing context leaks in customer support systems",
   "private": true,
   "type": "module",
