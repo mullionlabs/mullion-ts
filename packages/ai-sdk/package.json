@@ -2,20 +2,36 @@
   "name": "@mullion/ai-sdk",
   "version": "0.2.1",
   "description": "Mullion integration with Vercel AI SDK",
-  "keywords": [
-    "llm",
-    "ai-sdk",
-    "vercel",
-    "typescript",
-    "context",
-    "openai",
-    "anthropic"
-  ],
+  "homepage": "https://github.com/mullionlabs/mullion-ts/tree/main/packages/ai-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/mullionlabs/mullion-ts/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mullionlabs/mullion-ts.git",
+    "url": "git+https://github.com/mullionlabs/mullion-ts.git",
     "directory": "packages/ai-sdk"
   },
+  "keywords": [
+    "mullion",
+    "llm",
+    "ai",
+    "typescript",
+    "vercel",
+    "ai-sdk",
+    "vercel-ai-sdk",
+    "openai",
+    "anthropic",
+    "google",
+    "gemini",
+    "caching",
+    "cost-tracking",
+    "observability",
+    "opentelemetry",
+    "confidence",
+    "guardrails",
+    "context-management",
+    "streaming"
+  ],
   "license": "MIT",
   "author": {
     "name": "Oleksandr Huzei",
