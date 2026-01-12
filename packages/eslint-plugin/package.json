@@ -2,20 +2,34 @@
   "name": "@mullion/eslint-plugin",
   "version": "0.2.1",
   "description": "ESLint rules for type-safe LLM context management",
-  "keywords": [
-    "eslint",
-    "eslintplugin",
-    "eslint-plugin",
-    "llm",
-    "typescript",
-    "context",
-    "safety"
-  ],
+  "homepage": "https://github.com/mullionlabs/mullion-ts/tree/main/packages/eslint-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/mullionlabs/mullion-ts/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mullionlabs/mullion-ts.git",
+    "url": "git+https://github.com/mullionlabs/mullion-ts.git",
     "directory": "packages/eslint-plugin"
   },
+  "keywords": [
+    "mullion",
+    "eslint",
+    "eslint-plugin",
+    "typescript",
+    "lint",
+    "static-analysis",
+    "security",
+    "taint-analysis",
+    "dataflow",
+    "llm",
+    "ai",
+    "prompt",
+    "context",
+    "context-management",
+    "guardrails",
+    "safety",
+    "confidence"
+  ],
   "license": "MIT",
   "author": {
     "name": "Oleksandr Huzei",

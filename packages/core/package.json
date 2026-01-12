@@ -2,19 +2,34 @@
   "name": "@mullion/core",
   "version": "0.2.1",
   "description": "Core types and utilities for Mullion",
-  "keywords": [
-    "llm",
-    "typescript",
-    "types",
-    "context",
-    "ai",
-    "safety"
-  ],
+  "homepage": "https://github.com/mullionlabs/mullion-ts/tree/main/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/mullionlabs/mullion-ts/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mullionlabs/mullion-ts.git",
+    "url": "git+https://github.com/mullionlabs/mullion-ts.git",
     "directory": "packages/core"
   },
+  "keywords": [
+    "mullion",
+    "llm",
+    "ai",
+    "typescript",
+    "context",
+    "context-management",
+    "type-safe",
+    "static-analysis",
+    "provenance",
+    "dataflow",
+    "opentelemetry",
+    "otlp",
+    "tracing",
+    "observability",
+    "rag",
+    "guardrails",
+    "safety"
+  ],
   "license": "MIT",
   "author": {
     "name": "Oleksandr Huzei",
