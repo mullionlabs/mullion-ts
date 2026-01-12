@@ -8,6 +8,7 @@ This `docs/` folder is the technical source of truth.
 - **[Getting started](./guides/getting-started.md)** - Quick start guide for Mullion
 - **[Use cases](./guides/use-cases.md)** - Common scenarios and examples
 - **[Security model](./guides/security-model.md)** - Understanding Mullion's security guarantees
+- **[Build-time LLM safety](./guides/build-time-llm-safety.md)** - Deep dive: preventing context leaks as a dataflow problem
 - **[Patterns & recipes](./guides/patterns.md)** - Best practices and patterns
 - **[Positioning & comparisons](./guides/positioning.md)** - How Mullion compares to alternatives
 
