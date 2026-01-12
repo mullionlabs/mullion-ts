@@ -1,7 +1,7 @@
 # Design notes
 
-These docs explain Mullion’s architecture decisions and direction.
+These docs explain Mullion's architecture decisions and direction.
 
-- Architecture & mental model: `./architecture.md`
-- Roadmap: `./roadmap.md`
-- ADRs: `../adr/`
+- **[Architecture & mental model](./architecture.md)** - Core architecture and design philosophy
+- **[Roadmap](./roadmap.md)** - Future plans and development roadmap
+- **[ADRs](../adr/)** - Architecture Decision Records
