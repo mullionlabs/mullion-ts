@@ -1,6 +1,6 @@
 {
   "name": "@mullion/core",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Core types and utilities for Mullion",
   "homepage": "https://github.com/mullionlabs/mullion-ts/tree/main/packages/core#readme",
   "bugs": {
