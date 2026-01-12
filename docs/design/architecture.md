@@ -65,4 +65,4 @@ Two big “next” surfaces that benefit from this architecture:
 - **Cost visibility** (token estimation, cache economics, attribution)
 - **Observability** (structured trace events, provenance graphs, OpenTelemetry exporters)
 
-See `./roadmap.md` and `../../TODO.md`.
+See [Roadmap](./roadmap.md) and [TODO](../../TODO.md).

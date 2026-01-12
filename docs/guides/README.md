@@ -4,11 +4,11 @@ Guides are practical, task-oriented docs.
 
 Start with:
 
-- [`getting-started.md`](./getting-started.md)
+- **[Getting started](./getting-started.md)** - Quick start guide for Mullion
 
 Then:
 
-- [`use-cases.md`](./use-cases.md)
-- [`security-model.md`](./security-model.md)
-- [`patterns.md`](./patterns.md)
-- [`positioning.md`](./positioning.md)
+- **[Use cases](./use-cases.md)** - Common scenarios and examples
+- **[Security model](./security-model.md)** - Understanding Mullion's security guarantees
+- **[Patterns & recipes](./patterns.md)** - Best practices and patterns
+- **[Positioning & comparisons](./positioning.md)** - How Mullion compares to alternatives

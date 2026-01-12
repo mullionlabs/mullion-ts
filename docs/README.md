@@ -5,38 +5,38 @@ This `docs/` folder is the technical source of truth.
 
 ## Guides (start here)
 
-- Getting started: [Getting started](./guides/getting-started.md)
-- Use cases: [Use cases](./guides/use-cases.md)
-- Security model: [Security model](./guides/security-model.md)
-- Patterns & recipes: [Patterns & recipes](./guides/patterns.md)
-- Positioning & comparisons: [Positioning & comparisons](./guides/positioning.md)
+- **[Getting started](./guides/getting-started.md)** - Quick start guide for Mullion
+- **[Use cases](./guides/use-cases.md)** - Common scenarios and examples
+- **[Security model](./guides/security-model.md)** - Understanding Mullion's security guarantees
+- **[Patterns & recipes](./guides/patterns.md)** - Best practices and patterns
+- **[Positioning & comparisons](./guides/positioning.md)** - How Mullion compares to alternatives
 
 ## Reference
 
-- Core concepts: [Core concepts](./reference/concepts.md)
-- ESLint plugin: [ESLint plugin](./reference/eslint-plugin.md)
-- Caching: [Caching](./reference/caching.md)
-- Fork: [Fork](./reference/fork.md)
-- Merge strategies: [Merge strategies](./reference/merge-strategies.md)
-- Cost estimation: [Cost estimation](./reference/cost-estimation.md)
+- **[Core concepts](./reference/concepts.md)** - Fundamental Mullion concepts and APIs
+- **[ESLint plugin](./reference/eslint-plugin.md)** - ESLint integration and rules
+- **[Caching](./reference/caching.md)** - Provider-aware caching system
+- **[Fork](./reference/fork.md)** - Parallel execution patterns
+- **[Merge strategies](./reference/merge-strategies.md)** - Combining results from multiple inferences
+- **[Cost estimation](./reference/cost-estimation.md)** - Token and cost tracking
 
 ## Tracing / Observability
 
-- Tracing (OpenTelemetry): [TRACING.md](../packages/core/TRACING.md)
+- **[Tracing (OpenTelemetry)](../packages/core/TRACING.md)** - OpenTelemetry integration guide
 
 ## Design notes
 
-- Architecture & mental model: [Architecture & mental model](./design/architecture.md)
-- Roadmap: [Roadmap](./design/roadmap.md)
-- ADRs: [ADRs](./adr/)
+- **[Architecture & mental model](./design/architecture.md)** - Core architecture and design philosophy
+- **[Roadmap](./design/roadmap.md)** - Future plans and development roadmap
+- **[ADRs](./adr/)** - Architecture Decision Records
 
 ## Project references
 
-- Roadmap / progress (canonical): [TODO.md](../TODO.history.md)
-- Examples overview: [EXAMPLES.md](../EXAMPLES.md)
-- Runnable example: [basic example](../examples/basic)
+- **[Roadmap / progress (canonical)](../TODO.history.md)** - Historical TODO and progress tracking
+- **[Examples overview](../EXAMPLES.md)** - Overview of example projects
+- **[Runnable example](../examples/basic)** - Basic usage example
 
 ## Contributing
 
-- Contributor guide: [Contributing](./contributing/README.md)
-- Integration tests: [Integration tests](./contributing/integration-tests.md)
+- **[Contributor guide](./contributing/README.md)** - Complete guide to contributing to Mullion
+- **[Integration tests](./contributing/integration-tests.md)** - Manual testing with real LLM providers

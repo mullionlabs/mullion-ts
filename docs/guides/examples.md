@@ -2,12 +2,12 @@
 
 This page contains comprehensive examples showing how to use Mullion for **type-safe context management**, **trust boundaries**, and **auditable LLM outputs** in TypeScript.
 
-> Note: Some examples use simplified pseudo-workflows for clarity.  
+> Note: Some examples use simplified pseudo-workflows for clarity.
 > API details may evolve while Mullion is pre-release. Prefer the canonical docs for concepts and lint rules:
 >
-> - Concepts: `../reference/concepts.md`
-> - Security model: `./security-model.md`
-> - ESLint plugin: `../reference/eslint-plugin.md`
+> - Concepts: [Core concepts](../reference/concepts.md)
+> - Security model: [Security model](./security-model.md)
+> - ESLint plugin: [ESLint plugin](../reference/eslint-plugin.md)
 
 ---
 
@@ -499,8 +499,8 @@ async function robustProcessing(input: string) {
 
 ### Parallel analysis (fork/merge mental model)
 
-If you want “same context, multiple analyses”, you can run parallel scopes and merge results.
-(If your adapter supports it, prefer Mullion’s `fork()` strategy; see `./patterns.md`.)
+If you want "same context, multiple analyses", you can run parallel scopes and merge results.
+(If your adapter supports it, prefer Mullion's `fork()` strategy; see [Patterns & recipes](./patterns.md).)
 
 ```ts
 async function parallelAnalysis(document: string) {
@@ -592,7 +592,7 @@ await client.scope('scope-a', async (ctxA) => {
 });
 ```
 
-For rule docs and canonical configuration, see: `../reference/eslint-plugin.md`.
+For rule docs and canonical configuration, see: [ESLint plugin](../reference/eslint-plugin.md).
 
 ### Flat config example
 
@@ -616,13 +616,13 @@ export default [
 
 ## Getting started
 
-1. **Try the basic example:** `../../examples/basic/`
-2. **Run integration tests:** `../../docs/contributing/integration-tests.md`
-3. **Enable ESLint:** `../reference/eslint-plugin.md`
+1. **Try the basic example:** [Basic example](../../examples/basic/)
+2. **Run integration tests:** [Integration tests](../../docs/contributing/integration-tests.md)
+3. **Enable ESLint:** [ESLint plugin](../reference/eslint-plugin.md)
 4. **Adapt patterns:** use these examples as templates
 
 For package-specific docs (once stabilized), see:
 
-- `../../packages/core/README.md`
-- `../../packages/ai-sdk/README.md`
-- `../../packages/eslint-plugin/README.md`
+- [@mullion/core README](../../packages/core/README.md)
+- [@mullion/ai-sdk README](../../packages/ai-sdk/README.md)
+- [@mullion/eslint-plugin README](../../packages/eslint-plugin/README.md)

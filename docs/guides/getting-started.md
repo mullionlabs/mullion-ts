@@ -63,6 +63,6 @@ const publicResult = await client.scope('public', async (ctx) => {
 
 ## Next steps
 
-- Learn the mental model: `../reference/concepts.md`
-- Add guardrails: `../reference/eslint-plugin.md`
-- Explore patterns: `./patterns.md`
+- Learn the mental model: [Core concepts](../reference/concepts.md)
+- Add guardrails: [ESLint plugin](../reference/eslint-plugin.md)
+- Explore patterns: [Patterns & recipes](./patterns.md)

@@ -1,6 +1,6 @@
 # Roadmap
 
-This page is a high-level view. The canonical plan and progress tracking lives in `TODO.md`.
+This page is a high-level view. The canonical plan and progress tracking lives in [TODO](../../TODO.md).
 
 ## Near-term focus
 
@@ -10,10 +10,8 @@ This page is a high-level view. The canonical plan and progress tracking lives i
 
 ## Next major milestones
 
-- **Cost estimation** (token estimation, cache write/read economics, provider-aware breakdowns)
-- **Trace & observability** (structured trace events, provenance graph, OpenTelemetry exporters)
 - More end-to-end examples (Next.js + real-world patterns)
 
 ## Canonical source
 
-- `../../TODO.md`
+- [TODO](../../TODO.md)

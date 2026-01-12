@@ -62,6 +62,6 @@ Recommended policy examples:
 
 ## Fork / merge (advanced)
 
-Use fork/merge for “same context, multiple analyses”.
+Use fork/merge for "same context, multiple analyses".
 
-See: `../design/architecture.md`
+See: [Architecture & mental model](../design/architecture.md)
