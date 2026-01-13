@@ -9,7 +9,6 @@
  */
 
 import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
 import { fork } from '@mullion/core';
 import {
   DocumentClassification,
@@ -17,20 +16,27 @@ import {
   type Document,
   type AccessLevel,
 } from './schemas.js';
+import {
+  getLanguageModel,
+  getProviderName,
+  type ProviderConfig,
+} from './provider.js';
 
 /**
  * Classify a single document using AI
  */
 export async function classifyDocument(
   document: Document,
-  modelName: string = 'gpt-4o-mini'
+  providerConfig?: ProviderConfig
 ): Promise<{ classification: DocumentClassification; confidence: number }> {
-  if (!process.env.OPENAI_API_KEY) {
+  const model = getLanguageModel(providerConfig);
+
+  if (!model) {
     // Return mock classification for demo
     return getMockClassification(document);
   }
 
-  const client = createMullionClient(openai(modelName));
+  const client = createMullionClient(model);
 
   const result = await client.scope('classifier', async (ctx) => {
     const prompt = `Analyze this document and classify its access level.
@@ -55,9 +61,17 @@ Classification criteria:
     return ctx.use(classification);
   });
 
+  if (!result) {
+    throw new Error('Failed to classify document: No response from LLM');
+  }
+
+  // Handle both wrapped and unwrapped results
+  const classification = 'value' in result ? result.value : result;
+  const confidence = 'confidence' in result ? result.confidence : 0.85;
+
   return {
-    classification: result.value,
-    confidence: result.confidence,
+    classification,
+    confidence,
   };
 }
 
@@ -67,13 +81,16 @@ Classification criteria:
  * This demonstrates Mullion's fork/merge capability for consensus building.
  */
 export async function classifyDocumentWithConsensus(
-  document: Document
+  document: Document,
+  providerConfig?: ProviderConfig
 ): Promise<ClassificationConsensus> {
-  if (!process.env.OPENAI_API_KEY) {
+  const model = getLanguageModel(providerConfig);
+
+  if (!model) {
     return getMockConsensus(document);
   }
 
-  const client = createMullionClient(openai('gpt-4o-mini'));
+  const client = createMullionClient(model);
 
   // Fork: classify with multiple models in parallel
   const results = await fork(client, 'classifier', {

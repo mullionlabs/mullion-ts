@@ -5,9 +5,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "tsx src/index.ts",
-    "pipeline": "tsx src/pipeline.ts",
-    "classify": "tsx src/classifier.ts",
+    "start": "tsx --env-file=.env src/index.ts",
+    "pipeline": "tsx --env-file=.env src/pipeline.ts",
+    "classify": "tsx --env-file=.env src/classifier.ts",
     "lint": "eslint src/**/*.ts || echo 'ESLint found issues (examples may have intentional warnings for demonstration)'",
     "lint:strict": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@ai-sdk/openai": "catalog:",
+    "@ai-sdk/anthropic": "^3.0.12",
     "@typescript-eslint/parser": "catalog:",
     "@types/node": "catalog:",
     "ai": "catalog:",

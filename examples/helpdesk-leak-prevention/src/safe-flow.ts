@@ -13,7 +13,6 @@
  */
 
 import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
 import { createOwned } from '@mullion/core';
 import {
   TicketAnalysisSchema,
@@ -21,6 +20,11 @@ import {
   SanitizedTicketSchema,
   type SanitizedTicket,
 } from './schemas.js';
+import {
+  getLanguageModel,
+  getProviderName,
+  type ProviderConfig,
+} from './provider.js';
 
 // Sample customer ticket
 const SAMPLE_TICKET = `
@@ -40,13 +44,18 @@ Account status: Premium subscriber since 2020
 /**
  * ✅ SAFE: Process ticket with proper scope isolation and bridging
  */
-export async function processSupportTicketSafely() {
-  if (!process.env.OPENAI_API_KEY) {
-    console.log('⚠️  OPENAI_API_KEY not set. Running with mock data.\n');
+export async function processSupportTicketSafely(
+  providerConfig?: ProviderConfig
+) {
+  const model = getLanguageModel(providerConfig);
+
+  if (!model) {
+    console.log(`⚠️  No API key set. Running with mock data.\n`);
     return runMockSafeFlow();
   }
 
-  const client = createMullionClient(openai('gpt-4o-mini'));
+  console.log(`🤖 Using ${getProviderName(providerConfig)}\n`);
+  const client = createMullionClient(model);
 
   console.log('🔒 SAFE FLOW: Processing ticket with proper isolation\n');
   console.log('📋 Ticket:\n', SAMPLE_TICKET, '\n');
