@@ -51,13 +51,20 @@ pnpm install
 pnpm build
 ```
 
-### 2. Set Up Environment
+### 2. Set Up Environment (Optional)
 
 ```bash
 cd examples/helpdesk-leak-prevention
 cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
+# Edit .env and add your API key for OpenAI or Anthropic
 ```
+
+**Note:** The example works without an API key by using mock data. To use a real LLM provider:
+
+- For OpenAI: Set `OPENAI_API_KEY` in your `.env` file
+- For Anthropic: Set `ANTHROPIC_API_KEY` in your `.env` file
+
+The example will automatically detect which provider to use based on available API keys.
 
 ### 3. Run the Safe Flow
 
@@ -67,6 +74,7 @@ npm run safe
 
 **Output shows:**
 
+- Which provider is being used (Mock/OpenAI/Anthropic)
 - Admin scope analyzes ticket with internal context
 - Data is sanitized (sensitive fields removed)
 - Public scope generates response using only safe data

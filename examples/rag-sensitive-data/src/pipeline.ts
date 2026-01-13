@@ -12,6 +12,7 @@
 import { analyzeQuery, retrieveDocuments } from './retriever.js';
 import { generateResponseWithSources } from './generator.js';
 import type { UserQuery, RAGResponse } from './schemas.js';
+import { getProviderName, type ProviderConfig } from './provider.js';
 
 export interface RAGPipelineResult {
   query: UserQuery;
@@ -33,14 +34,16 @@ export async function executeRAGPipeline(
   options: {
     topK?: number;
     verbose?: boolean;
+    providerConfig?: ProviderConfig;
   } = {}
 ): Promise<RAGPipelineResult> {
-  const { topK = 3, verbose = true } = options;
+  const { topK = 3, verbose = true, providerConfig } = options;
   const startTime = Date.now();
 
   if (verbose) {
     console.log('\n🚀 Starting RAG Pipeline...\n');
     console.log('═'.repeat(70));
+    console.log(`🤖 Provider: ${getProviderName(providerConfig)}`);
     console.log(`📝 Query: "${query.query}"`);
     console.log(`👤 User Access Level: ${query.userAccessLevel.toUpperCase()}`);
     console.log('═'.repeat(70));
@@ -48,7 +51,7 @@ export async function executeRAGPipeline(
 
   // Step 1: Analyze Query
   if (verbose) console.log('\n📊 Step 1: Query Analysis');
-  const analysis = await analyzeQuery(query);
+  const analysis = await analyzeQuery(query, providerConfig);
 
   if (verbose) {
     console.log(`   Intent: ${analysis.value.intent}`);
@@ -127,7 +130,11 @@ export async function executeRAGPipeline(
 
   // Step 4: Generate Response
   if (verbose) console.log('\n💬 Step 4: Response Generation');
-  const result = await generateResponseWithSources(query, retrievedChunks);
+  const result = await generateResponseWithSources(
+    query,
+    retrievedChunks,
+    providerConfig
+  );
 
   if (verbose) {
     console.log(

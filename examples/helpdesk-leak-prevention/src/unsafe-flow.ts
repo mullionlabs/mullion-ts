@@ -13,13 +13,17 @@
  */
 
 import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
 import type { Owned } from '@mullion/core';
 import {
   TicketAnalysisSchema,
   CustomerResponseSchema,
   type TicketAnalysis,
 } from './schemas.js';
+import {
+  getLanguageModel,
+  getProviderName,
+  type ProviderConfig,
+} from './provider.js';
 
 const SAMPLE_TICKET = `
 Customer: Jane Doe (ID: CUST-12345)
@@ -32,8 +36,14 @@ This is the third billing issue and I'm extremely frustrated.
 /**
  * ❌ UNSAFE: Context Leak #1 - Storing scoped value in outer variable
  */
-export async function contextLeakOuterScope() {
-  const client = createMullionClient(openai('gpt-4o-mini'));
+export async function contextLeakOuterScope(providerConfig?: ProviderConfig) {
+  const model = getLanguageModel(providerConfig);
+  if (!model) {
+    console.log('⚠️  No API key set. This demo requires a real provider.');
+    return;
+  }
+
+  const client = createMullionClient(model);
 
   // This variable will hold admin-scoped data
   let leakedAnalysis: Owned<TicketAnalysis, 'admin'>;
@@ -58,8 +68,14 @@ export async function contextLeakOuterScope() {
 /**
  * ❌ UNSAFE: Context Leak #2 - Using data in different scope without bridge
  */
-export async function contextLeakCrossScope() {
-  const client = createMullionClient(openai('gpt-4o-mini'));
+export async function contextLeakCrossScope(providerConfig?: ProviderConfig) {
+  const model = getLanguageModel(providerConfig);
+  if (!model) {
+    console.log('⚠️  No API key set. This demo requires a real provider.');
+    return;
+  }
+
+  const client = createMullionClient(model);
 
   const adminAnalysis = await client.scope('admin', async (adminCtx) => {
     const analysis = await adminCtx.infer(TicketAnalysisSchema, SAMPLE_TICKET);
@@ -83,8 +99,14 @@ export async function contextLeakCrossScope() {
 /**
  * ❌ UNSAFE: Context Leak #3 - Direct value access without bridge
  */
-export async function directValueAccessLeak() {
-  const client = createMullionClient(openai('gpt-4o-mini'));
+export async function directValueAccessLeak(providerConfig?: ProviderConfig) {
+  const model = getLanguageModel(providerConfig);
+  if (!model) {
+    console.log('⚠️  No API key set. This demo requires a real provider.');
+    return;
+  }
+
+  const client = createMullionClient(model);
 
   const adminData = await client.scope('admin', async (adminCtx) => {
     return await adminCtx.infer(TicketAnalysisSchema, SAMPLE_TICKET);
@@ -106,8 +128,14 @@ export async function directValueAccessLeak() {
 /**
  * ❌ UNSAFE: No confidence checking
  */
-export async function noConfidenceCheck() {
-  const client = createMullionClient(openai('gpt-4o-mini'));
+export async function noConfidenceCheck(providerConfig?: ProviderConfig) {
+  const model = getLanguageModel(providerConfig);
+  if (!model) {
+    console.log('⚠️  No API key set. This demo requires a real provider.');
+    return;
+  }
+
+  const client = createMullionClient(model);
 
   await client.scope('admin', async (adminCtx) => {
     const analysis = await adminCtx.infer(TicketAnalysisSchema, SAMPLE_TICKET);
@@ -127,8 +155,14 @@ export async function noConfidenceCheck() {
 /**
  * ❌ UNSAFE: Array collection leak
  */
-export async function arrayCollectionLeak() {
-  const client = createMullionClient(openai('gpt-4o-mini'));
+export async function arrayCollectionLeak(providerConfig?: ProviderConfig) {
+  const model = getLanguageModel(providerConfig);
+  if (!model) {
+    console.log('⚠️  No API key set. This demo requires a real provider.');
+    return;
+  }
+
+  const client = createMullionClient(model);
 
   // Array in outer scope
   const leakedData: Array<Owned<TicketAnalysis, 'admin'>> = [];
@@ -157,8 +191,14 @@ export async function arrayCollectionLeak() {
 /**
  * ❌ UNSAFE: Return value leak
  */
-export async function returnValueLeak() {
-  const client = createMullionClient(openai('gpt-4o-mini'));
+export async function returnValueLeak(providerConfig?: ProviderConfig) {
+  const model = getLanguageModel(providerConfig);
+  if (!model) {
+    console.log('⚠️  No API key set. This demo requires a real provider.');
+    return;
+  }
+
+  const client = createMullionClient(model);
 
   // ❌ ESLint ERROR: Returning scoped value from scope callback
   // @mullion/no-context-leak should flag this
@@ -177,14 +217,18 @@ export async function returnValueLeak() {
 /**
  * ❌ UNSAFE: Complete unsafe flow (all violations together)
  */
-export async function completeUnsafeFlow() {
-  if (!process.env.OPENAI_API_KEY) {
+export async function completeUnsafeFlow(providerConfig?: ProviderConfig) {
+  const model = getLanguageModel(providerConfig);
+
+  if (!model) {
     console.log('⚠️  This is the UNSAFE flow - intentionally broken!');
-    console.log('Run `npm run lint` to see ESLint catch these violations.\n');
+    console.log('Run `npm run lint` to see ESLint catch these violations.');
+    console.log('Note: This demo requires a real API key to run.\n');
     return;
   }
 
-  const client = createMullionClient(openai('gpt-4o-mini'));
+  console.log(`🤖 Using ${getProviderName(providerConfig)}\n`);
+  const client = createMullionClient(model);
 
   console.log('❌ UNSAFE FLOW: Processing ticket WITHOUT proper isolation\n');
   console.log('📋 Ticket:\n', SAMPLE_TICKET, '\n');

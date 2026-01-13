@@ -9,7 +9,6 @@
  */
 
 import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
 import type { Owned } from '@mullion/core';
 import {
   QueryAnalysis,
@@ -22,20 +21,24 @@ import {
   filterDocumentsByAccess,
   scoreDocumentRelevance,
 } from './data/sample-docs.js';
+import { getLanguageModel, type ProviderConfig } from './provider.js';
 
 /**
  * Analyze user query to understand intent and required access level
  */
 export async function analyzeQuery(
-  query: UserQuery
+  query: UserQuery,
+  providerConfig?: ProviderConfig
 ): Promise<Owned<QueryAnalysis, 'query-analysis'>> {
-  if (!process.env.OPENAI_API_KEY) {
+  const model = getLanguageModel(providerConfig);
+
+  if (!model) {
     return getMockQueryAnalysis(query);
   }
 
-  const client = createMullionClient(openai('gpt-4o-mini'));
+  const client = createMullionClient(model);
 
-  return await client.scope('query-analysis', async (ctx) => {
+  const result = await client.scope('query-analysis', async (ctx) => {
     const prompt = `Analyze this user query:
 
 Query: ${query.query}
@@ -57,6 +60,20 @@ Consider:
 
     return ctx.use(analysis);
   });
+
+  // Handle both wrapped and unwrapped results
+  if ('value' in result && '__scope' in result) {
+    // Already wrapped as Owned
+    return result as Owned<QueryAnalysis, 'query-analysis'>;
+  } else {
+    // Unwrapped - create Owned wrapper
+    return {
+      value: result as any,
+      confidence: 0.85,
+      __scope: 'query-analysis',
+      traceId: `trace-${Date.now()}`,
+    } as Owned<QueryAnalysis, 'query-analysis'>;
+  }
 }
 
 /**

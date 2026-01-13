@@ -129,8 +129,15 @@ pnpm build
 ```bash
 cd examples/rag-sensitive-data
 cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY (optional - works without it)
+# Edit .env and add your API key for OpenAI or Anthropic (optional - works without it)
 ```
+
+**Note:** The example works without an API key by using mock data. To use a real LLM provider:
+
+- For OpenAI: Set `OPENAI_API_KEY` in your `.env` file
+- For Anthropic: Set `ANTHROPIC_API_KEY` in your `.env` file
+
+The example will automatically detect which provider to use based on available API keys.
 
 ### 3. Run the Pipeline
 
@@ -140,6 +147,7 @@ npm run pipeline
 
 **Output shows:**
 
+- Which provider is being used (Mock/OpenAI/Anthropic)
 - Query analysis (intent, keywords, required access)
 - Access control check (granted/denied)
 - Document retrieval (filtered by access level)

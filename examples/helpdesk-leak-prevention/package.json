@@ -5,9 +5,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "tsx src/index.ts",
-    "safe": "tsx src/safe-flow.ts",
-    "unsafe": "tsx src/unsafe-flow.ts",
+    "start": "tsx --env-file=.env src/index.ts",
+    "safe": "tsx --env-file=.env src/safe-flow.ts",
+    "unsafe": "tsx --env-file=.env src/unsafe-flow.ts",
     "lint": "eslint src/**/*.ts || echo 'ESLint found issues (expected - unsafe-flow.ts has intentional leaks for demonstration)'",
     "lint:strict": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@ai-sdk/openai": "catalog:",
+    "@ai-sdk/anthropic": "^3.0.12",
     "@typescript-eslint/parser": "catalog:",
     "@types/node": "catalog:",
     "ai": "catalog:",

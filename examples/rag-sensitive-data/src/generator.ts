@@ -9,13 +9,13 @@
  */
 
 import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
 import {
   RAGResponse,
   type UserQuery,
   type RetrievedChunk,
   type AccessLevel,
 } from './schemas.js';
+import { getLanguageModel, type ProviderConfig } from './provider.js';
 
 /**
  * Generate response from retrieved documents
@@ -26,13 +26,16 @@ import {
  */
 export async function generateResponse(
   query: UserQuery,
-  retrievedChunks: RetrievedChunk[]
+  retrievedChunks: RetrievedChunk[],
+  providerConfig?: ProviderConfig
 ): Promise<RAGResponse> {
-  if (!process.env.OPENAI_API_KEY) {
+  const model = getLanguageModel(providerConfig);
+
+  if (!model) {
     return getMockResponse(query, retrievedChunks);
   }
 
-  const client = createMullionClient(openai('gpt-4o-mini'));
+  const client = createMullionClient(model);
 
   const result = await client.scope('generator', async (ctx) => {
     // Build context from retrieved documents
@@ -73,7 +76,8 @@ Please provide a comprehensive answer based on the context above. Cite your sour
     return ctx.use(response);
   });
 
-  return result.value;
+  // Handle both wrapped and unwrapped results
+  return 'value' in result ? result.value : result;
 }
 
 /**
@@ -81,14 +85,19 @@ Please provide a comprehensive answer based on the context above. Cite your sour
  */
 export async function generateResponseWithSources(
   query: UserQuery,
-  retrievedChunks: RetrievedChunk[]
+  retrievedChunks: RetrievedChunk[],
+  providerConfig?: ProviderConfig
 ): Promise<{
   response: RAGResponse;
   sources: RetrievedChunk[];
   highestAccessLevel: AccessLevel;
   totalConfidence: number;
 }> {
-  const response = await generateResponse(query, retrievedChunks);
+  const response = await generateResponse(
+    query,
+    retrievedChunks,
+    providerConfig
+  );
 
   // Determine highest access level used
   const accessHierarchy: Record<AccessLevel, number> = {
