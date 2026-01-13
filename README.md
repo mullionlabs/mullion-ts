@@ -203,25 +203,20 @@ export default [...mullion.configs.recommended];
 
 If you read only 3 pages:
 
-1. **Security model:** what scopes are, what can cross, and why  
-   → [`docs/guides/security-model.md`](./docs/guides/security-model.md)
-
-2. **Core concepts:** `Owned<T>`, provenance, confidence, and how `infer()` works  
-   → [`docs/reference/concepts.md`](./docs/reference/concepts.md)
-
-3. **Patterns & recipes:** practical ways to compose scopes safely  
-   → [`docs/guides/patterns.md`](./docs/guides/patterns.md)
+1. [**Security model:**](./docs/guides/security-model.md) what scopes are, what can cross, and why
+2. [**Core concepts:**](./docs/reference/concepts.md) `Owned<T>`, provenance, confidence, and how `infer()` works
+3. [**Patterns & recipes:**](./docs/guides/patterns.md) practical ways to compose scopes safely
 
 ---
 
 ## 🚀 Feature deep dives
 
-- Tracing / OpenTelemetry: [`packages/core/TRACING.md`](./packages/core/TRACING.md)
-- Cost estimation: [`docs/reference/cost-estimation.md`](./docs/reference/cost-estimation.md)
-- Caching: [`docs/reference/caching.md`](./docs/reference/caching.md)
-- Fork: [`docs/reference/fork.md`](./docs/reference/fork.md)
-- Merge strategies: [`docs/reference/merge-strategies.md`](./docs/reference/merge-strategies.md)
-- ESLint plugin: [`docs/reference/eslint-plugin.md`](./docs/reference/eslint-plugin.md)
+- [**Tracing / OpenTelemetry**](./packages/core/TRACING.md) - Observability
+- [**Cost estimation**](./docs/reference/cost-estimation.md) - Token and cost tracking
+- [**Caching**](./docs/reference/caching.md) - Provider-aware caching system
+- [**Fork**](./docs/reference/fork.md) - Parallel execution patterns
+- [**Merge strategies**](./docs/reference/merge-strategies.md) - Combining results from multiple inferences
+- [**ESLint plugin**](./docs/reference/eslint-plugin.md) - ESLint integration and rules
 
 ---
 
@@ -279,10 +274,10 @@ pnpm --filter mullion-example-rag-sensitive-data pipeline
 
 ## Documentation
 
-- Docs index: [`docs/README.md`](./docs/README.md)
-- Guides: [`docs/guides/README.md`](./docs/guides/README.md)
-- Reference: [`docs/reference/README.md`](./docs/reference/README.md)
-- Examples overview: [`EXAMPLES.md`](./EXAMPLES.md)
+- [**Docs index**](./docs/README.md)
+- [**Guides**](./docs/guides/README.md)
+- [**Reference**](./docs/reference/README.md)
+- [**Examples overview**](./EXAMPLES.md)
 
 Roadmap:
 
@@ -303,14 +298,14 @@ Mullion is under active development. Expect API refinements while we harden:
 - provider-facing integration surfaces
 - cost/observability features
 
-For the definitive plan and progress, see [`TODO.md`](TODO.history.md).
+For the definitive plan and progress, see [`TODO`](TODO.history.md).
 
 ---
 
 ## Contributing
 
-- Contributor guide: [`docs/contributing/README.md`](./docs/contributing/README.md)
-- Integration tests: [`docs/contributing/integration-tests.md`](./docs/contributing/integration-tests.md)
+- **[Contributing Guide](./docs/contributing/CONTRIBUTING.md)** - Complete guide to contributing to Mullion (start here)
+- **[Integration Tests](./docs/contributing/integration-tests.md)** - Manual testing with real LLM providers
 
 ```bash
 pnpm install
