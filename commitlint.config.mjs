@@ -28,6 +28,7 @@ export default {
         'deps',
         'release',
         'monorepo',
+        'examples',
       ],
     ],
     'scope-empty': [1, 'never'], // Warn if scope is empty
