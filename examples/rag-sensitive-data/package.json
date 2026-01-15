@@ -1,11 +1,14 @@
 {
-  "name": "mullion-example-rag-sensitive-data",
-  "version": "1.0.1",
-  "description": "Mullion example: RAG pipeline with document access level classification",
+  "name": "@mullion/template-rag-sensitive-data",
+  "version": "0.0.1",
+  "description": "Mullion template: RAG pipeline with document access level classification",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
-    "start": "tsx --env-file=.env src/index.ts",
+    "start": "tsx --env-file=.env src/cli.ts",
     "pipeline": "tsx --env-file=.env src/pipeline.ts",
     "classify": "tsx --env-file=.env src/classifier.ts",
     "lint": "eslint src/**/*.ts || echo 'ESLint found issues (examples may have intentional warnings for demonstration)'",

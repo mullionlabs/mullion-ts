@@ -1,8 +1,16 @@
-# Mullion Example: RAG with Sensitive Data
+# Mullion Template: RAG with Sensitive Data
+
+**Package:** `@mullion/template-rag-sensitive-data`
 
 > **Scenario:** RAG pipeline with access-level aware document retrieval and classification.
 
-This example demonstrates a **production-ready RAG (Retrieval-Augmented Generation) pipeline** that handles documents with different access levels using Mullion's type-safe context management.
+This template provides a **production-ready RAG (Retrieval-Augmented Generation) pipeline** that handles documents with different access levels using Mullion's type-safe context management.
+
+**Features:**
+
+- 🔄 **Importable as a package** - Reuse in demo apps or generated projects
+- 🎯 **Standalone executable** - Run as a CLI demo
+- 📦 **Complete exports** - All functions, types, and data available for import
 
 ## 🎯 Problem Statement
 
@@ -99,6 +107,8 @@ Document Classification (Fork/Merge):
 ```
 examples/rag-sensitive-data/
 ├── src/
+│   ├── index.ts              # 📦 Package exports (importable)
+│   ├── cli.ts                # 🎯 CLI entry point (executable)
 │   ├── schemas.ts            # Zod schemas for all data structures
 │   ├── data/
 │   │   └── sample-docs.ts    # Sample documents (public/internal/confidential)
@@ -106,7 +116,7 @@ examples/rag-sensitive-data/
 │   ├── retriever.ts          # Query analysis + document retrieval
 │   ├── generator.ts          # Response generation with caching
 │   ├── pipeline.ts           # Complete RAG orchestration
-│   └── index.ts              # Entry point with help
+│   └── provider.ts           # Provider selection (OpenAI/Anthropic/Mock)
 ├── package.json
 ├── tsconfig.json
 ├── eslint.config.js
@@ -115,7 +125,9 @@ examples/rag-sensitive-data/
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### Option A: Use as Standalone Demo
+
+#### 1. Install Dependencies
 
 From the monorepo root:
 
@@ -124,7 +136,7 @@ pnpm install
 pnpm build
 ```
 
-### 2. Set Up Environment (Optional)
+#### 2. Set Up Environment (Optional)
 
 ```bash
 cd examples/rag-sensitive-data
@@ -139,7 +151,7 @@ cp .env.example .env
 
 The example will automatically detect which provider to use based on available API keys.
 
-### 3. Run the Pipeline
+#### 3. Run the Pipeline
 
 ```bash
 npm run pipeline
@@ -154,13 +166,56 @@ npm run pipeline
 - Response generation (with source attribution)
 - Metrics (confidence, execution time, access level used)
 
-### 4. Run Individual Components
+#### 4. Run Individual Components
 
 ```bash
 npm run classify      # Document classification demo
 npm start             # Show help menu
 npm run lint          # Check for context leaks
 ```
+
+### Option B: Import as a Package
+
+Within the monorepo, you can import and use the RAG pipeline in your own apps:
+
+```typescript
+import {
+  executeRAGPipeline,
+  sampleDocuments,
+  classifyDocument,
+  analyzeQuery,
+  retrieveDocuments,
+  generateResponse,
+  getProviderName,
+  type UserQuery,
+  type RAGPipelineResult,
+  type Document,
+} from '@mullion/template-rag-sensitive-data';
+
+// Use in your app
+const query: UserQuery = {
+  query: 'What features does the product offer?',
+  userAccessLevel: 'public',
+};
+
+const result = await executeRAGPipeline(query, {
+  topK: 3,
+  verbose: false,
+  providerConfig: { type: 'openai', model: 'gpt-4o-mini' },
+});
+
+console.log('Answer:', result.response.answer);
+console.log('Sources:', result.response.sources);
+```
+
+**Available Exports:**
+
+- **Pipeline:** `executeRAGPipeline`, `RAGPipelineResult`
+- **Components:** `classifyDocument`, `analyzeQuery`, `retrieveDocuments`, `generateResponse`
+- **Utilities:** `getLanguageModel`, `getProviderName`, `filterDocumentsByAccess`, `scoreDocumentRelevance`
+- **Data:** `sampleDocuments` (10 sample documents with different access levels)
+- **Types:** All TypeScript types and Zod schemas
+- **Schemas:** All Zod schemas exported with `Schema` suffix (e.g., `DocumentSchema`, `UserQuerySchema`)
 
 ## 📖 Example Walkthrough
 
