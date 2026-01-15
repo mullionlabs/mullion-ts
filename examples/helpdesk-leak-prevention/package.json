@@ -1,11 +1,14 @@
 {
-  "name": "mullion-example-helpdesk-leak-prevention",
-  "version": "1.0.1",
-  "description": "Mullion example: Preventing context leaks in customer support systems",
+  "name": "@mullion/template-helpdesk",
+  "version": "0.0.1",
+  "description": "Mullion template: Preventing context leaks in customer support systems",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
-    "start": "tsx --env-file=.env src/index.ts",
+    "start": "tsx --env-file=.env src/cli.ts",
     "safe": "tsx --env-file=.env src/safe-flow.ts",
     "unsafe": "tsx --env-file=.env src/unsafe-flow.ts",
     "lint": "eslint src/**/*.ts || echo 'ESLint found issues (expected - unsafe-flow.ts has intentional leaks for demonstration)'",

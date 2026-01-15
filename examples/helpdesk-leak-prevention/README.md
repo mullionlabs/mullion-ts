@@ -1,8 +1,17 @@
-# Mullion Example: Helpdesk Leak Prevention
+# Mullion Template: Helpdesk Leak Prevention
+
+**Package:** `@mullion/template-helpdesk`
 
 > **Scenario:** Customer support system where internal admin notes must never leak to customer-facing responses.
 
-This example demonstrates how **Mullion** prevents sensitive data leaks across execution scopes using type-safe context management and compile-time validation.
+This template demonstrates how **Mullion** prevents sensitive data leaks across execution scopes using type-safe context management and compile-time validation.
+
+**Features:**
+
+- 🔄 **Importable as a package** - Reuse in demo apps or generated projects
+- 🎯 **Standalone executable** - Run as a CLI demo
+- 📦 **Complete exports** - All functions, types, and schemas available for import
+- 🛡️ **Educational examples** - Both safe and unsafe patterns for learning
 
 ## 🎯 Problem Statement
 
@@ -30,10 +39,12 @@ In a customer support system:
 ```
 examples/helpdesk-leak-prevention/
 ├── src/
+│   ├── index.ts         # 📦 Package exports (importable)
+│   ├── cli.ts           # 🎯 CLI entry point (executable)
 │   ├── schemas.ts       # Zod schemas for ticket analysis & response
 │   ├── safe-flow.ts     # ✅ Correct: explicit sanitization + bridging
 │   ├── unsafe-flow.ts   # ❌ Wrong: intentional leaks for ESLint demo
-│   └── index.ts         # Entry point with instructions
+│   └── provider.ts      # Provider selection (OpenAI/Anthropic/Mock)
 ├── package.json
 ├── tsconfig.json
 ├── eslint.config.js     # Mullion ESLint rules configuration
@@ -42,7 +53,9 @@ examples/helpdesk-leak-prevention/
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### Option A: Use as Standalone Demo
+
+#### 1. Install Dependencies
 
 From the monorepo root:
 
@@ -51,7 +64,7 @@ pnpm install
 pnpm build
 ```
 
-### 2. Set Up Environment (Optional)
+#### 2. Set Up Environment (Optional)
 
 ```bash
 cd examples/helpdesk-leak-prevention
@@ -66,7 +79,7 @@ cp .env.example .env
 
 The example will automatically detect which provider to use based on available API keys.
 
-### 3. Run the Safe Flow
+#### 3. Run the Safe Flow
 
 ```bash
 npm run safe
@@ -80,7 +93,7 @@ npm run safe
 - Public scope generates response using only safe data
 - No leaks! ✅
 
-### 4. Run ESLint to Catch Leaks
+#### 4. Run ESLint to Catch Leaks
 
 ```bash
 npm run lint        # Runs lint (won't fail build - for CI)
@@ -93,6 +106,37 @@ npm run lint:strict # Shows all ESLint errors (for demonstration)
 - `@mullion/require-confidence-check`: Warns about using data without confidence validation (19 warnings)
 
 > **Note:** `npm run lint` exits with 0 (success) even when finding issues, since these are intentional for demonstration. Use `npm run lint:strict` to see ESLint actually fail on violations.
+
+### Option B: Import as a Package
+
+Within the monorepo, you can import and use the helpdesk flow in your own apps:
+
+```typescript
+import {
+  processSupportTicketSafely,
+  getProviderName,
+  getLanguageModel,
+  type TicketAnalysis,
+  type CustomerResponse,
+  type SanitizedTicket,
+  TicketAnalysisSchema,
+  CustomerResponseSchema,
+} from '@mullion/template-helpdesk';
+
+// Use in your app
+const result = await processSupportTicketSafely({
+  type: 'openai',
+  model: 'gpt-4o-mini',
+});
+```
+
+**Available Exports:**
+
+- **Safe Flow:** `processSupportTicketSafely` (production-ready implementation)
+- **Unsafe Flow:** `contextLeakOuterScope`, `contextLeakCrossScope`, `directValueAccessLeak`, etc. (educational examples - DO NOT USE IN PRODUCTION)
+- **Utilities:** `getLanguageModel`, `getProviderName`
+- **Types:** All TypeScript types (`TicketAnalysis`, `CustomerResponse`, `SanitizedTicket`)
+- **Schemas:** All Zod schemas (`TicketAnalysisSchema`, `CustomerResponseSchema`, `SanitizedTicketSchema`)
 
 ## 📖 Example Walkthrough
 

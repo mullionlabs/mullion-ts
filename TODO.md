@@ -71,64 +71,38 @@ examples/rag-sensitive-data/
 
 **Goal:** Enable `import { executeRAGPipeline } from '@mullion/template-rag-sensitive-data'`
 
-#### 12.4.1 RAG Sensitive Data Template
+#### 12.4.1 RAG Sensitive Data Template ✅
 
-- [ ] Rename `src/index.ts` → `src/cli.ts`
-- [ ] Create new `src/index.ts` with re-exports:
+- [x] Rename `src/index.ts` → `src/cli.ts`
+- [x] Create new `src/index.ts` with re-exports (includes all functions, types, schemas, and data)
+- [x] Update `package.json` with new name and exports field
+- [x] Verify CLI still works: `pnpm start` ✅
+- [x] Verify imports work (tested with test file) ✅
+- [x] Update README with import examples and usage documentation ✅
 
-  ```typescript
-  // Schemas
-  export * from './schemas.js';
+**Completed:** All exports verified working, CLI functional, documentation updated.
 
-  // Pipeline & Components
-  export { executeRAGPipeline, type RAGPipelineResult } from './pipeline.js';
-  export { classifyDocuments, classifyWithConsensus } from './classifier.js';
-  export { analyzeQuery, retrieveDocuments } from './retriever.js';
-  export { generateResponseWithSources } from './generator.js';
+#### 12.4.2 Helpdesk Template ✅
 
-  // Provider utilities
-  export {
-    getProvider,
-    getProviderName,
-    type ProviderConfig,
-  } from './provider.js';
+- [x] Apply same refactoring pattern to `examples/helpdesk-leak-prevention/`
+- [x] Rename package to `@mullion/template-helpdesk`
+- [x] Create `src/index.ts` with re-exports (safe flow, unsafe flow examples, schemas, provider utilities)
+- [x] Rename existing `src/index.ts` → `src/cli.ts`
+- [x] Update scripts in `package.json`
+- [x] Verify CLI still works: `pnpm start` ✅
+- [x] Verify imports work (tested with test file) ✅
+- [x] Update README with import examples and usage documentation ✅
 
-  // Data
-  export { sampleDocuments, type Document } from './data/sample-docs.js';
-  ```
+**Completed:** All exports verified working, CLI functional, documentation updated.
 
-- [ ] Update `package.json`:
-  ```json
-  {
-    "name": "@mullion/template-rag-sensitive-data",
-    "version": "0.1.0",
-    "exports": {
-      ".": "./src/index.ts"
-    },
-    "scripts": {
-      "start": "tsx --env-file=.env src/cli.ts",
-      "pipeline": "tsx --env-file=.env src/pipeline.ts",
-      ...
-    }
-  }
-  ```
-- [ ] Verify CLI still works: `pnpm --filter @mullion/template-rag-sensitive-data start`
-- [ ] Verify imports work from another package
+#### 12.4.3 Verify Integration ✅
 
-#### 12.4.2 Helpdesk Template
+- [x] Both templates importable as workspace packages
+- [x] CLI demos still work independently
+- [x] TypeScript types exported correctly
+- [x] Update READMEs with new import examples
 
-- [ ] Apply same refactoring pattern to `examples/helpdesk-leak-prevention/`
-- [ ] Rename package to `@mullion/template-helpdesk`
-- [ ] Create `src/index.ts` with re-exports
-- [ ] Rename existing `src/index.ts` → `src/cli.ts`
-- [ ] Update scripts in `package.json`
-
-#### 12.4.3 Verify Integration
-
-- [ ] Both templates importable as workspace packages
-- [ ] CLI demos still work independently
-- [ ] TypeScript types exported correctly
-- [ ] Update READMEs with new import examples
+**Task 12.4 COMPLETED:** Both RAG and Helpdesk templates are now fully refactored and ready for reuse in Task 13 (Demo Apps) and Task 15 (create-mullion CLI).
 
 ### Future: Paid Scenarios Migration Path
 
