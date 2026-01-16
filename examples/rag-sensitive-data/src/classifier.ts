@@ -225,49 +225,51 @@ function getMockConsensus(document: Document): ClassificationConsensus {
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const { SAMPLE_DOCUMENTS } = await import('./data/sample-docs.js');
+  (async () => {
+    const { SAMPLE_DOCUMENTS } = await import('./data/sample-docs.js');
 
-  console.log('🔍 Document Classifier Demo\n');
+    console.log('🔍 Document Classifier Demo\n');
 
-  // Classify first document from each access level
-  const testDocs = [
-    SAMPLE_DOCUMENTS.find((d) => d.accessLevel === 'public')!,
-    SAMPLE_DOCUMENTS.find((d) => d.accessLevel === 'internal')!,
-    SAMPLE_DOCUMENTS.find((d) => d.accessLevel === 'confidential')!,
-  ];
+    // Classify first document from each access level
+    const testDocs = [
+      SAMPLE_DOCUMENTS.find((d) => d.accessLevel === 'public')!,
+      SAMPLE_DOCUMENTS.find((d) => d.accessLevel === 'internal')!,
+      SAMPLE_DOCUMENTS.find((d) => d.accessLevel === 'confidential')!,
+    ];
 
-  for (const doc of testDocs) {
-    console.log(`📄 Document: ${doc.title}`);
-    console.log(`   Actual Level: ${doc.accessLevel.toUpperCase()}\n`);
+    for (const doc of testDocs) {
+      console.log(`📄 Document: ${doc.title}`);
+      console.log(`   Actual Level: ${doc.accessLevel.toUpperCase()}\n`);
 
-    const { classification, confidence } = await classifyDocument(doc);
-    console.log(
-      `   Classified as: ${classification.accessLevel.toUpperCase()}`
-    );
-    console.log(`   Confidence: ${confidence.toFixed(2)}`);
-    console.log(`   Reasoning: ${classification.reasoning}`);
-    if (classification.sensitiveTopics.length > 0) {
+      const { classification, confidence } = await classifyDocument(doc);
       console.log(
-        `   Sensitive Topics: ${classification.sensitiveTopics.join(', ')}`
+        `   Classified as: ${classification.accessLevel.toUpperCase()}`
       );
+      console.log(`   Confidence: ${confidence.toFixed(2)}`);
+      console.log(`   Reasoning: ${classification.reasoning}`);
+      if (classification.sensitiveTopics.length > 0) {
+        console.log(
+          `   Sensitive Topics: ${classification.sensitiveTopics.join(', ')}`
+        );
+      }
+      console.log();
     }
-    console.log();
-  }
 
-  // Demonstrate consensus classification
-  console.log('🔀 Consensus Classification (Fork/Merge)\n');
-  const testDoc = SAMPLE_DOCUMENTS.find(
-    (d) => d.accessLevel === 'confidential'
-  )!;
-  console.log(`📄 Document: ${testDoc.title}\n`);
+    // Demonstrate consensus classification
+    console.log('🔀 Consensus Classification (Fork/Merge)\n');
+    const testDoc = SAMPLE_DOCUMENTS.find(
+      (d) => d.accessLevel === 'confidential'
+    )!;
+    console.log(`📄 Document: ${testDoc.title}\n`);
 
-  const consensus = await classifyDocumentWithConsensus(testDoc);
-  console.log(
-    `   Final Access Level: ${consensus.finalAccessLevel.toUpperCase()}`
-  );
-  console.log(`   Agreement Score: ${consensus.agreementScore.toFixed(2)}`);
-  console.log(
-    `   Participating Models: ${consensus.participatingModels.join(', ')}`
-  );
-  console.log(`   Sensitive Topics: ${consensus.sensitiveTopics.join(', ')}`);
+    const consensus = await classifyDocumentWithConsensus(testDoc);
+    console.log(
+      `   Final Access Level: ${consensus.finalAccessLevel.toUpperCase()}`
+    );
+    console.log(`   Agreement Score: ${consensus.agreementScore.toFixed(2)}`);
+    console.log(
+      `   Participating Models: ${consensus.participatingModels.join(', ')}`
+    );
+    console.log(`   Sensitive Topics: ${consensus.sensitiveTopics.join(', ')}`);
+  })();
 }

@@ -95,5 +95,24 @@ export default tseslint.config(
   {
     files: ['**/*.config.{js,ts,mjs}', '**/eslint.config.js'],
     extends: [tseslint.configs.disableTypeChecked],
+  },
+
+  // Nuxt demo apps - relax strict type checking for auto-imports
+  {
+    files: ['apps/demo-*/**/*.{ts,tsx,vue}'],
+    rules: {
+      // Nuxt auto-imports cause false positives with these rules
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      // Allow explicit any in demo code
+      '@typescript-eslint/no-explicit-any': 'off',
+      // Turn off type-aware rules that don't work well with Nuxt
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      // Allow async functions without await (for future-proofing/consistency)
+      '@typescript-eslint/require-await': 'off',
+    },
   }
 );

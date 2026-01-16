@@ -229,63 +229,65 @@ function getMockQueryAnalysis(
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  console.log('📚 Document Retriever Demo\n');
+  (async () => {
+    console.log('📚 Document Retriever Demo\n');
 
-  const testQueries: UserQuery[] = [
-    {
-      query: 'What are the product features?',
-      userAccessLevel: 'public',
-    },
-    {
-      query: 'What is our Q4 roadmap?',
-      userAccessLevel: 'internal',
-    },
-    {
-      query: 'What were our Q3 financial results?',
-      userAccessLevel: 'confidential',
-    },
-    {
-      query: 'Tell me about the security incident',
-      userAccessLevel: 'confidential',
-    },
-  ];
+    const testQueries: UserQuery[] = [
+      {
+        query: 'What are the product features?',
+        userAccessLevel: 'public',
+      },
+      {
+        query: 'What is our Q4 roadmap?',
+        userAccessLevel: 'internal',
+      },
+      {
+        query: 'What were our Q3 financial results?',
+        userAccessLevel: 'confidential',
+      },
+      {
+        query: 'Tell me about the security incident',
+        userAccessLevel: 'confidential',
+      },
+    ];
 
-  for (const query of testQueries) {
-    console.log('\n' + '='.repeat(60));
-    console.log(`\n🔎 Query: "${query.query}"`);
-    console.log(`👤 User Access: ${query.userAccessLevel.toUpperCase()}\n`);
+    for (const query of testQueries) {
+      console.log('\n' + '='.repeat(60));
+      console.log(`\n🔎 Query: "${query.query}"`);
+      console.log(`👤 User Access: ${query.userAccessLevel.toUpperCase()}\n`);
 
-    // Analyze query
-    const analysis = await analyzeQuery(query);
-    console.log('📊 Query Analysis:');
-    console.log(`   Intent: ${analysis.value.intent}`);
-    console.log(`   Keywords: ${analysis.value.keywords.join(', ')}`);
-    console.log(`   Required Access: ${analysis.value.requiredAccessLevel}`);
-    console.log(`   Categories: ${analysis.value.categories.join(', ')}`);
-    console.log(`   Confidence: ${analysis.confidence.toFixed(2)}`);
+      // Analyze query
+      const analysis = await analyzeQuery(query);
+      console.log('📊 Query Analysis:');
+      console.log(`   Intent: ${analysis.value.intent}`);
+      console.log(`   Keywords: ${analysis.value.keywords.join(', ')}`);
+      console.log(`   Required Access: ${analysis.value.requiredAccessLevel}`);
+      console.log(`   Categories: ${analysis.value.categories.join(', ')}`);
+      console.log(`   Confidence: ${analysis.confidence.toFixed(2)}`);
 
-    // Check access
-    if (
-      query.userAccessLevel === 'public' &&
-      analysis.value.requiredAccessLevel !== 'public'
-    ) {
-      console.log('\n⛔ ACCESS DENIED: User lacks required access level');
-      continue;
+      // Check access
+      if (
+        query.userAccessLevel === 'public' &&
+        analysis.value.requiredAccessLevel !== 'public'
+      ) {
+        console.log('\n⛔ ACCESS DENIED: User lacks required access level');
+        continue;
+      }
+
+      // Retrieve documents
+      const chunks = await retrieveDocuments(query, 3);
+
+      console.log(`\n📄 Retrieved ${chunks.length} documents:`);
+      chunks.forEach((chunk, i) => {
+        console.log(`\n${i + 1}. ${chunk.documentTitle}`);
+        console.log(`   Level: ${chunk.accessLevel.toUpperCase()}`);
+        console.log(`   Relevance: ${chunk.relevanceScore.toFixed(2)}`);
+        console.log(
+          `   Excerpt: ${chunk.excerpt.substring(0, 100)}${chunk.excerpt.length > 100 ? '...' : ''}`
+        );
+      });
     }
 
-    // Retrieve documents
-    const chunks = await retrieveDocuments(query, 3);
-
-    console.log(`\n📄 Retrieved ${chunks.length} documents:`);
-    chunks.forEach((chunk, i) => {
-      console.log(`\n${i + 1}. ${chunk.documentTitle}`);
-      console.log(`   Level: ${chunk.accessLevel.toUpperCase()}`);
-      console.log(`   Relevance: ${chunk.relevanceScore.toFixed(2)}`);
-      console.log(
-        `   Excerpt: ${chunk.excerpt.substring(0, 100)}${chunk.excerpt.length > 100 ? '...' : ''}`
-      );
-    });
-  }
-
-  console.log('\n' + '='.repeat(60) + '\n');
+    console.log('\n' + '='.repeat(60) + '\n');
+  })();
 }

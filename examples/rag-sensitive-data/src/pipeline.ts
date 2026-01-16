@@ -209,59 +209,61 @@ function wrapText(text: string, width: number): string {
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  console.log('🎯 RAG Pipeline Demo\n');
+  (async () => {
+    console.log('🎯 RAG Pipeline Demo\n');
 
-  const scenarios: UserQuery[] = [
-    {
-      query: 'What features does the product offer?',
-      userAccessLevel: 'public',
-      context: 'Potential customer researching features',
-    },
-    {
-      query: 'What is our product roadmap for Q4?',
-      userAccessLevel: 'internal',
-      context: 'Employee planning work',
-    },
-    {
-      query: 'What were our Q3 financial results?',
-      userAccessLevel: 'confidential',
-      context: 'Executive reviewing performance',
-    },
-    {
-      query: 'Tell me about any recent security incidents',
-      userAccessLevel: 'confidential',
-      context: 'Security team review',
-    },
-  ];
+    const scenarios: UserQuery[] = [
+      {
+        query: 'What features does the product offer?',
+        userAccessLevel: 'public',
+        context: 'Potential customer researching features',
+      },
+      {
+        query: 'What is our product roadmap for Q4?',
+        userAccessLevel: 'internal',
+        context: 'Employee planning work',
+      },
+      {
+        query: 'What were our Q3 financial results?',
+        userAccessLevel: 'confidential',
+        context: 'Executive reviewing performance',
+      },
+      {
+        query: 'Tell me about any recent security incidents',
+        userAccessLevel: 'confidential',
+        context: 'Security team review',
+      },
+    ];
 
-  console.log('Running 4 scenarios with different access levels...\n');
+    console.log('Running 4 scenarios with different access levels...\n');
 
-  for (let i = 0; i < scenarios.length; i++) {
-    console.log(`\n${'#'.repeat(70)}`);
-    console.log(`# Scenario ${i + 1}/${scenarios.length}`);
-    console.log('#'.repeat(70));
+    for (let i = 0; i < scenarios.length; i++) {
+      console.log(`\n${'#'.repeat(70)}`);
+      console.log(`# Scenario ${i + 1}/${scenarios.length}`);
+      console.log('#'.repeat(70));
 
-    try {
-      await executeRAGPipeline(scenarios[i], { verbose: true });
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(`\n❌ Error: ${error.message}\n`);
+      try {
+        await executeRAGPipeline(scenarios[i], { verbose: true });
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(`\n❌ Error: ${error.message}\n`);
+        }
+      }
+
+      // Add delay between scenarios for readability
+      if (i < scenarios.length - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
-    // Add delay between scenarios for readability
-    if (i < scenarios.length - 1) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-  }
-
-  console.log('\n✅ All scenarios completed!\n');
-  console.log('📖 Key Takeaways:');
-  console.log('   • Mullion enforces access control at retrieval time');
-  console.log(
-    '   • Each scope (query-analysis, retriever, generator) is isolated'
-  );
-  console.log('   • Confidence tracking flows through the entire pipeline');
-  console.log('   • Users only see documents they have permission to access');
-  console.log();
+    console.log('\n✅ All scenarios completed!\n');
+    console.log('📖 Key Takeaways:');
+    console.log('   • Mullion enforces access control at retrieval time');
+    console.log(
+      '   • Each scope (query-analysis, retriever, generator) is isolated'
+    );
+    console.log('   • Confidence tracking flows through the entire pipeline');
+    console.log('   • Users only see documents they have permission to access');
+    console.log();
+  })();
 }

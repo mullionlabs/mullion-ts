@@ -29,6 +29,7 @@ export default {
         'release',
         'monorepo',
         'examples',
+        'apps',
       ],
     ],
     'scope-empty': [1, 'never'], // Warn if scope is empty
