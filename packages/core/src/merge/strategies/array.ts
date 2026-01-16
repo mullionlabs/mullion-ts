@@ -1,6 +1,6 @@
-import { createOwned } from '../../owned.js';
-import type { Owned } from '../../owned.js';
-import type { MergeStrategy, MergeResult } from '../types.js';
+import {createOwned} from '../../owned.js';
+import type {Owned} from '../../owned.js';
+import type {MergeStrategy, MergeResult} from '../types.js';
 
 /**
  * Options for configuring array concatenation strategy.
@@ -127,7 +127,7 @@ export interface ConcatOptions<T> {
  * ```
  */
 export function concat<T>(
-  options: ConcatOptions<T> = {}
+  options: ConcatOptions<T> = {},
 ): MergeStrategy<T[], T[]> {
   const {
     minConfidence = 0,
@@ -165,12 +165,12 @@ export function concat<T>(
 
       if (validResults.length === 0) {
         throw new Error(
-          `All results rejected: confidence below threshold (${minConfidence})`
+          `All results rejected: confidence below threshold (${minConfidence})`,
         );
       }
 
       // Track items with their source branch confidence (for prioritization)
-      const itemsWithMeta: { item: T; confidence: number }[] = [];
+      const itemsWithMeta: {item: T; confidence: number}[] = [];
 
       validResults.forEach((result) => {
         result.value.forEach((item) => {
@@ -190,7 +190,7 @@ export function concat<T>(
 
         itemsWithMeta.forEach((itemMeta, idx) => {
           const isDuplicate = uniqueItems.some((existing) =>
-            equalityFn(existing, itemMeta.item)
+            equalityFn(existing, itemMeta.item),
           );
 
           if (!isDuplicate) {
@@ -209,7 +209,7 @@ export function concat<T>(
       if (maxItems !== undefined && finalItems.length > maxItems) {
         // Sort items by their source branch confidence, keep top N
         const sortedWithMeta = itemsWithMeta
-          .map((meta, originalIdx) => ({ ...meta, originalIdx }))
+          .map((meta, originalIdx) => ({...meta, originalIdx}))
           .filter((meta) => {
             // Find this item in finalItems
             return finalItems.some((item) => equalityFn(item, meta.item));

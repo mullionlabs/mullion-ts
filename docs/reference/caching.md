@@ -22,8 +22,8 @@ Mullion's cache system:
 ### Basic Caching
 
 ```typescript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { anthropic } from '@ai-sdk/anthropic';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {anthropic} from '@ai-sdk/anthropic';
 
 const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 
@@ -151,12 +151,12 @@ Only use `'allow-user-content'` when you're certain it's safe.
 
 ```typescript
 // ✅ VALID: Longer TTL before shorter
-ctx.cache.addDeveloperContent(docA, { ttl: '1h' });
-ctx.cache.addDeveloperContent(docB, { ttl: '5m' });
+ctx.cache.addDeveloperContent(docA, {ttl: '1h'});
+ctx.cache.addDeveloperContent(docB, {ttl: '5m'});
 
 // ❌ INVALID: Shorter TTL before longer
-ctx.cache.addDeveloperContent(docC, { ttl: '5m' });
-ctx.cache.addDeveloperContent(docD, { ttl: '1h' }); // Error!
+ctx.cache.addDeveloperContent(docC, {ttl: '5m'});
+ctx.cache.addDeveloperContent(docD, {ttl: '1h'}); // Error!
 ```
 
 **Max 4 Breakpoints:**
@@ -208,7 +208,7 @@ console.log(stats);
 ### Aggregating Metrics Across Multiple Calls
 
 ```typescript
-import { aggregateCacheMetrics } from '@mullion/ai-sdk';
+import {aggregateCacheMetrics} from '@mullion/ai-sdk';
 
 const call1Stats = await ctx.getCacheStats();
 const call2Stats = await ctx.getCacheStats();
@@ -254,17 +254,17 @@ Total: 67% cache hits (2/3 branches)
 ### Warmup Strategies
 
 ```typescript
-import { firstBranchWarmup, explicitWarmup } from '@mullion/ai-sdk';
+import {firstBranchWarmup, explicitWarmup} from '@mullion/ai-sdk';
 
 // 1. First Branch Warmup (automatic)
 const result = await ctx.fork({
-  branches: { a: fnA, b: fnB, c: fnC },
+  branches: {a: fnA, b: fnB, c: fnC},
   warmup: 'first-branch', // Runs 'a', then 'b' and 'c' in parallel
 });
 
 // 2. Explicit Warmup (manual control)
 const result = await ctx.fork({
-  branches: { a: fnA, b: fnB, c: fnC },
+  branches: {a: fnA, b: fnB, c: fnC},
   warmup: explicitWarmup({
     content: sharedContext,
     schema: SharedSchema, // Optional: prime schema cache
@@ -273,7 +273,7 @@ const result = await ctx.fork({
 
 // 3. No Warmup (fast-parallel)
 const result = await ctx.fork({
-  branches: { a: fnA, b: fnB, c: fnC },
+  branches: {a: fnA, b: fnB, c: fnC},
   strategy: 'fast-parallel', // No warmup, all parallel
 });
 ```
@@ -281,7 +281,7 @@ const result = await ctx.fork({
 ### Estimating Warmup Cost
 
 ```typescript
-import { estimateWarmupCost, shouldWarmup } from '@mullion/ai-sdk';
+import {estimateWarmupCost, shouldWarmup} from '@mullion/ai-sdk';
 
 const estimate = await estimateWarmupCost({
   content: largeDocument,
@@ -373,7 +373,7 @@ const result = await ctx.fork({
 Override default thresholds:
 
 ```typescript
-import { createDefaultCacheConfig } from '@mullion/ai-sdk';
+import {createDefaultCacheConfig} from '@mullion/ai-sdk';
 
 const config = createDefaultCacheConfig('anthropic', {
   model: 'claude-3-5-sonnet-20241022',
@@ -387,7 +387,7 @@ const config = createDefaultCacheConfig('anthropic', {
 Integrate custom caching logic:
 
 ```typescript
-import { createAnthropicAdapter } from '@mullion/ai-sdk';
+import {createAnthropicAdapter} from '@mullion/ai-sdk';
 
 const adapter = createAnthropicAdapter({
   minTokens: 2048,
@@ -457,7 +457,7 @@ As document size and branch count increase, savings multiply.
 ```typescript
 // ✅ GOOD: Cache documentation, system prompts
 ctx.cache.addSystemPrompt(SYSTEM_PROMPT);
-ctx.cache.addDeveloperContent(docs, { ttl: '1d', scope: 'persistent' });
+ctx.cache.addDeveloperContent(docs, {ttl: '1d', scope: 'persistent'});
 
 // ❌ BAD: Don't cache frequently changing content
 ctx.cache.addDeveloperContent(realtimeData); // Wastes cache writes
@@ -467,11 +467,11 @@ ctx.cache.addDeveloperContent(realtimeData); // Wastes cache writes
 
 ```typescript
 // ✅ GOOD: Match TTL to content lifecycle
-ctx.cache.addDeveloperContent(staticDocs, { ttl: '1d' });
-ctx.cache.addDeveloperContent(sessionContext, { ttl: '5m' });
+ctx.cache.addDeveloperContent(staticDocs, {ttl: '1d'});
+ctx.cache.addDeveloperContent(sessionContext, {ttl: '5m'});
 
 // ❌ BAD: Long TTL for ephemeral content
-ctx.cache.addDeveloperContent(tempData, { ttl: '1d' }); // Wastes money
+ctx.cache.addDeveloperContent(tempData, {ttl: '1d'}); // Wastes money
 ```
 
 ### 3. Measure Cache Performance
@@ -517,14 +517,14 @@ ctx.cache.addDeveloperContent(summary.value.nonSensitiveSummary);
 **Debug:**
 
 ```typescript
-import { getCacheCapabilities } from '@mullion/ai-sdk';
+import {getCacheCapabilities} from '@mullion/ai-sdk';
 
 const caps = getCacheCapabilities('anthropic', 'claude-3-5-sonnet-20241022');
 console.log(`Min tokens: ${caps.minTokens}`);
 console.log(`Supports cache: ${caps.supportsCache}`);
 
 // Estimate tokens
-import { estimateTokens } from '@mullion/ai-sdk';
+import {estimateTokens} from '@mullion/ai-sdk';
 const estimate = estimateTokens(content);
 console.log(`Content tokens: ${estimate.tokens} (min: ${caps.minTokens})`);
 ```

@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { createOwned } from '../owned.js';
-import type { Context } from '../context.js';
-import type { Owned } from '../owned.js';
+import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
+import {createOwned} from '../owned.js';
+import type {Context} from '../context.js';
+import type {Owned} from '../owned.js';
 
 import {
   fork,
@@ -9,7 +9,7 @@ import {
   clearWarmupExecutor,
   getWarmupExecutor,
 } from './fork.js';
-import type { WarmupExecutor, WarmupResult } from './types.js';
+import type {WarmupExecutor, WarmupResult} from './types.js';
 
 /**
  * Creates a mock context for testing.
@@ -20,7 +20,7 @@ function createMockContext<S extends string>(scopeName: S): Context<S> {
     async infer<T>(): Promise<Owned<T, S>> {
       // Simple mock that returns a fake owned value
       return createOwned({
-        value: { mocked: true } as T,
+        value: {mocked: true} as T,
         scope: scopeName,
         confidence: 0.9,
       });
@@ -72,7 +72,7 @@ describe('fork', () => {
         branches: [
           async (c) =>
             createOwned({
-              value: { data: 'result1' },
+              value: {data: 'result1'},
               scope: c.scope,
               confidence: 0.9,
             }),
@@ -80,7 +80,7 @@ describe('fork', () => {
       });
 
       expect(result.results).toHaveLength(1);
-      expect(result.results[0].value).toEqual({ data: 'result1' });
+      expect(result.results[0].value).toEqual({data: 'result1'});
       expect(result.results[0].confidence).toBe(0.9);
     });
 
@@ -91,11 +91,11 @@ describe('fork', () => {
         strategy: 'fast-parallel',
         branches: [
           async (c) =>
-            createOwned({ value: 'first', scope: c.scope, confidence: 0.9 }),
+            createOwned({value: 'first', scope: c.scope, confidence: 0.9}),
           async (c) =>
-            createOwned({ value: 'second', scope: c.scope, confidence: 0.8 }),
+            createOwned({value: 'second', scope: c.scope, confidence: 0.8}),
           async (c) =>
-            createOwned({ value: 'third', scope: c.scope, confidence: 0.7 }),
+            createOwned({value: 'third', scope: c.scope, confidence: 0.7}),
         ],
       });
 
@@ -116,16 +116,16 @@ describe('fork', () => {
             // Add slight delay to test order preservation
             await new Promise((resolve) => setTimeout(resolve, 30));
             executionOrder.push(1);
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 10));
             executionOrder.push(2);
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
           async (c) => {
             executionOrder.push(3);
-            return createOwned({ value: 3, scope: c.scope });
+            return createOwned({value: 3, scope: c.scope});
           },
         ],
       });
@@ -150,15 +150,15 @@ describe('fork', () => {
         branches: [
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 50));
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 50));
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 50));
-            return createOwned({ value: 3, scope: c.scope });
+            return createOwned({value: 3, scope: c.scope});
           },
         ],
       });
@@ -176,8 +176,8 @@ describe('fork', () => {
       const result = await fork(ctx, {
         strategy: 'fast-parallel',
         branches: [
-          async (c) => createOwned({ value: 1, scope: c.scope }),
-          async (c) => createOwned({ value: 2, scope: c.scope }),
+          async (c) => createOwned({value: 1, scope: c.scope}),
+          async (c) => createOwned({value: 2, scope: c.scope}),
         ],
       });
 
@@ -191,7 +191,7 @@ describe('fork', () => {
 
       const result = await fork(ctx, {
         strategy: 'fast-parallel',
-        branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
+        branches: [async (c) => createOwned({value: 1, scope: c.scope})],
       });
 
       expect(result.warnings).toEqual([]);
@@ -204,7 +204,7 @@ describe('fork', () => {
 
       const result = await fork(ctx, {
         strategy: 'cache-optimized',
-        branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
+        branches: [async (c) => createOwned({value: 1, scope: c.scope})],
       });
 
       expect(result.warnings).toHaveLength(1);
@@ -219,8 +219,8 @@ describe('fork', () => {
         strategy: 'cache-optimized',
         warmup: 'explicit',
         branches: [
-          async (c) => createOwned({ value: 1, scope: c.scope }),
-          async (c) => createOwned({ value: 2, scope: c.scope }),
+          async (c) => createOwned({value: 1, scope: c.scope}),
+          async (c) => createOwned({value: 2, scope: c.scope}),
         ],
       });
 
@@ -252,8 +252,8 @@ describe('fork', () => {
         strategy: 'cache-optimized',
         warmup: 'explicit',
         branches: [
-          async (c) => createOwned({ value: 1, scope: c.scope }),
-          async (c) => createOwned({ value: 2, scope: c.scope }),
+          async (c) => createOwned({value: 1, scope: c.scope}),
+          async (c) => createOwned({value: 2, scope: c.scope}),
         ],
       });
 
@@ -268,7 +268,7 @@ describe('fork', () => {
       const mockExecutor: WarmupExecutor = {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
-          return { tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0 };
+          return {tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0};
         },
       };
 
@@ -283,15 +283,15 @@ describe('fork', () => {
           async (c) => {
             executionOrder.push(1);
             await new Promise((resolve) => setTimeout(resolve, 30));
-            return createOwned({ value: 'first', scope: c.scope });
+            return createOwned({value: 'first', scope: c.scope});
           },
           async (c) => {
             executionOrder.push(2);
-            return createOwned({ value: 'second', scope: c.scope });
+            return createOwned({value: 'second', scope: c.scope});
           },
           async (c) => {
             executionOrder.push(3);
-            return createOwned({ value: 'third', scope: c.scope });
+            return createOwned({value: 'third', scope: c.scope});
           },
         ],
       });
@@ -311,7 +311,7 @@ describe('fork', () => {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
           warmupCalled();
-          return { tokenCost: 100, cacheCreatedTokens: 5000, durationMs: 50 };
+          return {tokenCost: 100, cacheCreatedTokens: 5000, durationMs: 50};
         },
       };
 
@@ -323,8 +323,8 @@ describe('fork', () => {
         strategy: 'cache-optimized',
         warmup: 'none',
         branches: [
-          async (c) => createOwned({ value: 1, scope: c.scope }),
-          async (c) => createOwned({ value: 2, scope: c.scope }),
+          async (c) => createOwned({value: 1, scope: c.scope}),
+          async (c) => createOwned({value: 2, scope: c.scope}),
         ],
       });
 
@@ -340,7 +340,7 @@ describe('fork', () => {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
           warmupCalled();
-          return { tokenCost: 50, cacheCreatedTokens: 3000, durationMs: 25 };
+          return {tokenCost: 50, cacheCreatedTokens: 3000, durationMs: 25};
         },
       };
 
@@ -351,7 +351,7 @@ describe('fork', () => {
       await fork(ctx, {
         strategy: 'cache-optimized',
         // warmup not specified - should default to 'explicit'
-        branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
+        branches: [async (c) => createOwned({value: 1, scope: c.scope})],
       });
 
       expect(warmupCalled).toHaveBeenCalledTimes(1);
@@ -368,11 +368,11 @@ describe('fork', () => {
         branches: [
           async (c) => {
             receivedContexts.push(c);
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             receivedContexts.push(c);
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
         ],
       });
@@ -391,11 +391,11 @@ describe('fork', () => {
         branches: [
           async (c) => {
             scopeNames.push(c.scope);
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             scopeNames.push(c.scope);
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
         ],
       });
@@ -433,7 +433,7 @@ describe('fork', () => {
       const mockExecutor: WarmupExecutor = {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
-          return { tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0 };
+          return {tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0};
         },
       };
 
@@ -446,7 +446,7 @@ describe('fork', () => {
       const mockExecutor: WarmupExecutor = {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
-          return { tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0 };
+          return {tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0};
         },
       };
 
@@ -461,7 +461,7 @@ describe('fork', () => {
       const mockExecutor: WarmupExecutor = {
         supportsCacheOptimization: false,
         async explicitWarmup(): Promise<WarmupResult> {
-          return { tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0 };
+          return {tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0};
         },
       };
 
@@ -471,7 +471,7 @@ describe('fork', () => {
 
       const result = await fork(ctx, {
         strategy: 'cache-optimized',
-        branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
+        branches: [async (c) => createOwned({value: 1, scope: c.scope})],
       });
 
       // Should warn and fall back to fast-parallel
@@ -492,7 +492,7 @@ describe('fork', () => {
               throw new Error('Branch error');
             },
           ],
-        })
+        }),
       ).rejects.toThrow('Branch error');
     });
 
@@ -507,7 +507,7 @@ describe('fork', () => {
             async () => {
               executed.push(1);
               await new Promise((resolve) => setTimeout(resolve, 50));
-              return createOwned({ value: 1, scope: 'test' as const });
+              return createOwned({value: 1, scope: 'test' as const});
             },
             async () => {
               executed.push(2);
@@ -516,10 +516,10 @@ describe('fork', () => {
             async () => {
               executed.push(3);
               await new Promise((resolve) => setTimeout(resolve, 50));
-              return createOwned({ value: 3, scope: 'test' as const });
+              return createOwned({value: 3, scope: 'test' as const});
             },
           ],
-        })
+        }),
       ).rejects.toThrow('Branch 2 error');
 
       // All branches should have started (parallel execution)
@@ -542,8 +542,8 @@ describe('fork', () => {
         fork(ctx, {
           strategy: 'cache-optimized',
           warmup: 'explicit',
-          branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
-        })
+          branches: [async (c) => createOwned({value: 1, scope: c.scope})],
+        }),
       ).rejects.toThrow('Warmup failed');
     });
   });
@@ -556,8 +556,8 @@ describe('fork', () => {
         strategy: 'fast-parallel',
         onSchemaConflict: 'warn',
         branches: [
-          async (c) => createOwned({ value: 1, scope: c.scope }),
-          async (c) => createOwned({ value: 2, scope: c.scope }),
+          async (c) => createOwned({value: 1, scope: c.scope}),
+          async (c) => createOwned({value: 2, scope: c.scope}),
         ],
       });
 
@@ -570,7 +570,7 @@ describe('fork', () => {
       const result = await fork(ctx, {
         strategy: 'fast-parallel',
         onSchemaConflict: 'error',
-        branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
+        branches: [async (c) => createOwned({value: 1, scope: c.scope})],
       });
 
       expect(result.results).toHaveLength(1);
@@ -582,7 +582,7 @@ describe('fork', () => {
       const result = await fork(ctx, {
         strategy: 'fast-parallel',
         onSchemaConflict: 'allow',
-        branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
+        branches: [async (c) => createOwned({value: 1, scope: c.scope})],
       });
 
       expect(result.results).toHaveLength(1);
@@ -594,7 +594,7 @@ describe('fork', () => {
       // Should not throw - warn is the default
       const result = await fork(ctx, {
         strategy: 'fast-parallel',
-        branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
+        branches: [async (c) => createOwned({value: 1, scope: c.scope})],
       });
 
       expect(result.results).toHaveLength(1);
@@ -615,12 +615,12 @@ describe('fork', () => {
         branches: [
           async (c) =>
             createOwned({
-              value: { id: 1, name: 'first' },
+              value: {id: 1, name: 'first'},
               scope: c.scope,
             }),
           async (c) =>
             createOwned({
-              value: { id: 2, name: 'second' },
+              value: {id: 2, name: 'second'},
               scope: c.scope,
             }),
         ],
@@ -637,7 +637,7 @@ describe('fork', () => {
 
       const result = await fork<string, 'my-scope'>(ctx, {
         strategy: 'fast-parallel',
-        branches: [async (c) => createOwned({ value: 'test', scope: c.scope })],
+        branches: [async (c) => createOwned({value: 'test', scope: c.scope})],
       });
 
       expect(result.results[0].__scope).toBe('my-scope');

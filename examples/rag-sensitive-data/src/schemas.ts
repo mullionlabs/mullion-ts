@@ -6,7 +6,7 @@
  * with access-level aware document handling.
  */
 
-import { z } from 'zod';
+import {z} from 'zod';
 
 /**
  * Access levels for documents
@@ -51,7 +51,7 @@ export const DocumentClassification = z.object({
   sensitiveTopics: z
     .array(z.string())
     .describe(
-      'List of sensitive topics found (e.g., PII, financial data, trade secrets)'
+      'List of sensitive topics found (e.g., PII, financial data, trade secrets)',
     ),
   requiresRedaction: z
     .boolean()
@@ -83,7 +83,7 @@ export const QueryAnalysis = z.object({
     .describe('Type of query'),
   keywords: z.array(z.string()).describe('Key terms extracted from query'),
   requiredAccessLevel: AccessLevel.describe(
-    'Minimum access level needed to answer this query'
+    'Minimum access level needed to answer this query',
   ),
   categories: z
     .array(z.string())
@@ -116,7 +116,7 @@ export const RAGResponse = z.object({
         documentId: z.string(),
         title: z.string(),
         accessLevel: AccessLevel,
-      })
+      }),
     )
     .describe('Source documents used to generate the answer'),
   accessLevelUsed: AccessLevel.describe('Highest access level of sources used'),
@@ -153,7 +153,7 @@ export type ForkProcessingResult = z.infer<typeof ForkProcessingResult>;
  */
 export const ClassificationConsensus = z.object({
   finalAccessLevel: AccessLevel.describe(
-    'Consensus access level (most restrictive wins)'
+    'Consensus access level (most restrictive wins)',
   ),
   agreementScore: z
     .number()

@@ -6,10 +6,10 @@
  * validation, token estimation, and safe-by-default policies.
  */
 
-import type { CacheCapabilities, Provider } from './capabilities.js';
-import { getCacheCapabilities } from './capabilities.js';
-import type { CacheConfig, CacheScope, CacheTTL } from './types.js';
-import { validateMinTokens, validateBreakpointLimit } from './types.js';
+import type {CacheCapabilities, Provider} from './capabilities.js';
+import {getCacheCapabilities} from './capabilities.js';
+import type {CacheConfig, CacheScope, CacheTTL} from './types.js';
+import {validateMinTokens, validateBreakpointLimit} from './types.js';
 
 /**
  * Options for creating a cache segment.
@@ -103,7 +103,7 @@ export class CacheSegmentManager {
   segment(
     key: string,
     content: string | object,
-    options: SegmentOptions = {}
+    options: SegmentOptions = {},
   ): void {
     const contentString =
       typeof content === 'string' ? content : JSON.stringify(content);
@@ -123,11 +123,11 @@ export class CacheSegmentManager {
       ttl,
       tokenCount,
       minTokens,
-      options.force
+      options.force,
     );
     if (!validation.valid && !options.force) {
       throw new Error(
-        `Cache segment validation failed: ${validation.errors.join(', ')}`
+        `Cache segment validation failed: ${validation.errors.join(', ')}`,
       );
     }
 
@@ -200,14 +200,14 @@ export class CacheSegmentManager {
     // Check if caching is supported
     if (!capabilities.supported) {
       errors.push(`Caching is not supported for model '${model}'`);
-      return { valid: false, errors, warnings };
+      return {valid: false, errors, warnings};
     }
 
     // Validate segment count against breakpoint limit
     const breakpointValidation = validateBreakpointLimit(
       this.segments.length,
       this.provider,
-      model
+      model,
     );
     errors.push(...breakpointValidation.errors);
     warnings.push(...breakpointValidation.warnings);
@@ -220,14 +220,14 @@ export class CacheSegmentManager {
       const tokenValidation = validateMinTokens(
         segment.tokenCount,
         this.provider,
-        model
+        model,
       );
       warnings.push(...tokenValidation.warnings);
 
       // Validate TTL support
       if (segment.ttl && !capabilities.supportsTtl) {
         warnings.push(
-          `Segment ${i} (${segment.key}) specifies TTL '${segment.ttl}' but model '${model}' does not support TTL`
+          `Segment ${i} (${segment.key}) specifies TTL '${segment.ttl}' but model '${model}' does not support TTL`,
         );
       }
 
@@ -237,7 +237,7 @@ export class CacheSegmentManager {
         !capabilities.supportedTtl.includes(segment.ttl)
       ) {
         errors.push(
-          `Segment ${i} (${segment.key}) uses unsupported TTL '${segment.ttl}'. Supported: ${capabilities.supportedTtl.join(', ')}`
+          `Segment ${i} (${segment.key}) uses unsupported TTL '${segment.ttl}'. Supported: ${capabilities.supportedTtl.join(', ')}`,
         );
       }
     }
@@ -290,7 +290,7 @@ export class CacheSegmentManager {
   getTotalTokens(): number {
     return this.segments.reduce(
       (total, segment) => total + segment.tokenCount,
-      0
+      0,
     );
   }
 
@@ -333,7 +333,7 @@ export class CacheSegmentManager {
     ttl: CacheTTL,
     tokenCount: number,
     minTokens: number,
-    force?: boolean
+    force?: boolean,
   ): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -351,11 +351,11 @@ export class CacheSegmentManager {
     // Check breakpoint limit against configuration
     const maxBreakpoints = Math.min(
       this.defaultConfig.breakpoints ?? this.capabilities.maxBreakpoints,
-      this.capabilities.maxBreakpoints
+      this.capabilities.maxBreakpoints,
     );
     if (this.segments.length >= maxBreakpoints) {
       errors.push(
-        `Cannot add segment: would exceed maximum breakpoints (${maxBreakpoints})`
+        `Cannot add segment: would exceed maximum breakpoints (${maxBreakpoints})`,
       );
     }
 
@@ -370,14 +370,14 @@ export class CacheSegmentManager {
       !this.capabilities.supportedTtl.includes(ttl)
     ) {
       errors.push(
-        `Unsupported TTL '${ttl}'. Supported values: ${this.capabilities.supportedTtl.join(', ')}`
+        `Unsupported TTL '${ttl}'. Supported values: ${this.capabilities.supportedTtl.join(', ')}`,
       );
     }
 
     // Check token threshold
     if (tokenCount < minTokens && !force) {
       warnings.push(
-        `Content has ${tokenCount} tokens, below minimum of ${minTokens}. Consider using force: true`
+        `Content has ${tokenCount} tokens, below minimum of ${minTokens}. Consider using force: true`,
       );
     }
 
@@ -392,7 +392,7 @@ export class CacheSegmentManager {
       this.defaultConfig.scope !== 'allow-user-content'
     ) {
       warnings.push(
-        'Using allow-user-content scope when context default is more restrictive. Ensure this is intentional.'
+        'Using allow-user-content scope when context default is more restrictive. Ensure this is intentional.',
       );
     }
 
@@ -415,7 +415,7 @@ export class CacheSegmentManager {
 export function createCacheSegmentManager(
   provider: Provider,
   model: string,
-  config: CacheConfig
+  config: CacheConfig,
 ): CacheSegmentManager {
   return new CacheSegmentManager(provider, model, config);
 }

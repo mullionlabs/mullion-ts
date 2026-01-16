@@ -18,7 +18,7 @@ All merge strategies:
 **Use when:** You have categorical/enum values and want the most common choice weighted by confidence.
 
 ```typescript
-import { categorical } from '@mullion/core';
+import {categorical} from '@mullion/core';
 
 const SentimentSchema = z.enum(['positive', 'negative', 'neutral']);
 
@@ -56,7 +56,7 @@ console.log(merged.provenance); // ['model1', 'model3']
 **Use when:** You have numeric values and want a confidence-weighted average.
 
 ```typescript
-import { continuous } from '@mullion/core';
+import {continuous} from '@mullion/core';
 
 const PriceSchema = z.object({
   amount: z.number(),
@@ -101,7 +101,7 @@ console.log(merged.metadata.outliers); // Removed outliers
 **Use when:** You have objects and want to merge field-by-field with conflict detection.
 
 ```typescript
-import { object } from '@mullion/core';
+import {object} from '@mullion/core';
 
 const MetadataSchema = z.object({
   title: z.string(),
@@ -147,7 +147,7 @@ A conflict occurs when:
 **Use when:** You have arrays and want to combine + deduplicate.
 
 ```typescript
-import { array } from '@mullion/core';
+import {array} from '@mullion/core';
 
 const KeywordsSchema = z.object({
   keywords: z.array(z.string()),
@@ -209,7 +209,7 @@ const merged = merge(result, {
 
 ```typescript
 type CustomMergeFn<T, S extends string> = (
-  values: Array<Owned<T, S>>
+  values: Array<Owned<T, S>>,
 ) => MergeResult<T>;
 ```
 
@@ -218,7 +218,7 @@ type CustomMergeFn<T, S extends string> = (
 **Use when:** You need k-of-n agreement to accept result.
 
 ```typescript
-import { requireConsensus } from '@mullion/core';
+import {requireConsensus} from '@mullion/core';
 
 const DecisionSchema = z.object({
   approve: z.boolean(),
@@ -280,7 +280,7 @@ const merged = merge(result, {
       // Average numeric scores
       riskScore: continuous.weightedAverage(),
       // Combine all findings
-      findings: array.concat({ deduplicate: true }),
+      findings: array.concat({deduplicate: true}),
     },
   }),
 });
@@ -304,7 +304,7 @@ Each strategy calculates final confidence differently:
 All strategies track which branches contributed:
 
 ```typescript
-const merged = merge(result, { strategy: categorical.weightedVote() });
+const merged = merge(result, {strategy: categorical.weightedVote()});
 
 console.log(merged.provenance);
 // {
@@ -365,7 +365,7 @@ if (merged.conflicts.length > 0) {
 ### 4. Set Confidence Thresholds
 
 ```typescript
-const merged = merge(result, { strategy: categorical.weightedVote() });
+const merged = merge(result, {strategy: categorical.weightedVote()});
 
 if (merged.confidence < 0.8) {
   // Low confidence in merged result

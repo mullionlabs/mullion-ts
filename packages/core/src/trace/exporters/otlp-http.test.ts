@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { OTLPHttpExporter, OTLPExporters } from './otlp-http.js';
-import type { MullionSpan } from '../types.js';
+import {describe, it, expect, beforeEach, vi, afterEach} from 'vitest';
+import {OTLPHttpExporter, OTLPExporters} from './otlp-http.js';
+import type {MullionSpan} from '../types.js';
 
 describe('trace/exporters/otlp-http', () => {
   // Mock fetch
@@ -65,7 +65,7 @@ describe('trace/exporters/otlp-http', () => {
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
           }),
-        })
+        }),
       );
     });
 
@@ -77,7 +77,7 @@ describe('trace/exporters/otlp-http', () => {
 
       expect(body.resourceSpans[0].resource.attributes).toContainEqual({
         key: 'service.name',
-        value: { stringValue: 'mullion' },
+        value: {stringValue: 'mullion'},
       });
     });
 
@@ -94,7 +94,7 @@ describe('trace/exporters/otlp-http', () => {
 
       expect(body.resourceSpans[0].resource.attributes).toContainEqual({
         key: 'service.name',
-        value: { stringValue: 'my-app' },
+        value: {stringValue: 'my-app'},
       });
     });
 
@@ -117,7 +117,7 @@ describe('trace/exporters/otlp-http', () => {
             Authorization: 'Bearer token123',
             'x-custom-header': 'value',
           }),
-        })
+        }),
       );
     });
 
@@ -138,11 +138,11 @@ describe('trace/exporters/otlp-http', () => {
 
     it('should map span kinds correctly', async () => {
       const spans: MullionSpan[] = [
-        { ...testSpan, kind: 'internal' },
-        { ...testSpan, spanId: 'span2', kind: 'server' },
-        { ...testSpan, spanId: 'span3', kind: 'client' },
-        { ...testSpan, spanId: 'span4', kind: 'producer' },
-        { ...testSpan, spanId: 'span5', kind: 'consumer' },
+        {...testSpan, kind: 'internal'},
+        {...testSpan, spanId: 'span2', kind: 'server'},
+        {...testSpan, spanId: 'span3', kind: 'client'},
+        {...testSpan, spanId: 'span4', kind: 'producer'},
+        {...testSpan, spanId: 'span5', kind: 'consumer'},
       ];
 
       await exporter.export(spans);
@@ -160,8 +160,8 @@ describe('trace/exporters/otlp-http', () => {
 
     it('should map span status correctly', async () => {
       const spans: MullionSpan[] = [
-        { ...testSpan, status: 'unset' },
-        { ...testSpan, spanId: 'span2', status: 'ok' },
+        {...testSpan, status: 'unset'},
+        {...testSpan, spanId: 'span2', status: 'ok'},
         {
           ...testSpan,
           spanId: 'span3',
@@ -204,19 +204,19 @@ describe('trace/exporters/otlp-http', () => {
       // String attribute
       expect(attributes).toContainEqual({
         key: 'mullion.scope.id',
-        value: { stringValue: 'admin' },
+        value: {stringValue: 'admin'},
       });
 
       // Number attribute (float)
       expect(attributes).toContainEqual({
         key: 'mullion.confidence',
-        value: { doubleValue: 0.95 },
+        value: {doubleValue: 0.95},
       });
 
       // Number attribute (int)
       expect(attributes).toContainEqual({
         key: 'gen_ai.usage.input_tokens',
-        value: { intValue: 1500 },
+        value: {intValue: 1500},
       });
     });
 
@@ -238,7 +238,7 @@ describe('trace/exporters/otlp-http', () => {
 
       expect(attributes).toContainEqual({
         key: 'gen_ai.response.finish_reasons',
-        value: { stringValue: '["stop","end_turn"]' },
+        value: {stringValue: '["stop","end_turn"]'},
       });
     });
 
@@ -256,7 +256,7 @@ describe('trace/exporters/otlp-http', () => {
       });
 
       await expect(exporter.export([testSpan])).rejects.toThrow(
-        'OTLP export failed: 500 Internal Server Error'
+        'OTLP export failed: 500 Internal Server Error',
       );
     });
 
@@ -272,8 +272,8 @@ describe('trace/exporters/otlp-http', () => {
       fetchMock.mockImplementation(
         () =>
           new Promise((resolve) => {
-            setTimeout(() => resolve({ ok: true }), 200);
-          })
+            setTimeout(() => resolve({ok: true}), 200);
+          }),
       );
 
       await expect(slowExporter.export([testSpan])).rejects.toThrow();
@@ -283,15 +283,15 @@ describe('trace/exporters/otlp-http', () => {
       await exporter.shutdown();
 
       await expect(exporter.export([testSpan])).rejects.toThrow(
-        'Exporter has been shut down'
+        'Exporter has been shut down',
       );
     });
 
     it('should export multiple spans in single request', async () => {
       const spans: MullionSpan[] = [
         testSpan,
-        { ...testSpan, spanId: 'span2', name: 'mullion.bridge' },
-        { ...testSpan, spanId: 'span3', name: 'mullion.merge' },
+        {...testSpan, spanId: 'span2', name: 'mullion.bridge'},
+        {...testSpan, spanId: 'span3', name: 'mullion.merge'},
       ];
 
       await exporter.export(spans);
@@ -347,7 +347,7 @@ describe('trace/exporters/otlp-http', () => {
       const attributes =
         body.resourceSpans[0].scopeSpans[0].spans[0].attributes;
 
-      const keys = attributes.map((attr: { key: string }) => attr.key);
+      const keys = attributes.map((attr: {key: string}) => attr.key);
       expect(keys).not.toContain('mullion.confidence');
     });
   });
@@ -379,7 +379,7 @@ describe('trace/exporters/otlp-http', () => {
 
     it('should create custom exporter', () => {
       const exporter = OTLPExporters.custom(
-        'https://custom-otel.com/v1/traces'
+        'https://custom-otel.com/v1/traces',
       );
       expect(exporter).toBeInstanceOf(OTLPHttpExporter);
     });
@@ -392,7 +392,7 @@ describe('trace/exporters/otlp-http', () => {
           headers: {
             Authorization: 'Bearer token',
           },
-        }
+        },
       );
       expect(exporter).toBeInstanceOf(OTLPHttpExporter);
     });

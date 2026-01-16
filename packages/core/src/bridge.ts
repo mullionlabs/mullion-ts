@@ -1,5 +1,5 @@
-import type { Owned } from './owned.js';
-import type { SemanticValue } from './semantic-value.js';
+import type {Owned} from './owned.js';
+import type {SemanticValue} from './semantic-value.js';
 
 /**
  * Bridge utilities for transferring values across scope boundaries.
@@ -59,7 +59,7 @@ import type { SemanticValue } from './semantic-value.js';
  */
 export function bridge<T, S1 extends string, S2 extends string>(
   owned: Owned<T, S1>,
-  targetScope: S2
+  targetScope: S2,
 ): Owned<T, S1 | S2> {
   return {
     value: owned.value,
@@ -105,7 +105,7 @@ export function bridge<T, S1 extends string, S2 extends string>(
  */
 export function bridgeSemantic<T, S1 extends string, S2 extends string>(
   semantic: SemanticValue<T, S1>,
-  targetScope: S2
+  targetScope: S2,
 ): SemanticValue<T, S1 | S2> {
   return {
     value: semantic.value,
@@ -171,9 +171,9 @@ export interface BridgeMultipleOptions {
 export function bridgeMultiple<T, S extends string, TS extends string>(
   values: readonly Owned<T, S>[],
   targetScope: TS,
-  options: BridgeMultipleOptions = {}
+  options: BridgeMultipleOptions = {},
 ): Owned<T, S | TS>[] {
-  const { requireSameScope = false } = options;
+  const {requireSameScope = false} = options;
 
   // Validate all values have same scope if required
   if (requireSameScope && values.length > 0) {
@@ -183,7 +183,7 @@ export function bridgeMultiple<T, S extends string, TS extends string>(
     if (!allSame) {
       const scopes = Array.from(new Set(values.map((v) => v.__scope)));
       throw new Error(
-        `bridgeMultiple with requireSameScope=true received values from different scopes: ${scopes.join(', ')}`
+        `bridgeMultiple with requireSameScope=true received values from different scopes: ${scopes.join(', ')}`,
       );
     }
   }
@@ -215,7 +215,7 @@ export function bridgeMultiple<T, S extends string, TS extends string>(
  * ```
  */
 export function getProvenance<T, S extends string>(
-  owned: Owned<T, S>
+  owned: Owned<T, S>,
 ): {
   currentScope: string;
   traceId: string;
@@ -252,7 +252,7 @@ export function getProvenance<T, S extends string>(
  * ```
  */
 export function isBridged<T, S extends string>(
-  _owned: Owned<T, S>
+  _owned: Owned<T, S>,
 ): _owned is Owned<T, S> {
   // At runtime, we can't distinguish if it's been bridged
   // This function is primarily for type-level documentation
@@ -323,7 +323,7 @@ export interface BridgeMetadata {
 export function bridgeWithMetadata<T, S1 extends string, S2 extends string>(
   owned: Owned<T, S1>,
   targetScope: S2,
-  reason?: string
+  reason?: string,
 ): {
   bridged: Owned<T, S1 | S2>;
   metadata: BridgeMetadata;
@@ -338,5 +338,5 @@ export function bridgeWithMetadata<T, S1 extends string, S2 extends string>(
     reason,
   };
 
-  return { bridged, metadata };
+  return {bridged, metadata};
 }

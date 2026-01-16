@@ -10,10 +10,10 @@
  * 4. Type-safe LLM integration
  */
 
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
-import { createOwned } from '@mullion/core';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
+import {z} from 'zod';
+import {createOwned} from '@mullion/core';
 
 // Schemas for our demo
 const UserQuerySchema = z.object({
@@ -40,7 +40,7 @@ async function runDemo() {
   // Check if we have an API key
   if (!process.env.OPENAI_API_KEY) {
     console.log(
-      '⚠️  No OPENAI_API_KEY found. Running with mock data instead.\n'
+      '⚠️  No OPENAI_API_KEY found. Running with mock data instead.\n',
     );
     return runMockDemo();
   }
@@ -66,7 +66,7 @@ async function runDemo() {
       // Demonstrate confidence checking
       if (query.confidence < 0.7) {
         console.log(
-          '⚠️  Low confidence detected - flagging for human review\n'
+          '⚠️  Low confidence detected - flagging for human review\n',
         );
       }
 
@@ -79,7 +79,7 @@ async function runDemo() {
 
       // Create a mock owned value to demonstrate bridging
       const supportContext = createOwned({
-        value: { department: 'billing', agent: 'AI Assistant' },
+        value: {department: 'billing', agent: 'AI Assistant'},
         scope: 'support',
         confidence: 1.0,
         traceId: 'support-ctx-001',
@@ -91,7 +91,7 @@ async function runDemo() {
 
       const responseData = await ctx.infer(
         ResponseSchema,
-        `Based on this user query analysis: ${JSON.stringify(bridgedAnalysis.value)}, generate a helpful response for a ${supportContext.value.department} issue.`
+        `Based on this user query analysis: ${JSON.stringify(bridgedAnalysis.value)}, generate a helpful response for a ${supportContext.value.department} issue.`,
       );
 
       console.log(`   Response: "${responseData.value.message}"`);
@@ -156,7 +156,7 @@ async function runMockDemo() {
 
   console.log('✅ Mock demo completed!');
   console.log(
-    '💡 To see full AI integration, set OPENAI_API_KEY and run again.\n'
+    '💡 To see full AI integration, set OPENAI_API_KEY and run again.\n',
   );
 }
 

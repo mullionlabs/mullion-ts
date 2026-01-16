@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect} from 'vitest';
 import {
   bridge,
   bridgeSemantic,
@@ -6,10 +6,10 @@ import {
   getProvenance,
   bridgeWithMetadata,
 } from './bridge.js';
-import type { Owned } from './owned.js';
-import { createOwned } from './owned.js';
-import type { SemanticValue } from './semantic-value.js';
-import { createSemanticValue } from './semantic-value.js';
+import type {Owned} from './owned.js';
+import {createOwned} from './owned.js';
+import type {SemanticValue} from './semantic-value.js';
+import {createSemanticValue} from './semantic-value.js';
 
 describe('bridge', () => {
   describe('bridge()', () => {
@@ -67,13 +67,13 @@ describe('bridge', () => {
       }
 
       const original: Owned<ComplexData, 'scope1'> = createOwned({
-        value: { id: 1, nested: { field: 'value' } },
+        value: {id: 1, nested: {field: 'value'}},
         scope: 'scope1',
       });
 
       const bridged = bridge(original, 'scope2');
 
-      expect(bridged.value).toEqual({ id: 1, nested: { field: 'value' } });
+      expect(bridged.value).toEqual({id: 1, nested: {field: 'value'}});
       expect(bridged.__scope).toBe('scope2');
     });
   });
@@ -86,8 +86,8 @@ describe('bridge', () => {
           scope: 'ai-analysis',
           confidence: 0.85,
           alternatives: [
-            { value: 'neutral', confidence: 0.7 },
-            { value: 'negative', confidence: 0.3 },
+            {value: 'neutral', confidence: 0.7},
+            {value: 'negative', confidence: 0.3},
           ],
           reasoning: 'Overall positive sentiment detected',
         });
@@ -139,9 +139,9 @@ describe('bridge', () => {
   describe('bridgeMultiple()', () => {
     it('should bridge multiple values to same target scope', () => {
       const values: Owned<number, 'source'>[] = [
-        createOwned({ value: 1, scope: 'source' }),
-        createOwned({ value: 2, scope: 'source' }),
-        createOwned({ value: 3, scope: 'source' }),
+        createOwned({value: 1, scope: 'source'}),
+        createOwned({value: 2, scope: 'source'}),
+        createOwned({value: 3, scope: 'source'}),
       ];
 
       const bridged = bridgeMultiple(values, 'target');
@@ -164,8 +164,8 @@ describe('bridge', () => {
 
     it('should preserve individual trace IDs', () => {
       const values: Owned<string, 'source'>[] = [
-        createOwned({ value: 'a', scope: 'source', traceId: 'trace-1' }),
-        createOwned({ value: 'b', scope: 'source', traceId: 'trace-2' }),
+        createOwned({value: 'a', scope: 'source', traceId: 'trace-1'}),
+        createOwned({value: 'b', scope: 'source', traceId: 'trace-2'}),
       ];
 
       const bridged = bridgeMultiple(values, 'target');
@@ -176,19 +176,19 @@ describe('bridge', () => {
 
     it('should throw when requireSameScope=true and scopes differ', () => {
       const values: Owned<string, 'scope1' | 'scope2'>[] = [
-        createOwned({ value: 'a', scope: 'scope1' as const }),
-        createOwned({ value: 'b', scope: 'scope2' as const }),
+        createOwned({value: 'a', scope: 'scope1' as const}),
+        createOwned({value: 'b', scope: 'scope2' as const}),
       ];
 
       expect(() => {
-        bridgeMultiple(values, 'target', { requireSameScope: true });
+        bridgeMultiple(values, 'target', {requireSameScope: true});
       }).toThrow(/different scopes/);
     });
 
     it('should not throw when requireSameScope=true and scopes match', () => {
       const values: Owned<string, 'source'>[] = [
-        createOwned({ value: 'a', scope: 'source' }),
-        createOwned({ value: 'b', scope: 'source' }),
+        createOwned({value: 'a', scope: 'source'}),
+        createOwned({value: 'b', scope: 'source'}),
       ];
 
       const bridged = bridgeMultiple(values, 'target', {
@@ -210,12 +210,12 @@ describe('bridge', () => {
 
     it('should accept metadata option', () => {
       const values: Owned<string, 'source'>[] = [
-        createOwned({ value: 'test', scope: 'source' }),
+        createOwned({value: 'test', scope: 'source'}),
       ];
 
       // Should not throw
       const bridged = bridgeMultiple(values, 'target', {
-        metadata: { reason: 'aggregation' },
+        metadata: {reason: 'aggregation'},
       });
 
       expect(bridged).toHaveLength(1);
@@ -274,10 +274,10 @@ describe('bridge', () => {
         traceId: 'trace-789',
       });
 
-      const { bridged, metadata } = bridgeWithMetadata(
+      const {bridged, metadata} = bridgeWithMetadata(
         original,
         'audit-log',
-        'Compliance requirement'
+        'Compliance requirement',
       );
 
       // Check bridged value
@@ -300,7 +300,7 @@ describe('bridge', () => {
         scope: 'scope1',
       });
 
-      const { bridged, metadata } = bridgeWithMetadata(original, 'scope2');
+      const {bridged, metadata} = bridgeWithMetadata(original, 'scope2');
 
       expect(bridged.__scope).toBe('scope2');
       expect(metadata.reason).toBeUndefined();
@@ -313,7 +313,7 @@ describe('bridge', () => {
       });
 
       const before = Date.now();
-      const { metadata } = bridgeWithMetadata(original, 'target');
+      const {metadata} = bridgeWithMetadata(original, 'target');
       const after = Date.now();
 
       expect(metadata.timestamp).toBeGreaterThanOrEqual(before);
@@ -326,7 +326,7 @@ describe('bridge', () => {
         scope: 'source',
       });
 
-      const { metadata } = bridgeWithMetadata(original, 'dest', 'test-reason');
+      const {metadata} = bridgeWithMetadata(original, 'dest', 'test-reason');
 
       expect(metadata).toHaveProperty('source');
       expect(metadata).toHaveProperty('target');
@@ -344,7 +344,7 @@ describe('bridge', () => {
       }
 
       const original: Owned<TestData, 'source'> = createOwned({
-        value: { id: 1, name: 'test' },
+        value: {id: 1, name: 'test'},
         scope: 'source',
       });
 

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { scope } from './scope.js';
+import {describe, it, expect} from 'vitest';
+import {scope} from './scope.js';
 import {
   bridge,
   bridgeSemantic,
@@ -7,10 +7,10 @@ import {
   getProvenance,
   bridgeWithMetadata,
 } from './bridge.js';
-import { createOwned } from './owned.js';
-import { createSemanticValue } from './semantic-value.js';
-import type { Owned } from './owned.js';
-import type { SemanticValue } from './semantic-value.js';
+import {createOwned} from './owned.js';
+import {createSemanticValue} from './semantic-value.js';
+import type {Owned} from './owned.js';
+import type {SemanticValue} from './semantic-value.js';
 
 /**
  * Integration tests for Mullion
@@ -38,7 +38,7 @@ describe('Integration Tests', () => {
           return value * 2;
         });
 
-        return { outer: outerCtx.use(outerData), inner: innerResult };
+        return {outer: outerCtx.use(outerData), inner: innerResult};
       });
 
       expect(result.outer).toBe(10);
@@ -74,7 +74,7 @@ describe('Integration Tests', () => {
     it('should maintain scope isolation in sibling scopes', async () => {
       await scope('parent', async () => {
         const scope1Data = await scope('child1', async (_ctx1) => {
-          return createOwned({ value: 'child1-data', scope: 'child1' });
+          return createOwned({value: 'child1-data', scope: 'child1'});
         });
 
         const scope2Data = await scope('child2', async (ctx2) => {
@@ -98,10 +98,10 @@ describe('Integration Tests', () => {
         // Run two independent scopes
         const [data1, data2] = await Promise.all([
           scope('source1', async (_ctx1) =>
-            createOwned({ value: 100, scope: 'source1' })
+            createOwned({value: 100, scope: 'source1'}),
           ),
           scope('source2', async (_ctx2) =>
-            createOwned({ value: 200, scope: 'source2' })
+            createOwned({value: 200, scope: 'source2'}),
           ),
         ]);
 
@@ -111,7 +111,7 @@ describe('Integration Tests', () => {
 
         const sum = aggCtx.use(bridged1) + aggCtx.use(bridged2);
 
-        return createOwned({ value: sum, scope: 'aggregator' });
+        return createOwned({value: sum, scope: 'aggregator'});
       });
 
       expect(result.value).toBe(300);
@@ -187,9 +187,9 @@ describe('Integration Tests', () => {
 
     it('should bridge multiple values in batch', async () => {
       const values: Owned<number, 'batch-source'>[] = [
-        createOwned({ value: 1, scope: 'batch-source' }),
-        createOwned({ value: 2, scope: 'batch-source' }),
-        createOwned({ value: 3, scope: 'batch-source' }),
+        createOwned({value: 1, scope: 'batch-source'}),
+        createOwned({value: 2, scope: 'batch-source'}),
+        createOwned({value: 3, scope: 'batch-source'}),
       ];
 
       const bridged = bridgeMultiple(values, 'batch-target');
@@ -206,10 +206,10 @@ describe('Integration Tests', () => {
         scope: 'admin',
       });
 
-      const { bridged, metadata } = bridgeWithMetadata(
+      const {bridged, metadata} = bridgeWithMetadata(
         adminData,
         'audit-log',
-        'Required for compliance'
+        'Required for compliance',
       );
 
       expect(metadata.source).toBe('admin');
@@ -233,7 +233,7 @@ describe('Integration Tests', () => {
 
       const result = await scope('user-scope', async (ctx) => {
         const userData: Owned<UserData, 'user-scope'> = createOwned({
-          value: { id: 1, name: 'Alice' },
+          value: {id: 1, name: 'Alice'},
           scope: 'user-scope',
         });
 
@@ -257,7 +257,7 @@ describe('Integration Tests', () => {
       }
 
       const original: Owned<DataType, 'scope1'> = createOwned({
-        value: { count: 5, status: 'active' },
+        value: {count: 5, status: 'active'},
         scope: 'scope1',
       });
 
@@ -357,21 +357,21 @@ describe('Integration Tests', () => {
         const sourceData = await Promise.all([
           scope('api-1', async () =>
             createOwned({
-              value: { source: 'API-1', value: 100 },
+              value: {source: 'API-1', value: 100},
               scope: 'api-1',
-            })
+            }),
           ),
           scope('api-2', async () =>
             createOwned({
-              value: { source: 'API-2', value: 200 },
+              value: {source: 'API-2', value: 200},
               scope: 'api-2',
-            })
+            }),
           ),
           scope('api-3', async () =>
             createOwned({
-              value: { source: 'API-3', value: 150 },
+              value: {source: 'API-3', value: 150},
               scope: 'api-3',
-            })
+            }),
           ),
         ]);
 
@@ -403,16 +403,16 @@ describe('Integration Tests', () => {
       const result = await scope('ai-analysis', async (aiCtx) => {
         const analysis: SemanticValue<Category, 'ai-analysis'> =
           createSemanticValue({
-            value: { name: 'spam', confidence: 0.85 },
+            value: {name: 'spam', confidence: 0.85},
             scope: 'ai-analysis',
             confidence: 0.85,
             alternatives: [
               {
-                value: { name: 'promotional', confidence: 0.7 },
+                value: {name: 'promotional', confidence: 0.7},
                 confidence: 0.7,
               },
               {
-                value: { name: 'legitimate', confidence: 0.4 },
+                value: {name: 'legitimate', confidence: 0.4},
                 confidence: 0.4,
               },
             ],

@@ -302,7 +302,7 @@ export class TraceCollector {
       context,
       name,
       kind,
-      attributes: { ...attributes },
+      attributes: {...attributes},
     });
 
     return context;
@@ -341,7 +341,7 @@ export class TraceCollector {
    */
   async endSpan(
     context: SpanContext,
-    options: EndSpanOptions = {}
+    options: EndSpanOptions = {},
   ): Promise<void> {
     // Zero overhead when no exporter configured
     if (!this.exporter || this.isShutdown) {
@@ -354,7 +354,7 @@ export class TraceCollector {
       return;
     }
 
-    const { status = 'ok', statusMessage, attributes = {} } = options;
+    const {status = 'ok', statusMessage, attributes = {}} = options;
     const endTime = getTimestampMicros();
 
     // Merge final attributes
@@ -606,7 +606,7 @@ function generateTraceId(): string {
     bytes.push(
       Math.floor(Math.random() * 256)
         .toString(16)
-        .padStart(2, '0')
+        .padStart(2, '0'),
     );
   }
   return bytes.join('');
@@ -630,7 +630,7 @@ function generateSpanId(): string {
     bytes.push(
       Math.floor(Math.random() * 256)
         .toString(16)
-        .padStart(2, '0')
+        .padStart(2, '0'),
     );
   }
   return bytes.join('');

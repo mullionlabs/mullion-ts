@@ -1,21 +1,21 @@
-import type { LanguageModel, FinishReason } from 'ai';
-import { generateObject } from 'ai';
-import type { z } from 'zod';
-import { createOwned } from '@mullion/core';
-import type { Context, InferOptions, Owned } from '@mullion/core';
-import type { CacheSegmentManager } from './cache/segments.js';
-import { createCacheSegmentManager } from './cache/segments.js';
+import type {LanguageModel, FinishReason} from 'ai';
+import {generateObject} from 'ai';
+import type {z} from 'zod';
+import {createOwned} from '@mullion/core';
+import type {Context, InferOptions, Owned} from '@mullion/core';
+import type {CacheSegmentManager} from './cache/segments.js';
+import {createCacheSegmentManager} from './cache/segments.js';
 import {
   createDefaultCacheConfig,
   createAnthropicAdapter,
   createOpenAIAdapter,
 } from './cache/types.js';
-import type { Provider } from './cache/capabilities.js';
-import type { CacheStats } from './cache/metrics.js';
-import { CacheMetricsCollector } from './cache/metrics.js';
-import type { CostBreakdown, TokenUsage } from './cost/calculator.js';
-import { calculateCost, estimateCost } from './cost/calculator.js';
-import { estimateTokens } from './cost/tokens.js';
+import type {Provider} from './cache/capabilities.js';
+import type {CacheStats} from './cache/metrics.js';
+import {CacheMetricsCollector} from './cache/metrics.js';
+import type {CostBreakdown, TokenUsage} from './cost/calculator.js';
+import {calculateCost, estimateCost} from './cost/calculator.js';
+import {estimateTokens} from './cost/tokens.js';
 
 /**
  * Confidence scores mapped to LLM finish reasons.
@@ -56,7 +56,7 @@ const FINISH_REASON_CONFIDENCE: Record<FinishReason, number> = {
  * ```
  */
 export function extractConfidenceFromFinishReason(
-  finishReason: FinishReason
+  finishReason: FinishReason,
 ): number {
   return FINISH_REASON_CONFIDENCE[finishReason] ?? 0.5;
 }
@@ -131,7 +131,7 @@ export interface MullionClient {
    */
   scope<S extends string, R>(
     name: S,
-    fn: (ctx: Context<S>) => Promise<R>
+    fn: (ctx: MullionContext<S>) => Promise<R>,
   ): Promise<R>;
 }
 
@@ -214,9 +214,9 @@ export interface MullionContext<S extends string> extends Context<S> {
 
   /** Enhanced infer method with cache options */
   infer<T>(
-    schema: z.ZodType<T> & { _type?: T },
+    schema: z.ZodType<T> & {_type?: T},
     input: string,
-    options?: MullionInferOptions
+    options?: MullionInferOptions,
   ): Promise<Owned<T, S>>;
 
   /** Get aggregated cache statistics for this context */
@@ -277,20 +277,20 @@ export interface MullionContext<S extends string> extends Context<S> {
    */
   estimateNextCallCost(
     prompt: string,
-    estimatedOutputTokens?: number
+    estimatedOutputTokens?: number,
   ): CostBreakdown;
 }
 
 export function createMullionClient(
   model: LanguageModel,
-  clientOptions: MullionClientOptions = {}
+  clientOptions: MullionClientOptions = {},
 ): MullionClient {
   return {
     async scope<S extends string, R>(
       name: S,
-      fn: (ctx: Context<S>) => Promise<R>
+      fn: (ctx: MullionContext<S>) => Promise<R>,
     ): Promise<R> {
-      // Create cache segment manager if enabled
+      // Create cache segment manager (always create one, but it may be disabled)
       const cacheManager =
         clientOptions.enableCache &&
         clientOptions.provider &&
@@ -298,16 +298,20 @@ export function createMullionClient(
           ? createCacheSegmentManager(
               clientOptions.provider,
               clientOptions.model,
-              createDefaultCacheConfig({ enabled: true })
+              createDefaultCacheConfig({enabled: true}),
             )
-          : undefined;
+          : createCacheSegmentManager(
+              clientOptions.provider ?? ('openai' as Provider),
+              clientOptions.model ?? 'gpt-4',
+              createDefaultCacheConfig({enabled: false}),
+            );
 
       // Create metrics collector for cache statistics
       const metricsCollector =
         clientOptions.provider && clientOptions.model
           ? new CacheMetricsCollector(
               clientOptions.provider,
-              clientOptions.model
+              clientOptions.model,
             )
           : undefined;
 
@@ -315,19 +319,9 @@ export function createMullionClient(
       let lastCallCost: CostBreakdown | null = null;
 
       // Create context with working infer implementation and cache manager
-      const ctx: Context<S> & {
-        cache?: CacheSegmentManager;
-        getCacheStats?: () => CacheStats;
-        getLastCallCost?: () => CostBreakdown | null;
-        estimateNextCallCost?: (
-          prompt: string,
-          estimatedOutputTokens?: number
-        ) => CostBreakdown;
-      } = {
+      const ctx: MullionContext<S> = {
         scope: name,
-
-        // Add cache manager if enabled
-        ...(cacheManager ? { cache: cacheManager } : {}),
+        cache: cacheManager,
 
         /**
          * Infer a typed value from unstructured input using the LLM.
@@ -349,9 +343,9 @@ export function createMullionClient(
          * - `error` (0.3): Error occurred
          */
         async infer<T>(
-          schema: z.ZodType<T> & { _type?: T },
+          schema: z.ZodType<T> & {_type?: T},
           input: string,
-          options?: MullionInferOptions
+          options?: MullionInferOptions,
         ): Promise<Owned<T, S>> {
           // Determine cache strategy (use client-level provider/model info)
           const cacheStrategy = options?.cache ?? 'use-segments';
@@ -382,7 +376,7 @@ export function createMullionClient(
                     anthropic: {
                       cacheControl: segments.map((segment) => ({
                         type: 'ephemeral' as const,
-                        ...(segment.ttl ? { ttl: segment.ttl } : {}),
+                        ...(segment.ttl ? {ttl: segment.ttl} : {}),
                       })),
                     },
                   },
@@ -394,7 +388,7 @@ export function createMullionClient(
             ) {
               // OpenAI uses automatic caching - no special provider options needed
               const adapter = createOpenAIAdapter(clientOptions.model);
-              const cacheConfig = createDefaultCacheConfig({ enabled: true });
+              const cacheConfig = createDefaultCacheConfig({enabled: true});
               const openaiOptions = adapter.toProviderOptions(cacheConfig);
 
               if (openaiOptions.autoCaching) {
@@ -422,13 +416,13 @@ export function createMullionClient(
 
           // Extract confidence from finish reason
           const confidence = extractConfidenceFromFinishReason(
-            result.finishReason
+            result.finishReason,
           );
 
           // Collect cache metrics from the result
           if (metricsCollector && result.usage) {
             metricsCollector.addMetrics(
-              result.usage as Record<string, unknown>
+              result.usage as Record<string, unknown>,
             );
           }
 
@@ -451,7 +445,7 @@ export function createMullionClient(
             lastCallCost = calculateCost(
               usage,
               cacheStats,
-              clientOptions.model
+              clientOptions.model,
             );
           }
 
@@ -492,7 +486,7 @@ export function createMullionClient(
           if (owned.__scope !== name) {
             throw new Error(
               `Scope mismatch: attempting to use value from scope '${owned.__scope}' ` +
-                `in scope '${name}'. Use bridge() to explicitly transfer values between scopes.`
+                `in scope '${name}'. Use bridge() to explicitly transfer values between scopes.`,
             );
           }
 
@@ -516,7 +510,7 @@ export function createMullionClient(
               savedTokens: 0,
               cacheHitRate: 0,
               estimatedSavingsUsd: 0,
-              raw: { noMetrics: true },
+              raw: {noMetrics: true},
             }
           );
         },
@@ -533,11 +527,11 @@ export function createMullionClient(
          */
         estimateNextCallCost(
           prompt: string,
-          estimatedOutputTokens = 500
+          estimatedOutputTokens = 500,
         ): CostBreakdown {
           if (!clientOptions.model) {
             throw new Error(
-              'Cannot estimate cost: model identifier not provided in client options'
+              'Cannot estimate cost: model identifier not provided in client options',
             );
           }
 
@@ -554,7 +548,7 @@ export function createMullionClient(
             tokenEstimate.count,
             estimatedOutputTokens,
             clientOptions.model,
-            useCache
+            useCache,
           );
         },
       };

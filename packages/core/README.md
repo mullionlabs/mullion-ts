@@ -46,7 +46,7 @@ The core package provides fundamental types and utilities for Mullion's type-saf
 Wraps LLM-generated values with scope tracking and metadata:
 
 ```typescript
-import type { Owned } from '@mullion/core';
+import type {Owned} from '@mullion/core';
 
 interface Owned<T, S extends string> {
   value: T; // The actual data
@@ -61,7 +61,7 @@ interface Owned<T, S extends string> {
 Provides scoped execution environment for LLM operations:
 
 ```typescript
-import type { Context } from '@mullion/core';
+import type {Context} from '@mullion/core';
 
 interface Context<S extends string> {
   readonly scope: S;
@@ -70,7 +70,7 @@ interface Context<S extends string> {
   infer<T>(
     schema: Schema<T>,
     input: string,
-    options?: InferOptions
+    options?: InferOptions,
   ): Promise<Owned<T, S>>;
 
   // Transfer value from another scope
@@ -88,10 +88,10 @@ interface Context<S extends string> {
 Factory function for creating Owned values:
 
 ```typescript
-import { createOwned } from '@mullion/core';
+import {createOwned} from '@mullion/core';
 
 const data = createOwned({
-  value: { name: 'John', age: 30 },
+  value: {name: 'John', age: 30},
   scope: 'user-data',
   confidence: 0.95,
   traceId: 'trace-123',
@@ -105,7 +105,7 @@ console.log(data.__scope); // 'user-data'
 Type guard for checking if a value is Owned:
 
 ```typescript
-import { isOwned } from '@mullion/core';
+import {isOwned} from '@mullion/core';
 
 if (isOwned(someValue)) {
   // TypeScript knows someValue is Owned<unknown, string>
@@ -116,8 +116,8 @@ if (isOwned(someValue)) {
 ## Example: Custom Integration
 
 ```typescript
-import { createOwned, isOwned } from '@mullion/core';
-import type { Context, Owned } from '@mullion/core';
+import {createOwned, isOwned} from '@mullion/core';
+import type {Context, Owned} from '@mullion/core';
 
 // Create a custom context implementation
 class MyContext<S extends string> implements Context<S> {
@@ -164,24 +164,24 @@ if (result.confidence > 0.8) {
 `SemanticValue<T, S>` extends `Owned<T, S>` with additional fields for LLM reasoning:
 
 ```typescript
-import { createSemanticValue } from '@mullion/core';
-import type { SemanticValue, Alternative } from '@mullion/core';
+import {createSemanticValue} from '@mullion/core';
+import type {SemanticValue, Alternative} from '@mullion/core';
 
 const analysis: SemanticValue<Classification, 'analysis'> = createSemanticValue(
   {
-    value: { category: 'technical', priority: 'high' },
+    value: {category: 'technical', priority: 'high'},
     scope: 'analysis',
     confidence: 0.85,
     traceId: 'trace-456',
     reasoning: 'Based on technical keywords and urgency indicators',
     alternatives: [
-      { value: { category: 'support', priority: 'high' }, confidence: 0.75 },
+      {value: {category: 'support', priority: 'high'}, confidence: 0.75},
       {
-        value: { category: 'technical', priority: 'medium' },
+        value: {category: 'technical', priority: 'medium'},
         confidence: 0.65,
       },
     ],
-  }
+  },
 );
 
 // Access reasoning chain
@@ -193,7 +193,7 @@ analysis.alternatives.forEach((alt, i) => {
   console.log(
     `Alternative ${i + 1}:`,
     alt.value,
-    `(confidence: ${alt.confidence})`
+    `(confidence: ${alt.confidence})`,
   );
 });
 ```
@@ -212,7 +212,7 @@ Run multiple LLM inferences in parallel with intelligent cache optimization.
 ### Fork Strategies
 
 ```typescript
-import { fork } from '@mullion/core';
+import {fork} from '@mullion/core';
 
 // Fast parallel: All branches execute immediately
 const result = await fork(ctx, {
@@ -336,7 +336,7 @@ Mullion includes production-ready OpenTelemetry-compatible tracing for LLM workf
 ### Quick Start
 
 ```typescript
-import { TracingPresets } from '@mullion/core';
+import {TracingPresets} from '@mullion/core';
 
 // Enable tracing with one line
 TracingPresets.jaeger(); // Local development
@@ -356,7 +356,7 @@ TracingPresets.honeycomb(process.env.HONEYCOMB_API_KEY!);
 ### Manual Instrumentation
 
 ```typescript
-import { getGlobalTraceCollector, setupMullionTracing } from '@mullion/core';
+import {getGlobalTraceCollector, setupMullionTracing} from '@mullion/core';
 
 setupMullionTracing({
   endpoint: 'http://localhost:4318/v1/traces',
@@ -376,7 +376,7 @@ const spanCtx = collector.startSpan({
 try {
   // Your operation
   await performOperation();
-  await collector.endSpan(spanCtx, { status: 'ok' });
+  await collector.endSpan(spanCtx, {status: 'ok'});
 } catch (error) {
   await collector.endSpan(spanCtx, {
     status: 'error',

@@ -172,7 +172,7 @@ function estimateGenericTokens(text: string, model?: string): TokenEstimate {
  */
 export function estimateTokensForSegments(
   segments: string[],
-  model?: string
+  model?: string,
 ): TokenEstimate {
   const estimates = segments.map((segment) => estimateTokens(segment, model));
 

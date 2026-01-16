@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
+import {describe, it, expect} from 'vitest';
+import {z} from 'zod';
 import {
   createSemanticValue,
   isSemanticValue,
@@ -37,8 +37,8 @@ describe('SemanticValue', () => {
 
     it('should create a SemanticValue with alternatives', () => {
       const alternatives: Alternative<string>[] = [
-        { value: 'alt1', confidence: 0.8 },
-        { value: 'alt2', confidence: 0.6 },
+        {value: 'alt1', confidence: 0.8},
+        {value: 'alt2', confidence: 0.6},
       ];
 
       const semantic = createSemanticValue({
@@ -77,18 +77,18 @@ describe('SemanticValue', () => {
 
     it('should create a SemanticValue with all custom fields', () => {
       const semantic = createSemanticValue({
-        value: { action: 'refund', amount: 50 },
+        value: {action: 'refund', amount: 50},
         scope: 'customer-support',
         confidence: 0.85,
         alternatives: [
-          { value: { action: 'exchange', amount: 50 }, confidence: 0.7 },
-          { value: { action: 'credit', amount: 50 }, confidence: 0.6 },
+          {value: {action: 'exchange', amount: 50}, confidence: 0.7},
+          {value: {action: 'credit', amount: 50}, confidence: 0.6},
         ],
         reasoning: 'Customer explicitly mentioned "refund"',
         traceId: 'support-trace-456',
       });
 
-      expect(semantic.value).toEqual({ action: 'refund', amount: 50 });
+      expect(semantic.value).toEqual({action: 'refund', amount: 50});
       expect(semantic.__scope).toBe('customer-support');
       expect(semantic.confidence).toBe(0.85);
       expect(semantic.alternatives.length).toBe(2);
@@ -102,7 +102,7 @@ describe('SemanticValue', () => {
           value: 'test',
           scope: 'test',
           confidence: -0.1,
-        })
+        }),
       ).toThrow('Confidence must be between 0 and 1, got -0.1');
     });
 
@@ -112,7 +112,7 @@ describe('SemanticValue', () => {
           value: 'test',
           scope: 'test',
           confidence: 1.5,
-        })
+        }),
       ).toThrow('Confidence must be between 0 and 1, got 1.5');
     });
 
@@ -121,8 +121,8 @@ describe('SemanticValue', () => {
         createSemanticValue({
           value: 'primary',
           scope: 'test',
-          alternatives: [{ value: 'alt', confidence: -0.2 }],
-        })
+          alternatives: [{value: 'alt', confidence: -0.2}],
+        }),
       ).toThrow('Alternative confidence must be between 0 and 1, got -0.2');
     });
 
@@ -131,8 +131,8 @@ describe('SemanticValue', () => {
         createSemanticValue({
           value: 'primary',
           scope: 'test',
-          alternatives: [{ value: 'alt', confidence: 1.1 }],
-        })
+          alternatives: [{value: 'alt', confidence: 1.1}],
+        }),
       ).toThrow('Alternative confidence must be between 0 and 1, got 1.1');
     });
 
@@ -168,7 +168,7 @@ describe('SemanticValue', () => {
         id: 123,
         name: 'Test',
         tags: ['a', 'b', 'c'],
-        metadata: { key: 'value', nested: { deep: true } },
+        metadata: {key: 'value', nested: {deep: true}},
       };
 
       const semantic = createSemanticValue({
@@ -194,7 +194,7 @@ describe('SemanticValue', () => {
       const semantic = createSemanticValue({
         value: 'primary',
         scope: 'test',
-        alternatives: [{ value: 'alt', confidence: 0.5 }],
+        alternatives: [{value: 'alt', confidence: 0.5}],
       });
 
       expect(isSemanticValue(semantic)).toBe(true);
@@ -232,7 +232,7 @@ describe('SemanticValue', () => {
           traceId: 'trace-1',
           alternatives: [],
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -244,7 +244,7 @@ describe('SemanticValue', () => {
           traceId: 'trace-1',
           alternatives: [],
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -257,7 +257,7 @@ describe('SemanticValue', () => {
           traceId: 'trace-1',
           alternatives: [],
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -269,7 +269,7 @@ describe('SemanticValue', () => {
           traceId: 'trace-1',
           alternatives: [],
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -282,7 +282,7 @@ describe('SemanticValue', () => {
           traceId: 'trace-1',
           alternatives: [],
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -294,7 +294,7 @@ describe('SemanticValue', () => {
           __scope: 'test',
           alternatives: [],
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -307,7 +307,7 @@ describe('SemanticValue', () => {
           traceId: 123,
           alternatives: [],
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -319,7 +319,7 @@ describe('SemanticValue', () => {
           __scope: 'test',
           traceId: 'trace-1',
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -332,7 +332,7 @@ describe('SemanticValue', () => {
           traceId: 'trace-1',
           alternatives: 'not-an-array',
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -343,9 +343,9 @@ describe('SemanticValue', () => {
           confidence: 0.9,
           __scope: 'test',
           traceId: 'trace-1',
-          alternatives: [{ value: 'alt' }], // missing confidence
+          alternatives: [{value: 'alt'}], // missing confidence
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -356,9 +356,9 @@ describe('SemanticValue', () => {
           confidence: 0.9,
           __scope: 'test',
           traceId: 'trace-1',
-          alternatives: [{ confidence: 0.5 }], // missing value
+          alternatives: [{confidence: 0.5}], // missing value
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -369,9 +369,9 @@ describe('SemanticValue', () => {
           confidence: 0.9,
           __scope: 'test',
           traceId: 'trace-1',
-          alternatives: [{ value: 'alt', confidence: '0.5' }],
+          alternatives: [{value: 'alt', confidence: '0.5'}],
           reasoning: '',
-        })
+        }),
       ).toBe(false);
     });
 
@@ -383,7 +383,7 @@ describe('SemanticValue', () => {
           __scope: 'test',
           traceId: 'trace-1',
           alternatives: [],
-        })
+        }),
       ).toBe(false);
     });
 
@@ -396,7 +396,7 @@ describe('SemanticValue', () => {
           traceId: 'trace-1',
           alternatives: [],
           reasoning: 123,
-        })
+        }),
       ).toBe(false);
     });
   });
@@ -468,7 +468,7 @@ describe('SemanticValue', () => {
       const schema = alternativeSchema(ValueSchema);
 
       const result = schema.safeParse({
-        value: { id: 123, name: 'Test' },
+        value: {id: 123, name: 'Test'},
         confidence: 0.9,
       });
 
@@ -506,8 +506,8 @@ describe('SemanticValue', () => {
         __scope: 'test',
         traceId: 'trace-123',
         alternatives: [
-          { value: 'alt1', confidence: 0.7 },
-          { value: 'alt2', confidence: 0.5 },
+          {value: 'alt1', confidence: 0.7},
+          {value: 'alt2', confidence: 0.5},
         ],
         reasoning: 'Reasoning',
       });
@@ -585,7 +585,7 @@ describe('SemanticValue', () => {
         confidence: 0.9,
         __scope: 'test',
         traceId: 'trace-123',
-        alternatives: [{ value: 'alt' }], // missing confidence
+        alternatives: [{value: 'alt'}], // missing confidence
         reasoning: '',
       });
 
@@ -600,16 +600,16 @@ describe('SemanticValue', () => {
 
       const schema = semanticValueSchema(
         ValueSchema,
-        z.literal('customer-support')
+        z.literal('customer-support'),
       );
 
       const result = schema.safeParse({
-        value: { action: 'refund', amount: 50 },
+        value: {action: 'refund', amount: 50},
         confidence: 0.85,
         __scope: 'customer-support',
         traceId: 'trace-456',
         alternatives: [
-          { value: { action: 'exchange', amount: 50 }, confidence: 0.7 },
+          {value: {action: 'exchange', amount: 50}, confidence: 0.7},
         ],
         reasoning: 'Customer mentioned refund',
       });
@@ -644,7 +644,7 @@ describe('SemanticValue', () => {
       }
 
       const semantic: SemanticValue<UserData, 'users'> = createSemanticValue({
-        value: { id: 1, name: 'Alice' },
+        value: {id: 1, name: 'Alice'},
         scope: 'users',
       });
 
@@ -661,8 +661,8 @@ describe('SemanticValue', () => {
         value: 'primary',
         scope: 'test',
         alternatives: [
-          { value: 'alt1', confidence: 0.8 },
-          { value: 'alt2', confidence: 0.6 },
+          {value: 'alt1', confidence: 0.8},
+          {value: 'alt2', confidence: 0.6},
         ],
       });
 

@@ -16,7 +16,7 @@ docker run -d --name jaeger \
 ### 2. Enable Tracing
 
 ```typescript
-import { TracingPresets } from '@mullion/core';
+import {TracingPresets} from '@mullion/core';
 
 // One line - tracing enabled!
 TracingPresets.jaeger();
@@ -31,7 +31,7 @@ Open http://localhost:16686 in your browser.
 ### Honeycomb
 
 ```typescript
-import { TracingPresets } from '@mullion/core';
+import {TracingPresets} from '@mullion/core';
 
 TracingPresets.honeycomb(process.env.HONEYCOMB_API_KEY!);
 ```
@@ -39,7 +39,7 @@ TracingPresets.honeycomb(process.env.HONEYCOMB_API_KEY!);
 ### Datadog
 
 ```typescript
-import { TracingPresets } from '@mullion/core';
+import {TracingPresets} from '@mullion/core';
 
 TracingPresets.datadog(process.env.DATADOG_API_KEY!);
 ```
@@ -47,7 +47,7 @@ TracingPresets.datadog(process.env.DATADOG_API_KEY!);
 ### New Relic
 
 ```typescript
-import { TracingPresets } from '@mullion/core';
+import {TracingPresets} from '@mullion/core';
 
 TracingPresets.newRelic(process.env.NEW_RELIC_LICENSE_KEY!);
 ```
@@ -55,18 +55,18 @@ TracingPresets.newRelic(process.env.NEW_RELIC_LICENSE_KEY!);
 ### Grafana Cloud
 
 ```typescript
-import { TracingPresets } from '@mullion/core';
+import {TracingPresets} from '@mullion/core';
 
 TracingPresets.grafana(
   'tempo-prod-01-eu-west-0', // Your instance ID
-  process.env.GRAFANA_API_KEY!
+  process.env.GRAFANA_API_KEY!,
 );
 ```
 
 ### Custom Backend
 
 ```typescript
-import { setupMullionTracing } from '@mullion/core';
+import {setupMullionTracing} from '@mullion/core';
 
 setupMullionTracing({
   endpoint: 'https://your-otel-collector.com/v1/traces',
@@ -82,7 +82,7 @@ setupMullionTracing({
 ### Full Configuration
 
 ```typescript
-import { setupMullionTracing } from '@mullion/core';
+import {setupMullionTracing} from '@mullion/core';
 
 setupMullionTracing({
   // OTLP endpoint URL
@@ -111,7 +111,7 @@ setupMullionTracing({
 ### Custom Exporter
 
 ```typescript
-import { setupMullionTracing, SpanExporter } from '@mullion/core';
+import {setupMullionTracing, SpanExporter} from '@mullion/core';
 
 class MyExporter implements SpanExporter {
   async export(spans) {
@@ -133,7 +133,7 @@ setupMullionTracing({
 Until auto-instrumentation is available, you can manually create spans:
 
 ```typescript
-import { getGlobalTraceCollector } from '@mullion/core';
+import {getGlobalTraceCollector} from '@mullion/core';
 
 const collector = getGlobalTraceCollector();
 
@@ -270,7 +270,7 @@ Following OpenTelemetry semantic conventions:
 ### Graceful Shutdown
 
 ```typescript
-import { disableMullionTracing } from '@mullion/core';
+import {disableMullionTracing} from '@mullion/core';
 
 // At application exit
 process.on('SIGINT', async () => {
@@ -288,14 +288,14 @@ TracingPresets.jaeger();
 // Switch to production
 setupMullionTracing({
   endpoint: 'https://api.honeycomb.io/v1/traces',
-  headers: { 'x-honeycomb-team': process.env.API_KEY },
+  headers: {'x-honeycomb-team': process.env.API_KEY},
 });
 ```
 
 ### Manual Flush
 
 ```typescript
-import { getGlobalTraceCollector } from '@mullion/core';
+import {getGlobalTraceCollector} from '@mullion/core';
 
 const collector = getGlobalTraceCollector();
 
@@ -312,7 +312,7 @@ When no exporter is configured, tracing operations are no-ops:
 ```typescript
 // No exporter configured - zero overhead
 const collector = getGlobalTraceCollector();
-collector.startSpan({ name: 'test' }); // No-op
+collector.startSpan({name: 'test'}); // No-op
 ```
 
 ### Buffered Export
@@ -362,7 +362,7 @@ setupMullionTracing({
    // Verify headers/API keys are correct
    setupMullionTracing({
      endpoint: '...',
-     headers: { Authorization: 'Bearer YOUR_TOKEN' },
+     headers: {Authorization: 'Bearer YOUR_TOKEN'},
    });
    ```
 
@@ -435,7 +435,7 @@ process.on('SIGTERM', async () => {
 
 ```typescript
 // Parent for overall operation
-const operationCtx = collector.startSpan({ name: 'api.request' });
+const operationCtx = collector.startSpan({name: 'api.request'});
 
 // Children for sub-operations
 const inferCtx = collector.startSpan({
@@ -467,7 +467,7 @@ collector.startSpan({
 ### Complete Example
 
 ```typescript
-import { setupMullionTracing, getGlobalTraceCollector } from '@mullion/core';
+import {setupMullionTracing, getGlobalTraceCollector} from '@mullion/core';
 
 // Setup tracing at app startup
 setupMullionTracing({
@@ -512,7 +512,7 @@ async function processRequest(userId: string, message: string) {
       },
     });
 
-    await collector.endSpan(requestCtx, { status: 'ok' });
+    await collector.endSpan(requestCtx, {status: 'ok'});
     return result;
   } catch (error) {
     await collector.endSpan(requestCtx, {

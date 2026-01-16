@@ -33,7 +33,7 @@ import {
   areSchemasCompatible,
 } from '@mullion/ai-sdk';
 
-import { z } from 'zod';
+import {z} from 'zod';
 
 // =============================================================================
 // Schema Definitions
@@ -49,7 +49,7 @@ const RiskSchema = z.object({
       severity: z.enum(['low', 'medium', 'high', 'critical']),
       description: z.string(),
       mitigation: z.string().optional(),
-    })
+    }),
   ),
   overallRisk: z.enum(['low', 'medium', 'high', 'critical']),
   summary: z.string(),
@@ -65,7 +65,7 @@ const OpportunitySchema = z.object({
       potential: z.enum(['low', 'medium', 'high']),
       description: z.string(),
       timeline: z.string().optional(),
-    })
+    }),
   ),
   topOpportunity: z.string(),
   summary: z.string(),
@@ -109,7 +109,7 @@ async function fastParallelExample() {
     // Mock infer for demonstration
     const mockInfer = async (schema, prompt) => {
       return createOwned({
-        value: { mock: true, prompt: prompt.slice(0, 30) },
+        value: {mock: true, prompt: prompt.slice(0, 30)},
         scope: 'analysis',
         confidence: 0.85,
       });
@@ -161,17 +161,17 @@ async function cacheOptimizedExample() {
   const cacheManager = createCacheSegmentManager(
     'anthropic',
     'claude-3-5-sonnet-20241022',
-    createDefaultCacheConfig({ enabled: true, breakpoints: 2 })
+    createDefaultCacheConfig({enabled: true, breakpoints: 2}),
   );
 
   // Add document to cache (would be a real long document)
   const longDocument =
     'This is a sample document that would normally be very long. '.repeat(500);
 
-  cacheManager.segment('document', longDocument, { ttl: '5m' });
+  cacheManager.segment('document', longDocument, {ttl: '5m'});
   cacheManager.system(
     'You are an expert business analyst. Analyze documents thoroughly.',
-    { ttl: '1h' }
+    {ttl: '1h'},
   );
 
   console.log('Cache segments added:');
@@ -198,7 +198,7 @@ async function cacheOptimizedExample() {
       // Mock infer for demonstration
       const mockInfer = async (schema, prompt) => {
         return createOwned({
-          value: { mock: true, prompt: prompt.slice(0, 30) },
+          value: {mock: true, prompt: prompt.slice(0, 30)},
           scope: 'analysis',
           confidence: 0.9,
         });
@@ -218,7 +218,7 @@ async function cacheOptimizedExample() {
           languageModel: null, // Not used in shouldWarmup
         },
         cacheManager,
-        branchCount
+        branchCount,
       );
 
       console.log(`Warmup beneficial: ${warmupBeneficial}`);
@@ -238,12 +238,12 @@ async function cacheOptimizedExample() {
           async (c) =>
             c.infer(
               UniversalAnalysisSchema,
-              'Analyze from opportunity perspective'
+              'Analyze from opportunity perspective',
             ),
           async (c) =>
             c.infer(
               UniversalAnalysisSchema,
-              'Analyze from strategic perspective'
+              'Analyze from strategic perspective',
             ),
         ],
       });
@@ -252,7 +252,7 @@ async function cacheOptimizedExample() {
       console.log(`  Branches executed: ${result.results.length}`);
       console.log(`  Warmup cost: ${result.cacheStats.warmupCost} tokens`);
       console.log(
-        `  Cache hits per branch: [${result.cacheStats.branchCacheHits.join(', ')}]`
+        `  Cache hits per branch: [${result.cacheStats.branchCacheHits.join(', ')}]`,
       );
       console.log(`  Total saved: ${result.cacheStats.totalSaved} tokens`);
 
@@ -346,7 +346,7 @@ async function firstBranchWarmupExample() {
     supportsCacheOptimization: true,
     async explicitWarmup(ctx) {
       // Not used in first-branch strategy
-      return { tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0 };
+      return {tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0};
     },
   });
 
@@ -361,13 +361,13 @@ async function firstBranchWarmupExample() {
         // Simulate API latency
         await new Promise((resolve) => setTimeout(resolve, 50));
         return createOwned({
-          value: { prompt: prompt.slice(0, 30) },
+          value: {prompt: prompt.slice(0, 30)},
           scope: 'analysis',
           confidence: 0.88,
         });
       };
 
-      const demoCtx = { ...ctx, infer: mockInfer };
+      const demoCtx = {...ctx, infer: mockInfer};
 
       const result = await fork(demoCtx, {
         strategy: 'cache-optimized',
@@ -381,7 +381,7 @@ async function firstBranchWarmupExample() {
 
       console.log(`Branches executed: ${result.results.length}`);
       console.log(
-        `First branch completed before others: ${branchExecutionOrder[0] === 'overview'}`
+        `First branch completed before others: ${branchExecutionOrder[0] === 'overview'}`,
       );
       console.log(`Execution order: ${branchExecutionOrder.join(' -> ')}`);
 

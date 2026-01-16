@@ -201,7 +201,7 @@ const query: UserQuery = {
 const result = await executeRAGPipeline(query, {
   topK: 3,
   verbose: false,
-  providerConfig: { type: 'openai', model: 'gpt-4o-mini' },
+  providerConfig: {type: 'openai', model: 'gpt-4o-mini'},
 });
 
 console.log('Answer:', result.response.answer);
@@ -402,8 +402,8 @@ npm run lint      # ESLint validation
 // Cache system prompt and document context (Anthropic)
 const response = await ctx.infer(RAGResponse, userPrompt, {
   cache: {
-    systemPrompt: { content: systemPrompt, ttl: '1h' },
-    documentContext: { content: context, ttl: '5m' },
+    systemPrompt: {content: systemPrompt, ttl: '1h'},
+    documentContext: {content: context, ttl: '5m'},
   },
 });
 ```

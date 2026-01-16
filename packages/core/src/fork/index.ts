@@ -19,7 +19,7 @@ export type {
   WarmupResult,
 } from './types.js';
 
-export type { WarmupExecutor } from './fork.js';
+export type {WarmupExecutor} from './fork.js';
 export {
   fork,
   registerWarmupExecutor,

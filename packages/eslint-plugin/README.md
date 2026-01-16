@@ -301,7 +301,7 @@ for (const tenant of tenants) {
     const data = await ctx.infer(Schema, tenant.input);
     return ctx.use(data); // ✅ Extract safely within scope
   });
-  results.push({ tenantId: tenant.id, data: result });
+  results.push({tenantId: tenant.id, data: result});
 }
 ```
 
@@ -381,7 +381,7 @@ If you get false positives, you might need to:
 
 2. **Ensure proper imports:**
    ```typescript
-   import type { Owned, Context } from '@mullion/core';
+   import type {Owned, Context} from '@mullion/core';
    ```
 
 #### Missing Violations

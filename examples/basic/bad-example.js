@@ -8,9 +8,9 @@
  * This is for demonstration purposes only.
  */
 
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
+import {z} from 'zod';
 
 const Schema = z.object({
   data: z.string(),

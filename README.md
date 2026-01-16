@@ -160,9 +160,9 @@ pnpm add @mullion/core @mullion/ai-sdk
 ### Basic usage (Zod + Vercel AI SDK)
 
 ```ts
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
+import {z} from 'zod';
 
 const client = createMullionClient(openai('gpt-4o'));
 

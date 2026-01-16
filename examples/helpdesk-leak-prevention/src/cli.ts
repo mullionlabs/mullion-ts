@@ -28,7 +28,7 @@ console.log('leaking between scopes in a customer support system.\n');
 console.log('📖 Scenario:');
 console.log('   A support ticket is analyzed by an admin AI that generates');
 console.log(
-  '   internal notes, risk assessments, and compensation strategies.'
+  '   internal notes, risk assessments, and compensation strategies.',
 );
 console.log('   These MUST NOT leak into customer-facing responses.\n');
 
@@ -50,24 +50,24 @@ console.log('   1. Copy .env.example to .env');
 console.log('   2. Add your OPENAI_API_KEY');
 console.log('   3. Run: npm run safe (see correct implementation)');
 console.log(
-  '   4. Run: npm run lint (see ESLint catch unsafe-flow.ts violations)\n'
+  '   4. Run: npm run lint (see ESLint catch unsafe-flow.ts violations)\n',
 );
 
 console.log('💡 Key Takeaways:\n');
 console.log('   ✅ SAFE: Explicit sanitization → bridge → separate scope');
 console.log('   ❌ UNSAFE: Direct access → no bridge → data leaks');
 console.log(
-  '   🛡️  ESLint catches leaks at compile time (before production!)\n'
+  '   🛡️  ESLint catches leaks at compile time (before production!)\n',
 );
 
 console.log('📖 Learn More:');
 console.log('   Documentation: https://github.com/mullionlabs/mullion-ts');
 console.log(
-  '   Report Issues: https://github.com/mullionlabs/mullion-ts/issues\n'
+  '   Report Issues: https://github.com/mullionlabs/mullion-ts/issues\n',
 );
 
 console.log('---\n');
 console.log(
-  '💡 TIP: Start with "npm run safe" to see the correct implementation,'
+  '💡 TIP: Start with "npm run safe" to see the correct implementation,',
 );
 console.log('    then run "npm run lint" to see how ESLint prevents leaks!\n');

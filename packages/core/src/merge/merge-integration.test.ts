@@ -1,14 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
-import { scope } from '../scope.js';
-import { fork } from '../fork/fork.js';
-import type { Context } from '../context.js';
-import { mergeResults } from './index.js';
-import { categorical } from './strategies/categorical.js';
-import { continuous } from './strategies/continuous.js';
-import { object } from './strategies/object.js';
-import { array } from './strategies/array.js';
-import { requireConsensus } from './strategies/consensus.js';
-import { custom } from './strategies/custom.js';
+import {describe, it, expect, vi} from 'vitest';
+import {scope} from '../scope.js';
+import {fork} from '../fork/fork.js';
+import type {Context} from '../context.js';
+import {mergeResults} from './index.js';
+import {categorical} from './strategies/categorical.js';
+import {continuous} from './strategies/continuous.js';
+import {object} from './strategies/object.js';
+import {array} from './strategies/array.js';
+import {requireConsensus} from './strategies/consensus.js';
+import {custom} from './strategies/custom.js';
 
 describe('Merge Integration', () => {
   describe('merge() function with fork results', () => {
@@ -30,15 +30,15 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'classify'),
-            (c) => c.infer({ parse: (v: any) => v }, 'classify'),
-            (c) => c.infer({ parse: (v: any) => v }, 'classify'),
+            (c) => c.infer({parse: (v: any) => v}, 'classify'),
+            (c) => c.infer({parse: (v: any) => v}, 'classify'),
+            (c) => c.infer({parse: (v: any) => v}, 'classify'),
           ],
         });
 
         const mergeResult = mergeResults(
           forkResult.results,
-          categorical.weightedVote()
+          categorical.weightedVote(),
         );
 
         expect(mergeResult.value.value).toBe('urgent'); // 2 votes vs 1
@@ -65,15 +65,15 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'estimate'),
-            (c) => c.infer({ parse: (v: any) => v }, 'estimate'),
-            (c) => c.infer({ parse: (v: any) => v }, 'estimate'),
+            (c) => c.infer({parse: (v: any) => v}, 'estimate'),
+            (c) => c.infer({parse: (v: any) => v}, 'estimate'),
+            (c) => c.infer({parse: (v: any) => v}, 'estimate'),
           ],
         });
 
         const mergeResult = mergeResults(
           forkResult.results,
-          continuous.weightedAverage()
+          continuous.weightedAverage(),
         );
 
         expect(mergeResult.value.value.value).toBeCloseTo(101, 0);
@@ -93,9 +93,9 @@ describe('Merge Integration', () => {
         vi.spyOn(ctx, 'infer').mockImplementation(async () => {
           callCount++;
           const analyses: Analysis[] = [
-            { sentiment: 'positive', urgency: 8 },
-            { sentiment: 'positive', urgency: 7 },
-            { sentiment: 'negative', urgency: 9 },
+            {sentiment: 'positive', urgency: 8},
+            {sentiment: 'positive', urgency: 7},
+            {sentiment: 'negative', urgency: 9},
           ];
           return {
             value: analyses[callCount - 1],
@@ -108,15 +108,15 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'analyze'),
-            (c) => c.infer({ parse: (v: any) => v }, 'analyze'),
-            (c) => c.infer({ parse: (v: any) => v }, 'analyze'),
+            (c) => c.infer({parse: (v: any) => v}, 'analyze'),
+            (c) => c.infer({parse: (v: any) => v}, 'analyze'),
+            (c) => c.infer({parse: (v: any) => v}, 'analyze'),
           ],
         });
 
         const mergeResult = mergeResults(
           forkResult.results,
-          object.fieldwise<Analysis>()
+          object.fieldwise<Analysis>(),
         );
 
         expect(mergeResult.value.value.sentiment).toBe('positive'); // 2 vs 1
@@ -146,15 +146,15 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'extract tags'),
-            (c) => c.infer({ parse: (v: any) => v }, 'extract tags'),
-            (c) => c.infer({ parse: (v: any) => v }, 'extract tags'),
+            (c) => c.infer({parse: (v: any) => v}, 'extract tags'),
+            (c) => c.infer({parse: (v: any) => v}, 'extract tags'),
+            (c) => c.infer({parse: (v: any) => v}, 'extract tags'),
           ],
         });
 
         const mergeResult = mergeResults(
           forkResult.results,
-          array.concat<string>()
+          array.concat<string>(),
         );
 
         expect(mergeResult.value.value).toHaveLength(4); // Unique: tag1, tag2, tag3, tag4
@@ -182,16 +182,16 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'decide'),
-            (c) => c.infer({ parse: (v: any) => v }, 'decide'),
-            (c) => c.infer({ parse: (v: any) => v }, 'decide'),
+            (c) => c.infer({parse: (v: any) => v}, 'decide'),
+            (c) => c.infer({parse: (v: any) => v}, 'decide'),
+            (c) => c.infer({parse: (v: any) => v}, 'decide'),
           ],
         });
 
         // Require 2 out of 3 to agree
         const mergeResult = mergeResults(
           forkResult.results,
-          requireConsensus<string>(2)
+          requireConsensus<string>(2),
         );
 
         expect(mergeResult.value.value).toBe('approve');
@@ -218,17 +218,17 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'choose'),
-            (c) => c.infer({ parse: (v: any) => v }, 'choose'),
-            (c) => c.infer({ parse: (v: any) => v }, 'choose'),
+            (c) => c.infer({parse: (v: any) => v}, 'choose'),
+            (c) => c.infer({parse: (v: any) => v}, 'choose'),
+            (c) => c.infer({parse: (v: any) => v}, 'choose'),
           ],
         });
 
         expect(() =>
           mergeResults(
             forkResult.results,
-            requireConsensus<string>(2, { onFailure: 'error' })
-          )
+            requireConsensus<string>(2, {onFailure: 'error'}),
+          ),
         ).toThrow('Consensus requirement not met');
       });
     });
@@ -250,9 +250,9 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'generate'),
-            (c) => c.infer({ parse: (v: any) => v }, 'generate'),
-            (c) => c.infer({ parse: (v: any) => v }, 'generate'),
+            (c) => c.infer({parse: (v: any) => v}, 'generate'),
+            (c) => c.infer({parse: (v: any) => v}, 'generate'),
+            (c) => c.infer({parse: (v: any) => v}, 'generate'),
           ],
         });
 
@@ -262,7 +262,7 @@ describe('Merge Integration', () => {
           custom<number, number>((results) => {
             const values = results.map((r) => r.value).sort((a, b) => a - b);
             return values[Math.floor(values.length / 2)];
-          })
+          }),
         );
 
         expect(mergeResult.value.value).toBe(20); // Median of [10, 20, 30]
@@ -283,12 +283,12 @@ describe('Merge Integration', () => {
 
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
-          branches: [(c) => c.infer({ parse: (v: any) => v }, 'single')],
+          branches: [(c) => c.infer({parse: (v: any) => v}, 'single')],
         });
 
         const mergeResult = mergeResults(
           forkResult.results,
-          categorical.weightedVote()
+          categorical.weightedVote(),
         );
 
         expect(mergeResult.value.value).toBe('result');
@@ -309,15 +309,15 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'vote'),
-            (c) => c.infer({ parse: (v: any) => v }, 'vote'),
-            (c) => c.infer({ parse: (v: any) => v }, 'vote'),
+            (c) => c.infer({parse: (v: any) => v}, 'vote'),
+            (c) => c.infer({parse: (v: any) => v}, 'vote'),
+            (c) => c.infer({parse: (v: any) => v}, 'vote'),
           ],
         });
 
         const mergeResult = mergeResults(
           forkResult.results,
-          categorical.weightedVote()
+          categorical.weightedVote(),
         );
 
         expect(mergeResult.value.value).toBe('unanimous');
@@ -344,16 +344,16 @@ describe('Merge Integration', () => {
         const forkResult = await fork(ctx, {
           strategy: 'fast-parallel',
           branches: [
-            (c) => c.infer({ parse: (v: any) => v }, 'choose'),
-            (c) => c.infer({ parse: (v: any) => v }, 'choose'),
-            (c) => c.infer({ parse: (v: any) => v }, 'choose'),
-            (c) => c.infer({ parse: (v: any) => v }, 'choose'),
+            (c) => c.infer({parse: (v: any) => v}, 'choose'),
+            (c) => c.infer({parse: (v: any) => v}, 'choose'),
+            (c) => c.infer({parse: (v: any) => v}, 'choose'),
+            (c) => c.infer({parse: (v: any) => v}, 'choose'),
           ],
         });
 
         const mergeResult = mergeResults(
           forkResult.results,
-          requireConsensus<string>(2, { onFailure: 'low-confidence' })
+          requireConsensus<string>(2, {onFailure: 'low-confidence'}),
         );
 
         expect(mergeResult.value.confidence).toBe(0); // Consensus not met

@@ -12,8 +12,8 @@
  * 5. ESLint validates no leaks at compile time
  */
 
-import { createMullionClient } from '@mullion/ai-sdk';
-import { createOwned } from '@mullion/core';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {createOwned} from '@mullion/core';
 import {
   TicketAnalysisSchema,
   CustomerResponseSchema,
@@ -45,26 +45,38 @@ Account status: Premium subscriber since 2020
  * ✅ SAFE: Process ticket with proper scope isolation and bridging
  */
 export async function processSupportTicketSafely(
-  providerConfig?: ProviderConfig
+  providerConfig?: ProviderConfig,
+  ticketText?: string,
 ) {
+  const ticketToProcess = ticketText || SAMPLE_TICKET;
   const model = getLanguageModel(providerConfig);
 
   if (!model) {
     console.log(`⚠️  No API key set. Running with mock data.\n`);
-    return runMockSafeFlow();
+    return runMockSafeFlow(ticketToProcess);
   }
 
   console.log(`🤖 Using ${getProviderName(providerConfig)}\n`);
   const client = createMullionClient(model);
 
   console.log('🔒 SAFE FLOW: Processing ticket with proper isolation\n');
-  console.log('📋 Ticket:\n', SAMPLE_TICKET, '\n');
+  console.log('📋 Ticket:\n', ticketToProcess, '\n');
 
   // Step 1: Admin scope - analyze ticket with full context
   const adminAnalysis = await client.scope('admin', async (adminCtx) => {
     console.log('👨‍💼 ADMIN SCOPE: Analyzing ticket with internal context...');
 
-    const analysis = await adminCtx.infer(TicketAnalysisSchema, SAMPLE_TICKET);
+    const adminPrompt = `You are analyzing a support ticket for Mullion - a TypeScript library for type-safe LLM context management.
+
+CONTEXT: Mullion helps developers prevent data leaks between different security scopes in LLM applications. Key features include scope isolation, confidence tracking, fork/merge patterns, and cost estimation.
+
+Analyze the following customer support ticket:
+
+${ticketToProcess}
+
+Provide a complete analysis including category, priority, sentiment, internal notes about customer history/risk, and recommended actions.`;
+
+    const analysis = await adminCtx.infer(TicketAnalysisSchema, adminPrompt);
 
     // ✅ GOOD: Check confidence before using data
     if (analysis.confidence < 0.7) {
@@ -77,15 +89,15 @@ export async function processSupportTicketSafely(
     console.log(`   Sentiment: ${analysis.value.sentiment}`);
     console.log(`   Confidence: ${analysis.confidence.toFixed(2)}`);
     console.log(
-      `   🔐 Internal Notes: ${analysis.value.internalNotes.substring(0, 60)}...`
+      `   🔐 Internal Notes: ${analysis.value.internalNotes.substring(0, 60)}...`,
     );
     console.log(`   🔐 Risk Level: ${analysis.value.riskLevel}`);
     console.log(
-      `   🔐 Suggested Compensation: ${analysis.value.suggestedCompensation || 'None'}\n`
+      `   🔐 Suggested Compensation: ${analysis.value.suggestedCompensation || 'None'}\n`,
     );
 
     // ✅ GOOD: Return owned value within scope
-    return adminCtx.use(analysis);
+    return analysis;
   });
 
   // Step 2: Sanitize data before bridging
@@ -94,10 +106,11 @@ export async function processSupportTicketSafely(
   // ✅ GOOD: Explicitly create sanitized version with only public fields
   const sanitized: SanitizedTicket = {
     ticketId: adminAnalysis.value.ticketId,
+    summary: adminAnalysis.value.summary,
     category: adminAnalysis.value.category,
     priority: adminAnalysis.value.priority,
     sentiment: adminAnalysis.value.sentiment,
-    // ✅ CRITICAL: internalNotes, riskLevel, suggestedCompensation are NOT included
+    // ✅ CRITICAL: internalNotes, riskLevel, recommendedActions, suggestedCompensation are NOT included
   };
 
   console.log('   ✅ Sanitized data (safe to share):', sanitized, '\n');
@@ -119,16 +132,47 @@ export async function processSupportTicketSafely(
     console.log(`   Bridged scope: ${bridged.__scope}`);
 
     // ✅ GOOD: Generate response using only public data
-    const prompt = `Generate a professional customer response for this support ticket:
+    const prompt = `You are a customer support representative for Mullion - a TypeScript library for type-safe LLM context management.
+
+CONTEXT: Mullion helps developers prevent data leaks between different security scopes in LLM applications.
+Key features: scope isolation, confidence tracking, fork/merge patterns, and cost estimation.
+
+Generate a professional customer response for this support ticket:
+
+Summary: ${bridged.value.summary}
 Category: ${bridged.value.category}
 Priority: ${bridged.value.priority}
 Sentiment: ${bridged.value.sentiment}
 
-Be empathetic and solution-focused. Do NOT mention internal notes, risk levels, or compensation strategies.`;
+Instructions:
+- Be empathetic and solution-focused
+- Address the specific issue mentioned in the summary
+- Provide actionable next steps related to using Mullion (the TypeScript library)
+- Do NOT mention internal notes, risk levels, or compensation strategies
+- Do NOT use placeholders like [Your Name], [Customer Name], [Company], etc.
+- Write a complete, ready-to-send response from a customer support representative
+- Focus on Mullion as a software development tool, not architectural mullions
+
+FORMATTING REQUIREMENTS (STRICT, NO EMPTY LINES):
+- NEVER output an empty line.
+- NEVER output two consecutive newline characters. The sequence "\\n\\n" is forbidden.
+- Use exactly ONE "\\n" between blocks.
+- Do not wrap lines inside a paragraph. Each paragraph must be a single line.
+- Do NOT use Markdown hard line breaks: never end a line with two spaces ("  ").
+- For lists:
+  - The list-intro sentence is one line and ends with ":".
+  - List items start on the next line immediately (no empty line).
+  - No blank lines between items.
+  - After the last item, the closing paragraph starts on the next line.
+
+FINAL CHECK BEFORE SENDING:
+- Scan your output and ensure it contains NO "\\n\\n".
+- If "\\n\\n" exists anywhere, replace it with "\\n" and re-check.
+`;
 
     const customerResponse = await publicCtx.infer(
       CustomerResponseSchema,
-      prompt
+      prompt,
     );
 
     // ✅ GOOD: Check confidence before sending to customer
@@ -138,15 +182,15 @@ Be empathetic and solution-focused. Do NOT mention internal notes, risk levels, 
 
     console.log(`   Confidence: ${customerResponse.confidence.toFixed(2)}`);
     console.log(
-      `   Message: "${customerResponse.value.message.substring(0, 100)}..."`
+      `   Message: "${customerResponse.value.message.substring(0, 100)}..."`,
     );
     console.log(
-      `   Action Items: ${customerResponse.value.actionItems.join('; ')}`
+      `   Action Items: ${customerResponse.value.actionItems.join('; ')}`,
     );
     console.log(`   Escalated: ${customerResponse.value.escalated}\n`);
 
     // ✅ GOOD: Return owned value within scope
-    return publicCtx.use(customerResponse);
+    return customerResponse;
   });
 
   console.log('✅ SUCCESS: Ticket processed safely!\n');
@@ -157,60 +201,109 @@ Be empathetic and solution-focused. Do NOT mention internal notes, risk levels, 
   console.log('   • Confidence checked at each step');
   console.log('   • ESLint validated no leaks at compile time\n');
 
-  return { adminAnalysis, response };
+  return {adminAnalysis, response};
 }
 
 /**
  * Mock flow for demonstration without API key
  */
-async function runMockSafeFlow() {
+async function runMockSafeFlow(ticketText: string = SAMPLE_TICKET) {
   console.log('🔒 SAFE FLOW (Mock Mode)\n');
-  console.log('📋 Ticket:\n', SAMPLE_TICKET, '\n');
+  console.log('📋 Ticket:\n', ticketText, '\n');
 
   // Mock admin analysis
-  const mockAdminAnalysis = {
+  const mockAdminAnalysisValue = {
     ticketId: 'TIX-789',
-    category: 'billing' as const,
-    priority: 'urgent' as const,
-    sentiment: 'angry' as const,
+    summary: 'Customer inquiry about Mullion TypeScript library usage',
+    category: 'technical' as const,
+    priority: 'medium' as const,
+    sentiment: 'neutral' as const,
     internalNotes:
-      'High-value customer, 3rd billing issue. Churn risk. Previous complaints about payment processor integration.',
-    riskLevel: 'high' as const,
-    suggestedCompensation: 'Refund $299.99 + 1 month free service',
+      'Developer seeking clarification on Mullion scope isolation features. Potential for upsell to enterprise support. No previous tickets.',
+    riskLevel: 'none' as const,
+    recommendedActions: [
+      'Explain core scope isolation concept',
+      'Provide code examples',
+      'Link to documentation',
+    ],
+    suggestedCompensation: undefined,
   };
 
+  const mockAdminAnalysis = createOwned({
+    value: mockAdminAnalysisValue,
+    scope: 'admin' as const,
+    confidence: 0.85,
+    traceId: 'mock-trace-admin',
+  });
+
   console.log('👨‍💼 ADMIN SCOPE: Mock analysis');
-  console.log('   Category:', mockAdminAnalysis.category);
-  console.log('   Priority:', mockAdminAnalysis.priority);
-  console.log('   Sentiment:', mockAdminAnalysis.sentiment);
-  console.log('   🔐 Internal Notes:', mockAdminAnalysis.internalNotes);
-  console.log('   🔐 Risk Level:', mockAdminAnalysis.riskLevel);
+  console.log('   Summary:', mockAdminAnalysis.value.summary);
+  console.log('   Category:', mockAdminAnalysis.value.category);
+  console.log('   Priority:', mockAdminAnalysis.value.priority);
+  console.log('   Sentiment:', mockAdminAnalysis.value.sentiment);
+  console.log('   🔐 Internal Notes:', mockAdminAnalysis.value.internalNotes);
+  console.log('   🔐 Risk Level:', mockAdminAnalysis.value.riskLevel);
+  console.log(
+    '   🔐 Recommended Actions:',
+    mockAdminAnalysis.value.recommendedActions.join(', '),
+  );
   console.log(
     '   🔐 Suggested Compensation:',
-    mockAdminAnalysis.suggestedCompensation,
-    '\n'
+    mockAdminAnalysis.value.suggestedCompensation || 'None',
+    '\n',
   );
 
   // Mock sanitization
   const sanitized = {
-    ticketId: mockAdminAnalysis.ticketId,
-    category: mockAdminAnalysis.category,
-    priority: mockAdminAnalysis.priority,
-    sentiment: mockAdminAnalysis.sentiment,
+    ticketId: mockAdminAnalysis.value.ticketId,
+    summary: mockAdminAnalysis.value.summary,
+    category: mockAdminAnalysis.value.category,
+    priority: mockAdminAnalysis.value.priority,
+    sentiment: mockAdminAnalysis.value.sentiment,
   };
 
   console.log('🧹 SANITIZATION: Removing sensitive data...');
   console.log('   ✅ Sanitized data (safe to share):', sanitized, '\n');
 
-  // Mock customer response
+  // Mock customer response - context-aware based on summary
+  const mockResponseValue = {
+    message: `Thank you for reaching out about Mullion! I'd be happy to help you understand how Mullion can benefit your project.
+
+Mullion is a TypeScript library designed to prevent data leaks between different security scopes in LLM applications. Here's how it helps:
+
+1. **Scope Isolation** - Mullion ensures data from one context (e.g., admin) can't accidentally leak into another (e.g., public responses)
+2. **Compile-Time Safety** - TypeScript types catch potential leaks before your code runs
+3. **Confidence Tracking** - Every LLM inference includes a confidence score, helping you decide when to escalate to human review
+4. **Fork/Merge Patterns** - Run parallel LLM calls efficiently with intelligent caching
+
+Could you share more about your specific use case? For example, are you building a customer support system, content moderation tool, or something else? This will help me provide more targeted guidance.
+
+Check out our documentation at the repository for code examples and getting started guides!`,
+    actionItems: [
+      'Provide overview of Mullion features',
+      'Request use case details',
+      'Share documentation links',
+    ],
+    estimatedResolution: 'Immediate response with follow-up',
+    escalated: false,
+    followUpRequired: true,
+  };
+
+  const mockResponse = createOwned({
+    value: mockResponseValue,
+    scope: 'public' as const,
+    confidence: 0.9,
+    traceId: 'mock-trace-public',
+  });
+
   console.log('🌐 PUBLIC SCOPE: Mock customer response');
-  console.log('   Message: "We sincerely apologize for the billing issue..."');
-  console.log(
-    '   Action Items: Investigate charge, Process refund, Update account'
-  );
-  console.log('   Escalated: true\n');
+  console.log('   Message:', mockResponse.value.message);
+  console.log('   Action Items:', mockResponse.value.actionItems.join(', '));
+  console.log('   Escalated:', mockResponse.value.escalated, '\n');
 
   console.log('✅ SUCCESS: Mock ticket processed safely!\n');
+
+  return {adminAnalysis: mockAdminAnalysis, response: mockResponse};
 }
 
 // Run if called directly

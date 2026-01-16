@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { scope } from './scope.js';
-import type { Owned } from './owned.js';
-import { createOwned } from './owned.js';
+import {describe, it, expect} from 'vitest';
+import {scope} from './scope.js';
+import type {Owned} from './owned.js';
+import {createOwned} from './owned.js';
 
 describe('scope', () => {
   describe('Basic Functionality', () => {
@@ -24,10 +24,10 @@ describe('scope', () => {
     it('should handle async operations', async () => {
       const result = await scope('async-test', async (ctx) => {
         await new Promise((resolve) => setTimeout(resolve, 10));
-        return { scope: ctx.scope, data: 42 };
+        return {scope: ctx.scope, data: 42};
       });
 
-      expect(result).toEqual({ scope: 'async-test', data: 42 });
+      expect(result).toEqual({scope: 'async-test', data: 42});
     });
 
     it('should return values of different types', async () => {
@@ -37,8 +37,8 @@ describe('scope', () => {
       const numberResult = await scope('test2', async () => 123);
       expect(numberResult).toBe(123);
 
-      const objectResult = await scope('test3', async () => ({ foo: 'bar' }));
-      expect(objectResult).toEqual({ foo: 'bar' });
+      const objectResult = await scope('test3', async () => ({foo: 'bar'}));
+      expect(objectResult).toEqual({foo: 'bar'});
 
       const arrayResult = await scope('test4', async () => [1, 2, 3]);
       expect(arrayResult).toEqual([1, 2, 3]);
@@ -77,8 +77,8 @@ describe('scope', () => {
     });
 
     it('should preserve value and confidence when bridging', async () => {
-      const sourceValue: Owned<{ data: string }, 'admin'> = createOwned({
-        value: { data: 'sensitive' },
+      const sourceValue: Owned<{data: string}, 'admin'> = createOwned({
+        value: {data: 'sensitive'},
         scope: 'admin',
         confidence: 0.75,
       });
@@ -86,7 +86,7 @@ describe('scope', () => {
       await scope('audit', async (ctx) => {
         const bridged = ctx.bridge(sourceValue);
 
-        expect(bridged.value).toEqual({ data: 'sensitive' });
+        expect(bridged.value).toEqual({data: 'sensitive'});
         expect(bridged.confidence).toBe(0.75);
       });
     });
@@ -147,7 +147,7 @@ describe('scope', () => {
           ctx.use(otherValue);
         }).toThrow(
           "Scope mismatch: attempting to use value from scope 'admin' " +
-            "in scope 'user'. Use bridge() to explicitly transfer values between scopes."
+            "in scope 'user'. Use bridge() to explicitly transfer values between scopes.",
         );
       });
     });
@@ -292,7 +292,7 @@ describe('scope', () => {
       }
 
       const result = await scope('typed-test', async () => {
-        const data: TestData = { id: 1, name: 'test' };
+        const data: TestData = {id: 1, name: 'test'};
         return data;
       });
 

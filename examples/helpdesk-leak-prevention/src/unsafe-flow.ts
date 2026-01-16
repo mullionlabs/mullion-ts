@@ -12,8 +12,8 @@
  * - @mullion/require-confidence-check: Warns about using data without confidence checks
  */
 
-import { createMullionClient } from '@mullion/ai-sdk';
-import type { Owned } from '@mullion/core';
+import {createMullionClient} from '@mullion/ai-sdk';
+import type {Owned} from '@mullion/core';
 import {
   TicketAnalysisSchema,
   CustomerResponseSchema,
@@ -55,7 +55,7 @@ export async function contextLeakOuterScope(providerConfig?: ProviderConfig) {
     // @mullion/no-context-leak should flag this
     leakedAnalysis = analysis;
 
-    return adminCtx.use(analysis);
+    return analysis;
   });
 
   // ❌ ESLint ERROR: Using leaked data outside its scope
@@ -79,7 +79,7 @@ export async function contextLeakCrossScope(providerConfig?: ProviderConfig) {
 
   const adminAnalysis = await client.scope('admin', async (adminCtx) => {
     const analysis = await adminCtx.infer(TicketAnalysisSchema, SAMPLE_TICKET);
-    return adminCtx.use(analysis);
+    return analysis;
   });
 
   await client.scope('public', async (publicCtx) => {
@@ -92,7 +92,7 @@ export async function contextLeakCrossScope(providerConfig?: ProviderConfig) {
 
     // ❌ ESLint WARNING: No confidence check
     // @mullion/require-confidence-check should warn
-    return publicCtx.use(response);
+    return response;
   });
 }
 
@@ -247,7 +247,7 @@ export async function completeUnsafeFlow(providerConfig?: ProviderConfig) {
     // ❌ ESLint WARNING: No confidence check
     console.log(`   Internal Notes: ${analysis.value.internalNotes}`);
 
-    return adminCtx.use(analysis);
+    return analysis;
   });
 
   await client.scope('public', async (publicCtx) => {
@@ -262,7 +262,7 @@ export async function completeUnsafeFlow(providerConfig?: ProviderConfig) {
     // ❌ ESLint WARNING: No confidence check
     console.log(`   Response: "${response.value.message}"`);
 
-    return publicCtx.use(response);
+    return response;
   });
 
   console.log('\n❌ DANGER: This flow has MULTIPLE security vulnerabilities!');

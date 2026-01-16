@@ -37,16 +37,13 @@ export {
 // ============================================================================
 // Pipeline & Components
 // ============================================================================
-export { executeRAGPipeline, type RAGPipelineResult } from './pipeline.js';
+export {executeRAGPipeline, type RAGPipelineResult} from './pipeline.js';
 
-export {
-  classifyDocument,
-  classifyDocumentWithConsensus,
-} from './classifier.js';
+export {classifyDocument, classifyDocumentWithConsensus} from './classifier.js';
 
-export { analyzeQuery, retrieveDocuments } from './retriever.js';
+export {analyzeQuery, retrieveDocuments} from './retriever.js';
 
-export { generateResponse, generateResponseWithSources } from './generator.js';
+export {generateResponse, generateResponseWithSources} from './generator.js';
 
 // ============================================================================
 // Provider Utilities

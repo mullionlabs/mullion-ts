@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-import { ESLintUtils } from '@typescript-eslint/utils';
-import type { TSESTree } from '@typescript-eslint/utils';
+import {ESLintUtils} from '@typescript-eslint/utils';
+import type {TSESTree} from '@typescript-eslint/utils';
 import type * as ts from 'typescript';
 
 /**
@@ -53,7 +53,7 @@ type Options = [
 
 const createRule = ESLintUtils.RuleCreator(
   (name) =>
-    `https://github.com/mullionlabs/mullion-ts/blob/main/packages/eslint-plugin/docs/rules/${name}.md`
+    `https://github.com/mullionlabs/mullion-ts/blob/main/packages/eslint-plugin/docs/rules/${name}.md`,
 );
 
 export default createRule<Options, MessageIds>({
@@ -80,7 +80,7 @@ export default createRule<Options, MessageIds>({
           },
           handlerFunctions: {
             type: 'array',
-            items: { type: 'string' },
+            items: {type: 'string'},
             description:
               'Functions that count as confidence handling (e.g., ["handleLowConfidence"])',
           },
@@ -124,7 +124,7 @@ export default createRule<Options, MessageIds>({
      */
     function isInsideConfidenceCheck(
       node: TSESTree.Node,
-      variableName: string
+      variableName: string,
     ): boolean {
       let current: TSESTree.Node | undefined = node;
 
@@ -165,7 +165,7 @@ export default createRule<Options, MessageIds>({
      */
     function referencesConfidence(
       node: TSESTree.Node,
-      variableName: string
+      variableName: string,
     ): boolean {
       if (node.type === 'BinaryExpression') {
         // Check left or right side for variable.confidence
@@ -315,7 +315,7 @@ export default createRule<Options, MessageIds>({
         node:
           | TSESTree.FunctionDeclaration
           | TSESTree.FunctionExpression
-          | TSESTree.ArrowFunctionExpression
+          | TSESTree.ArrowFunctionExpression,
       ) {
         for (const param of node.params) {
           if (param.type === 'Identifier') {

@@ -30,6 +30,21 @@
     },
     "clean": {
       "cache": false
+    },
+    "start": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true
+    },
+    "generate": {
+      "dependsOn": ["^build"],
+      "outputs": [".nuxt/**", ".output/**"],
+      "cache": true
+    },
+    "preview": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true
     }
   }
 }

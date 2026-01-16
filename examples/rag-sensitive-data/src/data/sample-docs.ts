@@ -7,7 +7,7 @@
  * - CONFIDENTIAL: Financial data, trade secrets, legal documents
  */
 
-import type { Document, AccessLevel } from '../schemas.js';
+import type {Document, AccessLevel} from '../schemas.js';
 
 export const SAMPLE_DOCUMENTS: Document[] = [
   // PUBLIC documents
@@ -313,7 +313,7 @@ Lessons Learned:
  */
 export function filterDocumentsByAccess(
   documents: Document[],
-  userAccessLevel: AccessLevel
+  userAccessLevel: AccessLevel,
 ): Document[] {
   const accessHierarchy: Record<AccessLevel, number> = {
     public: 0,
@@ -324,7 +324,7 @@ export function filterDocumentsByAccess(
   const userLevel = accessHierarchy[userAccessLevel];
 
   return documents.filter(
-    (doc) => accessHierarchy[doc.accessLevel] <= userLevel
+    (doc) => accessHierarchy[doc.accessLevel] <= userLevel,
   );
 }
 
@@ -333,7 +333,7 @@ export function filterDocumentsByAccess(
  */
 export function getDocumentsByTag(
   documents: Document[],
-  tag: string
+  tag: string,
 ): Document[] {
   return documents.filter((doc) => doc.tags.includes(tag));
 }
@@ -344,7 +344,7 @@ export function getDocumentsByTag(
  */
 export function scoreDocumentRelevance(
   document: Document,
-  query: string
+  query: string,
 ): number {
   const queryLower = query.toLowerCase();
   const contentLower = document.content.toLowerCase();
@@ -365,7 +365,7 @@ export function scoreDocumentRelevance(
 
   // Tag match
   const matchingTags = document.tags.filter((tag) =>
-    queryLower.includes(tag.toLowerCase())
+    queryLower.includes(tag.toLowerCase()),
   );
   score += matchingTags.length * 0.2;
 

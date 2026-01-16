@@ -1,6 +1,6 @@
-import { createOwned } from '../../owned.js';
-import type { Owned } from '../../owned.js';
-import type { MergeStrategy, MergeResult, MergeConflict } from '../types.js';
+import {createOwned} from '../../owned.js';
+import type {Owned} from '../../owned.js';
+import type {MergeStrategy, MergeResult, MergeConflict} from '../types.js';
 
 /**
  * Options for configuring fieldwise merge strategy.
@@ -98,7 +98,7 @@ export interface FieldwiseOptions {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function fieldwise<T extends Record<string, any>>(
-  options: FieldwiseOptions = {}
+  options: FieldwiseOptions = {},
 ): MergeStrategy<T, T> {
   const {
     fieldStrategy = 'vote',
@@ -135,7 +135,7 @@ export function fieldwise<T extends Record<string, any>>(
 
       if (validResults.length === 0) {
         throw new Error(
-          `All results rejected: confidence below threshold (${minConfidence})`
+          `All results rejected: confidence below threshold (${minConfidence})`,
         );
       }
 
@@ -155,7 +155,7 @@ export function fieldwise<T extends Record<string, any>>(
             ![...firstFields].every((f) => currentFields.has(f))
           ) {
             throw new Error(
-              `Field mismatch: branches have different fields. Set allowPartial: true to allow this.`
+              `Field mismatch: branches have different fields. Set allowPartial: true to allow this.`,
             );
           }
         }
@@ -169,12 +169,12 @@ export function fieldwise<T extends Record<string, any>>(
       if (fieldStrategy === 'highest-confidence') {
         // Take all fields from branch with highest confidence
         const bestResult = validResults.reduce((best, current) =>
-          current.confidence > best.confidence ? current : best
+          current.confidence > best.confidence ? current : best,
         );
-        mergedValue = { ...bestResult.value };
+        mergedValue = {...bestResult.value};
       } else if (fieldStrategy === 'first') {
         // Take all fields from first branch
-        mergedValue = { ...validResults[0].value };
+        mergedValue = {...validResults[0].value};
       } else {
         // Vote on each field independently
         mergedValue = {} as T;
@@ -183,7 +183,7 @@ export function fieldwise<T extends Record<string, any>>(
           // Get values for this field from all branches that have it
           const fieldValues = new Map<
             unknown,
-            { weight: number; indices: number[] }
+            {weight: number; indices: number[]}
           >();
 
           validResults.forEach((result) => {

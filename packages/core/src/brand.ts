@@ -21,7 +21,7 @@
  *
  * @see {@link https://basarat.gitbook.io/typescript/main-1/nominaltyping | Nominal Typing in TypeScript}
  */
-export type Brand<T, B extends string> = T & { readonly __brand: B };
+export type Brand<T, B extends string> = T & {readonly __brand: B};
 
 /**
  * ScopeId is a branded string type representing a unique scope identifier.

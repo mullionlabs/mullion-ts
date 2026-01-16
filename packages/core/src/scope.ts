@@ -1,5 +1,5 @@
-import type { Context, Schema, InferOptions } from './context.js';
-import type { Owned } from './owned.js';
+import type {Context, Schema, InferOptions} from './context.js';
+import type {Owned} from './owned.js';
 
 /**
  * Creates a scoped execution context for LLM operations.
@@ -76,7 +76,7 @@ import type { Owned } from './owned.js';
  */
 export async function scope<S extends string, R>(
   name: S,
-  fn: (ctx: Context<S>) => Promise<R>
+  fn: (ctx: Context<S>) => Promise<R>,
 ): Promise<R> {
   // Create the context instance for this scope
   const ctx: Context<S> = {
@@ -89,15 +89,15 @@ export async function scope<S extends string, R>(
     infer<T>(
       _schema: Schema<T>,
       _input: string,
-      _options?: InferOptions
+      _options?: InferOptions,
     ): Promise<Owned<T, S>> {
       return Promise.reject(
         new Error(
           'Context.infer() is not implemented. ' +
             'This method is a placeholder provided by @mullion/core. ' +
             'To use LLM inference, install an integration package like @mullion/ai-sdk ' +
-            'which provides a working implementation.'
-        )
+            'which provides a working implementation.',
+        ),
       );
     },
 
@@ -124,7 +124,7 @@ export async function scope<S extends string, R>(
       if (owned.__scope !== name) {
         throw new Error(
           `Scope mismatch: attempting to use value from scope '${owned.__scope}' ` +
-            `in scope '${name}'. Use bridge() to explicitly transfer values between scopes.`
+            `in scope '${name}'. Use bridge() to explicitly transfer values between scopes.`,
         );
       }
 

@@ -8,14 +8,14 @@
  * - Source attribution and confidence tracking
  */
 
-import { createMullionClient } from '@mullion/ai-sdk';
+import {createMullionClient} from '@mullion/ai-sdk';
 import {
   RAGResponse,
   type UserQuery,
   type RetrievedChunk,
   type AccessLevel,
 } from './schemas.js';
-import { getLanguageModel, type ProviderConfig } from './provider.js';
+import {getLanguageModel, type ProviderConfig} from './provider.js';
 
 /**
  * Generate response from retrieved documents
@@ -27,7 +27,7 @@ import { getLanguageModel, type ProviderConfig } from './provider.js';
 export async function generateResponse(
   query: UserQuery,
   retrievedChunks: RetrievedChunk[],
-  providerConfig?: ProviderConfig
+  providerConfig?: ProviderConfig,
 ): Promise<RAGResponse> {
   const model = getLanguageModel(providerConfig);
 
@@ -44,7 +44,7 @@ export async function generateResponse(
         (chunk, i) => `
 [Source ${i + 1}: ${chunk.documentTitle} - ${chunk.accessLevel.toUpperCase()}]
 ${chunk.excerpt}
-`
+`,
       )
       .join('\n');
 
@@ -86,7 +86,7 @@ Please provide a comprehensive answer based on the context above. Cite your sour
 export async function generateResponseWithSources(
   query: UserQuery,
   retrievedChunks: RetrievedChunk[],
-  providerConfig?: ProviderConfig
+  providerConfig?: ProviderConfig,
 ): Promise<{
   response: RAGResponse;
   sources: RetrievedChunk[];
@@ -96,7 +96,7 @@ export async function generateResponseWithSources(
   const response = await generateResponse(
     query,
     retrievedChunks,
-    providerConfig
+    providerConfig,
   );
 
   // Determine highest access level used
@@ -126,7 +126,7 @@ export async function generateResponseWithSources(
  */
 function getMockResponse(
   query: UserQuery,
-  retrievedChunks: RetrievedChunk[]
+  retrievedChunks: RetrievedChunk[],
 ): RAGResponse {
   const sources = retrievedChunks.map((chunk) => ({
     documentId: chunk.documentId,
@@ -176,62 +176,64 @@ function getMockResponse(
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  console.log('💬 Response Generator Demo\n');
+  (async () => {
+    console.log('💬 Response Generator Demo\n');
 
-  // Mock retrieved chunks
-  const mockChunks: RetrievedChunk[] = [
-    {
-      documentId: 'doc-pub-001',
-      documentTitle: 'Product Features Overview',
-      accessLevel: 'public',
-      excerpt:
-        'Our flagship product offers enterprise-grade security, real-time collaboration, and seamless integration with popular tools...',
-      relevanceScore: 0.9,
-    },
-    {
-      documentId: 'doc-pub-003',
-      documentTitle: 'Pricing Plans',
-      accessLevel: 'public',
-      excerpt:
-        'We offer three pricing tiers: FREE (up to 5 users), PRO ($29/user/month), and ENTERPRISE (custom pricing)...',
-      relevanceScore: 0.7,
-    },
-  ];
+    // Mock retrieved chunks
+    const mockChunks: RetrievedChunk[] = [
+      {
+        documentId: 'doc-pub-001',
+        documentTitle: 'Product Features Overview',
+        accessLevel: 'public',
+        excerpt:
+          'Our flagship product offers enterprise-grade security, real-time collaboration, and seamless integration with popular tools...',
+        relevanceScore: 0.9,
+      },
+      {
+        documentId: 'doc-pub-003',
+        documentTitle: 'Pricing Plans',
+        accessLevel: 'public',
+        excerpt:
+          'We offer three pricing tiers: FREE (up to 5 users), PRO ($29/user/month), and ENTERPRISE (custom pricing)...',
+        relevanceScore: 0.7,
+      },
+    ];
 
-  const query: UserQuery = {
-    query: 'What features does the product offer and how much does it cost?',
-    userAccessLevel: 'public',
-  };
+    const query: UserQuery = {
+      query: 'What features does the product offer and how much does it cost?',
+      userAccessLevel: 'public',
+    };
 
-  console.log(`🔎 Query: "${query.query}"`);
-  console.log(`👤 User Access: ${query.userAccessLevel.toUpperCase()}\n`);
+    console.log(`🔎 Query: "${query.query}"`);
+    console.log(`👤 User Access: ${query.userAccessLevel.toUpperCase()}\n`);
 
-  console.log('📚 Using sources:');
-  mockChunks.forEach((chunk, i) => {
+    console.log('📚 Using sources:');
+    mockChunks.forEach((chunk, i) => {
+      console.log(
+        `   ${i + 1}. ${chunk.documentTitle} (${chunk.accessLevel}, relevance: ${chunk.relevanceScore})`,
+      );
+    });
+
+    console.log('\n💭 Generating response...\n');
+
+    const result = await generateResponseWithSources(query, mockChunks);
+
+    console.log('📝 Generated Response:\n');
+    console.log(`Answer: ${result.response.answer}\n`);
+    console.log('Sources:');
+    result.response.sources.forEach((source, i) => {
+      console.log(
+        `   ${i + 1}. ${source.title} (${source.accessLevel.toUpperCase()})`,
+      );
+    });
     console.log(
-      `   ${i + 1}. ${chunk.documentTitle} (${chunk.accessLevel}, relevance: ${chunk.relevanceScore})`
+      `\nAccess Level Used: ${result.highestAccessLevel.toUpperCase()}`,
     );
-  });
+    console.log(`Confidence: ${result.totalConfidence.toFixed(2)}`);
+    if (result.response.reasoning) {
+      console.log(`Reasoning: ${result.response.reasoning}`);
+    }
 
-  console.log('\n💭 Generating response...\n');
-
-  const result = await generateResponseWithSources(query, mockChunks);
-
-  console.log('📝 Generated Response:\n');
-  console.log(`Answer: ${result.response.answer}\n`);
-  console.log('Sources:');
-  result.response.sources.forEach((source, i) => {
-    console.log(
-      `   ${i + 1}. ${source.title} (${source.accessLevel.toUpperCase()})`
-    );
-  });
-  console.log(
-    `\nAccess Level Used: ${result.highestAccessLevel.toUpperCase()}`
-  );
-  console.log(`Confidence: ${result.totalConfidence.toFixed(2)}`);
-  if (result.response.reasoning) {
-    console.log(`Reasoning: ${result.response.reasoning}`);
-  }
-
-  console.log('\n✅ Response generated successfully!');
+    console.log('\n✅ Response generated successfully!');
+  })();
 }

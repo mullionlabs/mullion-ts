@@ -1,15 +1,15 @@
-import { describe, it, expect } from 'vitest';
-import { createOwned } from '../../owned.js';
-import type { Owned } from '../../owned.js';
-import { requireConsensus } from './consensus.js';
+import {describe, it, expect} from 'vitest';
+import {createOwned} from '../../owned.js';
+import type {Owned} from '../../owned.js';
+import {requireConsensus} from './consensus.js';
 
 describe('requireConsensus', () => {
   describe('basic consensus', () => {
     it('should accept result when consensus requirement is met', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'yes', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'yes', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'no', confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 'yes', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'yes', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'no', confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(2);
@@ -23,9 +23,9 @@ describe('requireConsensus', () => {
 
     it('should handle unanimous consensus', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'approve', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'approve', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'approve', confidence: 0.85, scope: 'b2' }),
+        createOwned({value: 'approve', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'approve', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'approve', confidence: 0.85, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(3);
@@ -40,9 +40,9 @@ describe('requireConsensus', () => {
 
     it('should work with k=1 (no consensus required)', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'B', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'C', confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'B', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'C', confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(1);
@@ -57,9 +57,9 @@ describe('requireConsensus', () => {
   describe('failure behaviors', () => {
     it('should return low confidence when consensus not met (default)', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'B', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'C', confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'B', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'C', confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(2); // Need 2 to agree
@@ -71,9 +71,9 @@ describe('requireConsensus', () => {
 
     it('should return low confidence when onFailure is low-confidence', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'B', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'C', confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'B', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'C', confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(2, {
@@ -86,9 +86,9 @@ describe('requireConsensus', () => {
 
     it('should throw error when consensus not met and onFailure is error', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'B', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'C', confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'B', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'C', confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(2, {
@@ -96,7 +96,7 @@ describe('requireConsensus', () => {
       });
 
       expect(() => strategy.merge(results)).toThrow(
-        'Consensus requirement not met'
+        'Consensus requirement not met',
       );
       expect(() => strategy.merge(results)).toThrow('needed 2 agreeing');
     });
@@ -105,9 +105,9 @@ describe('requireConsensus', () => {
   describe('numeric tolerance', () => {
     it('should consider values within tolerance as equal', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 100.0, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 100.05, confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 100.08, confidence: 0.85, scope: 'b2' }),
+        createOwned({value: 100.0, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 100.05, confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 100.08, confidence: 0.85, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<number>(3, {
@@ -122,9 +122,9 @@ describe('requireConsensus', () => {
 
     it('should reject values outside tolerance', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 100, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 101, confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 200, confidence: 0.7, scope: 'b2' }), // Outside tolerance
+        createOwned({value: 100, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 101, confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 200, confidence: 0.7, scope: 'b2'}), // Outside tolerance
       ];
 
       const strategy = requireConsensus<number>(2, {
@@ -139,9 +139,9 @@ describe('requireConsensus', () => {
 
     it('should use strict equality with tolerance=0 (default)', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 100, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 100.01, confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 100, confidence: 0.85, scope: 'b2' }),
+        createOwned({value: 100, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 100.01, confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 100, confidence: 0.85, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<number>(2); // Default tolerance=0
@@ -163,17 +163,17 @@ describe('requireConsensus', () => {
 
       const results: Owned<TestObj, string>[] = [
         createOwned({
-          value: { category: 'urgent', priority: 9 },
+          value: {category: 'urgent', priority: 9},
           confidence: 0.9,
           scope: 'b0',
         }),
         createOwned({
-          value: { category: 'urgent', priority: 8 },
+          value: {category: 'urgent', priority: 8},
           confidence: 0.8,
           scope: 'b1',
         }),
         createOwned({
-          value: { category: 'normal', priority: 5 },
+          value: {category: 'normal', priority: 5},
           confidence: 0.7,
           scope: 'b2',
         }),
@@ -220,9 +220,9 @@ describe('requireConsensus', () => {
 
     it('should prioritize equalityFn over tolerance', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 100, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 101, confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 102, confidence: 0.85, scope: 'b2' }),
+        createOwned({value: 100, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 101, confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 102, confidence: 0.85, scope: 'b2'}),
       ];
 
       // Custom function that considers all numbers equal
@@ -245,32 +245,32 @@ describe('requireConsensus', () => {
 
     it('should throw when k > number of results', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'B', confidence: 0.8, scope: 'b1' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'B', confidence: 0.8, scope: 'b1'}),
       ];
 
       const strategy = requireConsensus<string>(3); // k=3 but only 2 results
 
       expect(() => strategy.merge(results)).toThrow(
-        'Consensus requirement impossible'
+        'Consensus requirement impossible',
       );
     });
 
     it('should throw on invalid k (non-integer)', () => {
       expect(() => requireConsensus<string>(1.5)).toThrow(
-        'k must be a positive integer'
+        'k must be a positive integer',
       );
     });
 
     it('should throw on invalid k (negative)', () => {
       expect(() => requireConsensus<string>(-1)).toThrow(
-        'k must be a positive integer'
+        'k must be a positive integer',
       );
     });
 
     it('should throw on invalid k (zero)', () => {
       expect(() => requireConsensus<string>(0)).toThrow(
-        'k must be a positive integer'
+        'k must be a positive integer',
       );
     });
   });
@@ -278,9 +278,9 @@ describe('requireConsensus', () => {
   describe('conflict tracking', () => {
     it('should record conflicts when multiple groups exist', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'A', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'B', confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'A', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'B', confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(2);
@@ -293,9 +293,9 @@ describe('requireConsensus', () => {
 
     it('should not record conflicts when unanimous', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'A', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'A', confidence: 0.85, scope: 'b2' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'A', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'A', confidence: 0.85, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(3);
@@ -308,10 +308,10 @@ describe('requireConsensus', () => {
   describe('rejected values tracking', () => {
     it('should track rejected values that did not match consensus', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'A', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'B', confidence: 0.7, scope: 'b2' }),
-        createOwned({ value: 'C', confidence: 0.6, scope: 'b3' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'A', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'B', confidence: 0.7, scope: 'b2'}),
+        createOwned({value: 'C', confidence: 0.6, scope: 'b3'}),
       ];
 
       const strategy = requireConsensus<string>(2);
@@ -322,16 +322,16 @@ describe('requireConsensus', () => {
       expect(result.provenance.rejectedValues[1].branch).toBe(3);
       expect(
         result.provenance.rejectedValues.every(
-          (r) => r.reason === 'did not match consensus value'
-        )
+          (r) => r.reason === 'did not match consensus value',
+        ),
       ).toBe(true);
     });
 
     it('should not reject any values when all agree', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'same', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'same', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'same', confidence: 0.85, scope: 'b2' }),
+        createOwned({value: 'same', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'same', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'same', confidence: 0.85, scope: 'b2'}),
       ];
 
       const strategy = requireConsensus<string>(3);

@@ -1,6 +1,6 @@
-import { RuleTester } from '@typescript-eslint/rule-tester';
+import {RuleTester} from '@typescript-eslint/rule-tester';
 import * as tsParser from '@typescript-eslint/parser';
-import { afterAll, describe, it } from 'vitest';
+import {afterAll, describe, it} from 'vitest';
 import rule from './require-confidence-check.js';
 
 // Configure RuleTester to use Vitest
@@ -83,7 +83,7 @@ ruleTester.run('require-confidence-check', rule, {
           return resolved;
         }
       `,
-      options: [{ handlerFunctions: ['handleLowConfidence'] }],
+      options: [{handlerFunctions: ['handleLowConfidence']}],
     },
 
     // 4. Logical AND with confidence check
@@ -173,7 +173,7 @@ ruleTester.run('require-confidence-check', rule, {
           return 'fallback';
         }
       `,
-      options: [{ threshold: 0.5 }],
+      options: [{threshold: 0.5}],
     },
 
     // 10. Method call handler
@@ -192,7 +192,7 @@ ruleTester.run('require-confidence-check', rule, {
           return resolver.resolve(sentiment);
         }
       `,
-      options: [{ handlerFunctions: ['resolve'] }],
+      options: [{handlerFunctions: ['resolve']}],
     },
   ],
 
@@ -364,7 +364,7 @@ ruleTester.run('require-confidence-check', rule, {
           return sentiment.value;
         }
       `,
-      options: [{ threshold: 0.95 }],
+      options: [{threshold: 0.95}],
       errors: [
         {
           messageId: 'missingConfidenceCheck',

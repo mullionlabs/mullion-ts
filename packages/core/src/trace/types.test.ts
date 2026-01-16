@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect} from 'vitest';
 import {
   isMullionSpan,
   isSpanContext,
@@ -159,7 +159,7 @@ describe('trace/types', () => {
 
       expect(attributes['gen_ai.system']).toBe('anthropic');
       expect(attributes['gen_ai.request.model']).toBe(
-        'claude-3-5-sonnet-20241022'
+        'claude-3-5-sonnet-20241022',
       );
       expect(attributes['gen_ai.usage.input_tokens']).toBe(1500);
       expect(attributes['gen_ai.usage.output_tokens']).toBe(300);

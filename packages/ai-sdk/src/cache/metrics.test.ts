@@ -2,7 +2,7 @@
  * Tests for cache metrics module
  */
 
-import { describe, expect, it, beforeEach } from 'vitest';
+import {describe, expect, it, beforeEach} from 'vitest';
 import {
   parseAnthropicMetrics,
   parseOpenAIMetrics,
@@ -28,7 +28,7 @@ describe('parseAnthropicMetrics', () => {
     const stats = parseAnthropicMetrics(
       usage,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(stats.provider).toBe('anthropic');
@@ -49,7 +49,7 @@ describe('parseAnthropicMetrics', () => {
     const stats = parseAnthropicMetrics(
       usage,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(stats.cacheWriteTokens).toBe(0);
@@ -68,7 +68,7 @@ describe('parseAnthropicMetrics', () => {
     const stats = parseAnthropicMetrics(
       usage,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     // Claude 3.5 Sonnet input is $3/1M tokens
@@ -87,7 +87,7 @@ describe('parseAnthropicMetrics', () => {
     const stats = parseAnthropicMetrics(
       usage,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(stats.raw).toEqual({
@@ -163,7 +163,7 @@ describe('parseCacheMetrics', () => {
     const stats = parseCacheMetrics(
       usage,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(stats.provider).toBe('anthropic');
@@ -175,7 +175,7 @@ describe('parseCacheMetrics', () => {
       prompt_tokens: 100,
       completion_tokens: 50,
       total_tokens: 150,
-      prompt_tokens_details: { cached_tokens: 30 },
+      prompt_tokens_details: {cached_tokens: 30},
     };
 
     const stats = parseCacheMetrics(usage, 'openai', 'gpt-4o');
@@ -185,7 +185,7 @@ describe('parseCacheMetrics', () => {
   });
 
   it('returns unknown provider stats for other providers', () => {
-    const usage = { some_metric: 100 };
+    const usage = {some_metric: 100};
 
     const stats = parseCacheMetrics(usage, 'google', 'gemini-pro');
 
@@ -265,7 +265,7 @@ describe('estimateCacheSavings', () => {
       2000,
       5,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(result.cacheEffective).toBe(true);
@@ -279,7 +279,7 @@ describe('estimateCacheSavings', () => {
       500,
       5,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(result.cacheEffective).toBe(false);
@@ -291,7 +291,7 @@ describe('estimateCacheSavings', () => {
       2000,
       1,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(result.cacheEffective).toBe(false);
@@ -303,7 +303,7 @@ describe('estimateCacheSavings', () => {
       2000,
       1,
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(result.potentialSavedTokens).toBe(0);
@@ -358,7 +358,7 @@ describe('CacheMetricsCollector', () => {
   beforeEach(() => {
     collector = new CacheMetricsCollector(
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
   });
 
@@ -381,8 +381,8 @@ describe('CacheMetricsCollector', () => {
   });
 
   it('aggregates multiple calls', () => {
-    collector.addMetrics({ input_tokens: 100, output_tokens: 50 });
-    collector.addMetrics({ input_tokens: 200, output_tokens: 100 });
+    collector.addMetrics({input_tokens: 100, output_tokens: 50});
+    collector.addMetrics({input_tokens: 200, output_tokens: 100});
 
     const stats = collector.getAggregatedStats();
 
@@ -392,8 +392,8 @@ describe('CacheMetricsCollector', () => {
   });
 
   it('returns individual stats', () => {
-    collector.addMetrics({ input_tokens: 100, output_tokens: 50 });
-    collector.addMetrics({ input_tokens: 200, output_tokens: 100 });
+    collector.addMetrics({input_tokens: 100, output_tokens: 50});
+    collector.addMetrics({input_tokens: 200, output_tokens: 100});
 
     const individual = collector.getIndividualStats();
 
@@ -403,7 +403,7 @@ describe('CacheMetricsCollector', () => {
   });
 
   it('clears collected metrics', () => {
-    collector.addMetrics({ input_tokens: 100, output_tokens: 50 });
+    collector.addMetrics({input_tokens: 100, output_tokens: 50});
     collector.clear();
 
     expect(collector.getCallCount()).toBe(0);

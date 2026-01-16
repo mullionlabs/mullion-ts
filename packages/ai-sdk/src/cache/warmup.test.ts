@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { LanguageModel } from 'ai';
-import { createOwned } from '@mullion/core';
-import type { Context } from '@mullion/core';
+import {describe, it, expect, vi, beforeEach} from 'vitest';
+import type {LanguageModel} from 'ai';
+import {createOwned} from '@mullion/core';
+import type {Context} from '@mullion/core';
 
 import {
   explicitWarmup,
@@ -10,9 +10,9 @@ import {
   estimateWarmupCost,
   shouldWarmup,
 } from './warmup.js';
-import type { WarmupConfig } from './warmup.js';
-import { createCacheSegmentManager } from './segments.js';
-import { createDefaultCacheConfig } from './types.js';
+import type {WarmupConfig} from './warmup.js';
+import {createCacheSegmentManager} from './segments.js';
+import {createDefaultCacheConfig} from './types.js';
 
 // Mock the generateText function from 'ai'
 vi.mock('ai', async () => {
@@ -23,7 +23,7 @@ vi.mock('ai', async () => {
   };
 });
 
-import { generateText } from 'ai';
+import {generateText} from 'ai';
 
 const mockGenerateText = vi.mocked(generateText);
 
@@ -44,7 +44,7 @@ describe('warmup', () => {
       mockGenerateText.mockResolvedValueOnce({
         text: 'ready',
         finishReason: 'stop',
-        usage: { inputTokens: 100, outputTokens: 5 },
+        usage: {inputTokens: 100, outputTokens: 5},
         response: {} as never,
         request: {} as never,
         warnings: undefined,
@@ -62,7 +62,7 @@ describe('warmup', () => {
           model: mockModel,
           prompt: expect.stringContaining('ready'),
           maxOutputTokens: 10,
-        })
+        }),
       );
 
       expect(result.tokenCost).toBe(105);
@@ -97,7 +97,7 @@ describe('warmup', () => {
       mockGenerateText.mockResolvedValueOnce({
         text: 'ready',
         finishReason: 'stop',
-        usage: { inputTokens: 150, outputTokens: 5 },
+        usage: {inputTokens: 150, outputTokens: 5},
         response: {} as never,
         request: {} as never,
         warnings: undefined,
@@ -109,7 +109,7 @@ describe('warmup', () => {
       expect(mockGenerateText).toHaveBeenCalledWith(
         expect.objectContaining({
           system: 'You are a helpful assistant.',
-        })
+        }),
       );
     });
 
@@ -125,7 +125,7 @@ describe('warmup', () => {
       mockGenerateText.mockResolvedValueOnce({
         text: 'OK',
         finishReason: 'stop',
-        usage: { inputTokens: 50, outputTokens: 2 },
+        usage: {inputTokens: 50, outputTokens: 2},
         response: {} as never,
         request: {} as never,
         warnings: undefined,
@@ -137,7 +137,7 @@ describe('warmup', () => {
       expect(mockGenerateText).toHaveBeenCalledWith(
         expect.objectContaining({
           prompt: 'Say OK',
-        })
+        }),
       );
     });
 
@@ -152,16 +152,16 @@ describe('warmup', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       // Add a segment
-      cacheManager.segment('doc', 'A'.repeat(5000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(5000), {force: true});
 
       mockGenerateText.mockResolvedValueOnce({
         text: 'ready',
         finishReason: 'stop',
-        usage: { inputTokens: 100, outputTokens: 5 },
+        usage: {inputTokens: 100, outputTokens: 5},
         response: {} as never,
         request: {} as never,
         warnings: undefined,
@@ -174,10 +174,10 @@ describe('warmup', () => {
         expect.objectContaining({
           providerOptions: {
             anthropic: {
-              cacheControl: [{ type: 'ephemeral' }],
+              cacheControl: [{type: 'ephemeral'}],
             },
           },
-        })
+        }),
       );
     });
   });
@@ -193,19 +193,19 @@ describe('warmup', () => {
 
       const firstBranch = vi.fn().mockResolvedValue(
         createOwned({
-          value: { data: 'result' },
+          value: {data: 'result'},
           scope: 'test' as const,
           confidence: 0.9,
-        })
+        }),
       );
 
-      const { firstResult, warmup } = await firstBranchWarmup(
+      const {firstResult, warmup} = await firstBranchWarmup(
         firstBranch,
-        mockCtx
+        mockCtx,
       );
 
       expect(firstBranch).toHaveBeenCalledWith(mockCtx);
-      expect(firstResult.value).toEqual({ data: 'result' });
+      expect(firstResult.value).toEqual({data: 'result'});
       expect(warmup.durationMs).toBeGreaterThanOrEqual(0);
     });
 
@@ -220,12 +220,12 @@ describe('warmup', () => {
       const firstBranch = vi.fn().mockImplementation(async () => {
         await new Promise((resolve) => setTimeout(resolve, 50));
         return createOwned({
-          value: { data: 'delayed' },
+          value: {data: 'delayed'},
           scope: 'test' as const,
         });
       });
 
-      const { warmup } = await firstBranchWarmup(firstBranch, mockCtx);
+      const {warmup} = await firstBranchWarmup(firstBranch, mockCtx);
 
       expect(warmup.durationMs).toBeGreaterThanOrEqual(45);
     });
@@ -270,7 +270,7 @@ describe('warmup', () => {
       mockGenerateText.mockResolvedValueOnce({
         text: 'ready',
         finishReason: 'stop',
-        usage: { inputTokens: 100, outputTokens: 5 },
+        usage: {inputTokens: 100, outputTokens: 5},
         response: {} as never,
         request: {} as never,
         warnings: undefined,
@@ -298,11 +298,11 @@ describe('warmup', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       // Add a segment with 1000 characters (~250 tokens)
-      cacheManager.segment('doc', 'A'.repeat(1000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(1000), {force: true});
 
       const estimate = estimateWarmupCost(cacheManager);
 
@@ -314,13 +314,13 @@ describe('warmup', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       const withoutSystem = estimateWarmupCost(cacheManager);
       const withSystem = estimateWarmupCost(
         cacheManager,
-        'You are a helpful assistant that answers questions about documents.'
+        'You are a helpful assistant that answers questions about documents.',
       );
 
       expect(withSystem).toBeGreaterThan(withoutSystem);
@@ -346,11 +346,11 @@ describe('warmup', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       // Add segment that meets minimum threshold (1024 tokens = ~4096 chars)
-      cacheManager.segment('doc', 'A'.repeat(5000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(5000), {force: true});
 
       const result = shouldWarmup(config, cacheManager, 3);
 
@@ -368,10 +368,10 @@ describe('warmup', () => {
       const cacheManager = createCacheSegmentManager(
         'openai',
         'gpt-4o',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
-      cacheManager.segment('doc', 'A'.repeat(5000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(5000), {force: true});
 
       const result = shouldWarmup(config, cacheManager, 3);
 
@@ -389,10 +389,10 @@ describe('warmup', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
-      cacheManager.segment('doc', 'A'.repeat(5000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(5000), {force: true});
 
       const result = shouldWarmup(config, cacheManager, 1);
 
@@ -410,7 +410,7 @@ describe('warmup', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       const result = shouldWarmup(config, cacheManager, 3);
@@ -442,11 +442,11 @@ describe('warmup', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       // Small segment that doesn't meet 1024 token minimum
-      cacheManager.segment('doc', 'Hello world', { force: true });
+      cacheManager.segment('doc', 'Hello world', {force: true});
 
       const result = shouldWarmup(config, cacheManager, 3);
 

@@ -7,20 +7,15 @@
  * Task 8.6: Fork Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { z } from 'zod';
+import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
+import {z} from 'zod';
 import {
   fork,
   createOwned,
   registerWarmupExecutor,
   clearWarmupExecutor,
 } from '@mullion/core';
-import type {
-  Context,
-  WarmupExecutor,
-  WarmupResult,
-  Owned,
-} from '@mullion/core';
+import type {Context, WarmupExecutor, WarmupResult, Owned} from '@mullion/core';
 
 import {
   detectSchemaConflict,
@@ -32,7 +27,7 @@ import {
   shouldWarmup,
   estimateWarmupCost,
 } from './index.js';
-import type { LanguageModel } from 'ai';
+import type {LanguageModel} from 'ai';
 
 /**
  * Creates a mock context for testing.
@@ -42,7 +37,7 @@ function createMockContext<S extends string>(scopeName: S): Context<S> {
     scope: scopeName,
     async infer<T>(): Promise<Owned<T, S>> {
       return createOwned({
-        value: { mocked: true } as T,
+        value: {mocked: true} as T,
         scope: scopeName,
         confidence: 0.9,
       });
@@ -138,7 +133,7 @@ describe('Fork Integration Tests', () => {
       // Find groups
       const riskGroup = result.conflictingBranches.find((g) => g.includes(0));
       const opportunityGroup = result.conflictingBranches.find((g) =>
-        g.includes(1)
+        g.includes(1),
       );
 
       expect(riskGroup).toContain(2);
@@ -161,7 +156,7 @@ describe('Fork Integration Tests', () => {
       const conflict = detectSchemaConflict(schemas);
 
       expect(() => handleSchemaConflict(conflict, 'error')).toThrow(
-        /Schema conflict detected/
+        /Schema conflict detected/,
       );
     });
 
@@ -198,9 +193,9 @@ describe('Fork Integration Tests', () => {
         strategy: 'cache-optimized',
         warmup: 'explicit',
         branches: [
-          async (c) => createOwned({ value: 1, scope: c.scope }),
-          async (c) => createOwned({ value: 2, scope: c.scope }),
-          async (c) => createOwned({ value: 3, scope: c.scope }),
+          async (c) => createOwned({value: 1, scope: c.scope}),
+          async (c) => createOwned({value: 2, scope: c.scope}),
+          async (c) => createOwned({value: 3, scope: c.scope}),
         ],
       });
 
@@ -230,8 +225,8 @@ describe('Fork Integration Tests', () => {
         strategy: 'cache-optimized',
         warmup: 'explicit',
         branches: [
-          async (c) => createOwned({ value: 'a', scope: c.scope }),
-          async (c) => createOwned({ value: 'b', scope: c.scope }),
+          async (c) => createOwned({value: 'a', scope: c.scope}),
+          async (c) => createOwned({value: 'b', scope: c.scope}),
         ],
       });
 
@@ -248,7 +243,7 @@ describe('Fork Integration Tests', () => {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
           warmupCalled();
-          return { tokenCost: 100, cacheCreatedTokens: 5000, durationMs: 50 };
+          return {tokenCost: 100, cacheCreatedTokens: 5000, durationMs: 50};
         },
       };
 
@@ -259,7 +254,7 @@ describe('Fork Integration Tests', () => {
       const result = await fork(ctx, {
         strategy: 'cache-optimized',
         warmup: 'none',
-        branches: [async (c) => createOwned({ value: 1, scope: c.scope })],
+        branches: [async (c) => createOwned({value: 1, scope: c.scope})],
       });
 
       expect(warmupCalled).not.toHaveBeenCalled();
@@ -278,11 +273,11 @@ describe('Fork Integration Tests', () => {
         branches: [
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 30));
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 30));
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
         ],
       });
@@ -305,7 +300,7 @@ describe('Fork Integration Tests', () => {
       const mockExecutor: WarmupExecutor = {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
-          return { tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0 };
+          return {tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0};
         },
       };
 
@@ -321,25 +316,25 @@ describe('Fork Integration Tests', () => {
             executionOrder.push('first-start');
             await new Promise((resolve) => setTimeout(resolve, 50));
             executionOrder.push('first-end');
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             executionOrder.push('second');
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
           async (c) => {
             executionOrder.push('third');
-            return createOwned({ value: 3, scope: c.scope });
+            return createOwned({value: 3, scope: c.scope});
           },
         ],
       });
 
       // First branch should complete before others start
       expect(executionOrder.indexOf('first-end')).toBeLessThan(
-        executionOrder.indexOf('second')
+        executionOrder.indexOf('second'),
       );
       expect(executionOrder.indexOf('first-end')).toBeLessThan(
-        executionOrder.indexOf('third')
+        executionOrder.indexOf('third'),
       );
     });
 
@@ -347,7 +342,7 @@ describe('Fork Integration Tests', () => {
       const mockExecutor: WarmupExecutor = {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
-          return { tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0 };
+          return {tokenCost: 0, cacheCreatedTokens: 0, durationMs: 0};
         },
       };
 
@@ -362,15 +357,15 @@ describe('Fork Integration Tests', () => {
         branches: [
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 20)); // First branch
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 30));
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
           async (c) => {
             await new Promise((resolve) => setTimeout(resolve, 30));
-            return createOwned({ value: 3, scope: c.scope });
+            return createOwned({value: 3, scope: c.scope});
           },
         ],
       });
@@ -387,7 +382,7 @@ describe('Fork Integration Tests', () => {
       const mockExecutor: WarmupExecutor = {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
-          return { tokenCost: 100, cacheCreatedTokens: 5000, durationMs: 50 };
+          return {tokenCost: 100, cacheCreatedTokens: 5000, durationMs: 50};
         },
       };
 
@@ -399,9 +394,9 @@ describe('Fork Integration Tests', () => {
         strategy: 'cache-optimized',
         warmup: 'explicit',
         branches: [
-          async (c) => createOwned({ value: 'a', scope: c.scope }),
-          async (c) => createOwned({ value: 'b', scope: c.scope }),
-          async (c) => createOwned({ value: 'c', scope: c.scope }),
+          async (c) => createOwned({value: 'a', scope: c.scope}),
+          async (c) => createOwned({value: 'b', scope: c.scope}),
+          async (c) => createOwned({value: 'c', scope: c.scope}),
         ],
       });
 
@@ -415,7 +410,7 @@ describe('Fork Integration Tests', () => {
         supportsCacheOptimization: true,
         async explicitWarmup(): Promise<WarmupResult> {
           warmupCallCount++;
-          return { tokenCost: 75, cacheCreatedTokens: 4000, durationMs: 40 };
+          return {tokenCost: 75, cacheCreatedTokens: 4000, durationMs: 40};
         },
       };
 
@@ -427,8 +422,8 @@ describe('Fork Integration Tests', () => {
         strategy: 'cache-optimized',
         warmup: 'explicit',
         branches: [
-          async (c) => createOwned({ value: 1, scope: c.scope }),
-          async (c) => createOwned({ value: 2, scope: c.scope }),
+          async (c) => createOwned({value: 1, scope: c.scope}),
+          async (c) => createOwned({value: 2, scope: c.scope}),
         ],
       });
 
@@ -443,15 +438,15 @@ describe('Fork Integration Tests', () => {
       const result = await fork(ctx, {
         strategy: 'fast-parallel',
         branches: [
-          async (c) => createOwned({ value: 1, scope: c.scope }),
-          async (c) => createOwned({ value: 2, scope: c.scope }),
+          async (c) => createOwned({value: 1, scope: c.scope}),
+          async (c) => createOwned({value: 2, scope: c.scope}),
         ],
       });
 
       expect(result.cacheStats.warmupCost).toBe(0);
       expect(result.cacheStats.totalSaved).toBe(0);
       expect(result.cacheStats.branchCacheHits.every((h) => h === 0)).toBe(
-        true
+        true,
       );
     });
   });
@@ -461,11 +456,11 @@ describe('Fork Integration Tests', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       // Add large segment that meets minimum token threshold
-      cacheManager.segment('doc', 'A'.repeat(5000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(5000), {force: true});
 
       const mockModel = {} as LanguageModel;
       const result = shouldWarmup(
@@ -475,7 +470,7 @@ describe('Fork Integration Tests', () => {
           languageModel: mockModel,
         },
         cacheManager,
-        3 // 3 branches
+        3, // 3 branches
       );
 
       expect(result).toBe(true);
@@ -485,10 +480,10 @@ describe('Fork Integration Tests', () => {
       const cacheManager = createCacheSegmentManager(
         'openai',
         'gpt-4o',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
-      cacheManager.segment('doc', 'A'.repeat(5000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(5000), {force: true});
 
       const mockModel = {} as LanguageModel;
       const result = shouldWarmup(
@@ -498,7 +493,7 @@ describe('Fork Integration Tests', () => {
           languageModel: mockModel,
         },
         cacheManager,
-        3
+        3,
       );
 
       expect(result).toBe(false);
@@ -508,11 +503,11 @@ describe('Fork Integration Tests', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       // Add 4000 chars (~1000 tokens)
-      cacheManager.segment('doc', 'A'.repeat(4000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(4000), {force: true});
 
       const estimate = estimateWarmupCost(cacheManager);
 
@@ -525,10 +520,10 @@ describe('Fork Integration Tests', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
-      cacheManager.segment('doc', 'A'.repeat(5000), { force: true });
+      cacheManager.segment('doc', 'A'.repeat(5000), {force: true});
 
       const mockModel = {} as LanguageModel;
       const result = shouldWarmup(
@@ -538,7 +533,7 @@ describe('Fork Integration Tests', () => {
           languageModel: mockModel,
         },
         cacheManager,
-        1 // Single branch - no benefit from warmup
+        1, // Single branch - no benefit from warmup
       );
 
       expect(result).toBe(false);
@@ -548,11 +543,11 @@ describe('Fork Integration Tests', () => {
       const cacheManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        createDefaultCacheConfig({ enabled: true })
+        createDefaultCacheConfig({enabled: true}),
       );
 
       // Small segment below 1024 token minimum
-      cacheManager.segment('doc', 'Hello world', { force: true });
+      cacheManager.segment('doc', 'Hello world', {force: true});
 
       const mockModel = {} as LanguageModel;
       const result = shouldWarmup(
@@ -562,7 +557,7 @@ describe('Fork Integration Tests', () => {
           languageModel: mockModel,
         },
         cacheManager,
-        3
+        3,
       );
 
       expect(result).toBe(false);
@@ -579,15 +574,15 @@ describe('Fork Integration Tests', () => {
         branches: [
           async (c) => {
             contextRefs.push(c);
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             contextRefs.push(c);
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
           async (c) => {
             contextRefs.push(c);
-            return createOwned({ value: 3, scope: c.scope });
+            return createOwned({value: 3, scope: c.scope});
           },
         ],
       });
@@ -607,11 +602,11 @@ describe('Fork Integration Tests', () => {
         branches: [
           async (c) => {
             scopes.push(c.scope);
-            return createOwned({ value: 1, scope: c.scope });
+            return createOwned({value: 1, scope: c.scope});
           },
           async (c) => {
             scopes.push(c.scope);
-            return createOwned({ value: 2, scope: c.scope });
+            return createOwned({value: 2, scope: c.scope});
           },
         ],
       });
@@ -626,15 +621,15 @@ describe('Fork Integration Tests', () => {
         async infer<T>(): Promise<Owned<T, 'test'>> {
           inferCallCount++;
           return createOwned({
-            value: { callNum: inferCallCount } as T,
+            value: {callNum: inferCallCount} as T,
             scope: 'test',
             confidence: 0.9,
           });
         },
         bridge<T, OS extends string>(
-          owned: Owned<T, OS>
+          owned: Owned<T, OS>,
         ): Owned<T, 'test' | OS> {
-          return { ...owned, __scope: 'test' as 'test' | OS };
+          return {...owned, __scope: 'test' as 'test' | OS};
         },
         use<T>(owned: Owned<T, 'test'>): T {
           return owned.value;

@@ -7,8 +7,8 @@
  * @module fork/fork
  */
 
-import type { Context, InferOptions, Schema } from '../context.js';
-import type { Owned } from '../owned.js';
+import type {Context, InferOptions, Schema} from '../context.js';
+import type {Owned} from '../owned.js';
 
 import type {
   ForkBranch,
@@ -60,7 +60,7 @@ export interface WarmupExecutor {
  */
 function createChildContext<S extends string>(
   parentCtx: Context<S>,
-  branchIndex: number
+  branchIndex: number,
 ): Context<S> {
   return {
     scope: parentCtx.scope,
@@ -68,7 +68,7 @@ function createChildContext<S extends string>(
     infer<T>(
       schema: Schema<T>,
       input: string,
-      options?: InferOptions
+      options?: InferOptions,
     ): Promise<Owned<T, S>> {
       // Delegate to parent's infer but could add branch metadata
       return parentCtx.infer(schema, input, {
@@ -99,19 +99,19 @@ function createChildContext<S extends string>(
  */
 async function executeFastParallel<T, S extends string>(
   ctx: Context<S>,
-  branches: readonly ForkBranch<T, S>[]
+  branches: readonly ForkBranch<T, S>[],
 ): Promise<{
   results: Owned<T, S>[];
   cacheStats: ForkCacheStats;
 }> {
   // Create child contexts for each branch
   const childContexts = branches.map((_, index) =>
-    createChildContext(ctx, index)
+    createChildContext(ctx, index),
   );
 
   // Execute all branches in parallel
   const results = await Promise.all(
-    branches.map((branch, index) => branch(childContexts[index]))
+    branches.map((branch, index) => branch(childContexts[index])),
   );
 
   // No cache sharing in fast-parallel mode
@@ -121,7 +121,7 @@ async function executeFastParallel<T, S extends string>(
     totalSaved: 0,
   };
 
-  return { results, cacheStats };
+  return {results, cacheStats};
 }
 
 /**
@@ -134,7 +134,7 @@ async function executeCacheOptimized<T, S extends string>(
   ctx: Context<S>,
   branches: readonly ForkBranch<T, S>[],
   warmupStrategy: WarmupStrategy,
-  warmupExecutor?: WarmupExecutor
+  warmupExecutor?: WarmupExecutor,
 ): Promise<{
   results: Owned<T, S>[];
   cacheStats: ForkCacheStats;
@@ -147,11 +147,11 @@ async function executeCacheOptimized<T, S extends string>(
   if (!warmupExecutor?.supportsCacheOptimization) {
     warnings.push(
       'Cache optimization requested but no warmup executor available. ' +
-        'Falling back to fast-parallel execution. Install @mullion/ai-sdk for cache support.'
+        'Falling back to fast-parallel execution. Install @mullion/ai-sdk for cache support.',
     );
 
-    const { results, cacheStats } = await executeFastParallel(ctx, branches);
-    return { results, cacheStats, warnings };
+    const {results, cacheStats} = await executeFastParallel(ctx, branches);
+    return {results, cacheStats, warnings};
   }
 
   // Execute warmup based on strategy
@@ -173,7 +173,7 @@ async function executeCacheOptimized<T, S extends string>(
 
   // Create child contexts for each branch
   const childContexts = branches.map((_, index) =>
-    createChildContext(ctx, index)
+    createChildContext(ctx, index),
   );
 
   let results: Owned<T, S>[];
@@ -189,7 +189,7 @@ async function executeCacheOptimized<T, S extends string>(
       const remainingResults = await Promise.all(
         branches
           .slice(1)
-          .map((branch, index) => branch(childContexts[index + 1]))
+          .map((branch, index) => branch(childContexts[index + 1])),
       );
 
       // Remaining branches should have cache hits
@@ -203,7 +203,7 @@ async function executeCacheOptimized<T, S extends string>(
   } else {
     // Execute all branches in parallel (after explicit warmup or no warmup)
     results = await Promise.all(
-      branches.map((branch, index) => branch(childContexts[index]))
+      branches.map((branch, index) => branch(childContexts[index])),
     );
 
     // All branches after warmup should have cache hits
@@ -217,7 +217,7 @@ async function executeCacheOptimized<T, S extends string>(
     totalSaved: 0, // Calculated by integration package from actual metrics
   };
 
-  return { results, cacheStats, warnings };
+  return {results, cacheStats, warnings};
 }
 
 /**
@@ -350,7 +350,7 @@ export function clearWarmupExecutor(): void {
  */
 export async function fork<T, S extends string>(
   ctx: Context<S>,
-  options: ForkOptions<T, S>
+  options: ForkOptions<T, S>,
 ): Promise<ForkResult<T, S>> {
   const {
     strategy,
@@ -388,7 +388,7 @@ export async function fork<T, S extends string>(
 
   // Execute based on strategy
   if (strategy === 'fast-parallel') {
-    const { results, cacheStats } = await executeFastParallel(ctx, branches);
+    const {results, cacheStats} = await executeFastParallel(ctx, branches);
 
     return {
       results,
@@ -401,7 +401,7 @@ export async function fork<T, S extends string>(
       ctx,
       branches,
       warmup,
-      globalWarmupExecutor
+      globalWarmupExecutor,
     );
 
     return {

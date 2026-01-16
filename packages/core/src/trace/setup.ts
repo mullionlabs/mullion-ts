@@ -31,7 +31,7 @@ import {
   setGlobalTraceCollector,
   type SpanExporter,
 } from './collector.js';
-import { OTLPHttpExporter } from './exporters/otlp-http.js';
+import {OTLPHttpExporter} from './exporters/otlp-http.js';
 
 /**
  * Configuration options for setupMullionTracing.
@@ -181,7 +181,7 @@ export interface SetupTracingOptions {
  * ```
  */
 export function setupMullionTracing(
-  options: SetupTracingOptions = {}
+  options: SetupTracingOptions = {},
 ): TraceCollector {
   const {
     endpoint,
@@ -267,7 +267,7 @@ export const TracingPresets = {
    */
   honeycomb: (
     apiKey: string,
-    options?: Partial<SetupTracingOptions>
+    options?: Partial<SetupTracingOptions>,
   ): TraceCollector => {
     return setupMullionTracing({
       endpoint: 'https://api.honeycomb.io/v1/traces',
@@ -295,7 +295,7 @@ export const TracingPresets = {
    */
   datadog: (
     apiKey: string,
-    options?: Partial<SetupTracingOptions>
+    options?: Partial<SetupTracingOptions>,
   ): TraceCollector => {
     return setupMullionTracing({
       endpoint: 'https://http-intake.logs.datadoghq.com/api/v2/logs',
@@ -323,7 +323,7 @@ export const TracingPresets = {
    */
   newRelic: (
     licenseKey: string,
-    options?: Partial<SetupTracingOptions>
+    options?: Partial<SetupTracingOptions>,
   ): TraceCollector => {
     return setupMullionTracing({
       endpoint: 'https://otlp.nr-data.net:4318/v1/traces',
@@ -356,7 +356,7 @@ export const TracingPresets = {
   grafana: (
     instanceId: string,
     apiKey: string,
-    options?: Partial<SetupTracingOptions>
+    options?: Partial<SetupTracingOptions>,
   ): TraceCollector => {
     return setupMullionTracing({
       endpoint: `https://${instanceId}.grafana.net/otlp/v1/traces`,
@@ -384,7 +384,7 @@ export const TracingPresets = {
    */
   custom: (
     endpoint: string,
-    options?: Partial<SetupTracingOptions>
+    options?: Partial<SetupTracingOptions>,
   ): TraceCollector => {
     return setupMullionTracing({
       endpoint,
@@ -409,7 +409,7 @@ export const TracingPresets = {
  * ```
  */
 export async function disableMullionTracing(): Promise<void> {
-  const { getGlobalTraceCollector } = await import('./collector.js');
+  const {getGlobalTraceCollector} = await import('./collector.js');
   const collector = getGlobalTraceCollector();
 
   if (collector.isEnabled()) {

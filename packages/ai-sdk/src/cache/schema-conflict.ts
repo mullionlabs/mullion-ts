@@ -9,11 +9,8 @@
  * @module cache/schema-conflict
  */
 
-import type { z } from 'zod';
-import type {
-  SchemaConflictBehavior,
-  SchemaConflictResult,
-} from '@mullion/core';
+import type {z} from 'zod';
+import type {SchemaConflictBehavior, SchemaConflictResult} from '@mullion/core';
 
 /**
  * Information about a schema used in a fork branch.
@@ -71,7 +68,7 @@ export function computeSchemaSignature(schema: z.ZodTypeAny): string {
     const description = schema.description ?? '';
     const shape = getSchemaShape(schema);
 
-    return JSON.stringify({ description, shape });
+    return JSON.stringify({description, shape});
   } catch {
     // If we can't compute a signature, use a random one to be safe
     return `unknown-${Math.random().toString(36).substring(2, 9)}`;
@@ -112,10 +109,10 @@ interface ZodDef {
  */
 function getSchemaShape(schema: z.ZodTypeAny): unknown {
   // Access the internal _def property to get schema definition
-  const def = (schema as unknown as { _def?: ZodDef })._def;
+  const def = (schema as unknown as {_def?: ZodDef})._def;
 
   if (!def || typeof def !== 'object') {
-    return { type: 'unknown' };
+    return {type: 'unknown'};
   }
 
   // Zod v4 uses 'type' as a string identifier (e.g., 'object', 'string', 'array')
@@ -128,36 +125,36 @@ function getSchemaShape(schema: z.ZodTypeAny): unknown {
         for (const [key, value] of Object.entries(def.shape)) {
           result[key] = getSchemaShape(value);
         }
-        return { type: 'object', properties: result };
+        return {type: 'object', properties: result};
       }
-      return { type: 'object', properties: {} };
+      return {type: 'object', properties: {}};
     }
 
     case 'array': {
       return {
         type: 'array',
-        items: def.element ? getSchemaShape(def.element) : { type: 'unknown' },
+        items: def.element ? getSchemaShape(def.element) : {type: 'unknown'},
       };
     }
 
     case 'string':
-      return { type: 'string' };
+      return {type: 'string'};
 
     case 'number':
-      return { type: 'number' };
+      return {type: 'number'};
 
     case 'boolean':
-      return { type: 'boolean' };
+      return {type: 'boolean'};
 
     case 'enum': {
       // Zod v4 stores enum entries as { a: 'a', b: 'b' }
       const values = def.entries ? Object.values(def.entries) : [];
-      return { type: 'enum', values };
+      return {type: 'enum', values};
     }
 
     case 'literal': {
       // Zod v4 stores literal values in 'values' array
-      return { type: 'literal', value: def.values?.[0] };
+      return {type: 'literal', value: def.values?.[0]};
     }
 
     case 'union': {
@@ -172,7 +169,7 @@ function getSchemaShape(schema: z.ZodTypeAny): unknown {
         type: 'optional',
         inner: def.innerType
           ? getSchemaShape(def.innerType)
-          : { type: 'unknown' },
+          : {type: 'unknown'},
       };
     }
 
@@ -181,7 +178,7 @@ function getSchemaShape(schema: z.ZodTypeAny): unknown {
         type: 'nullable',
         inner: def.innerType
           ? getSchemaShape(def.innerType)
-          : { type: 'unknown' },
+          : {type: 'unknown'},
       };
     }
 
@@ -190,7 +187,7 @@ function getSchemaShape(schema: z.ZodTypeAny): unknown {
         type: 'default',
         inner: def.innerType
           ? getSchemaShape(def.innerType)
-          : { type: 'unknown' },
+          : {type: 'unknown'},
       };
     }
 
@@ -199,7 +196,7 @@ function getSchemaShape(schema: z.ZodTypeAny): unknown {
         type: 'record',
         value: def.valueType
           ? getSchemaShape(def.valueType)
-          : { type: 'unknown' },
+          : {type: 'unknown'},
       };
     }
 
@@ -211,25 +208,25 @@ function getSchemaShape(schema: z.ZodTypeAny): unknown {
     }
 
     case 'null':
-      return { type: 'null' };
+      return {type: 'null'};
 
     case 'undefined':
-      return { type: 'undefined' };
+      return {type: 'undefined'};
 
     case 'any':
-      return { type: 'any' };
+      return {type: 'any'};
 
     case 'unknown':
-      return { type: 'unknown' };
+      return {type: 'unknown'};
 
     case 'never':
-      return { type: 'never' };
+      return {type: 'never'};
 
     case 'void':
-      return { type: 'void' };
+      return {type: 'void'};
 
     default:
-      return { type: typeName ?? 'unknown' };
+      return {type: typeName ?? 'unknown'};
   }
 }
 
@@ -240,7 +237,7 @@ function getSchemaShape(schema: z.ZodTypeAny): unknown {
  * @returns Groups of schemas with the same signature
  */
 function groupSchemasBySignature(
-  schemas: readonly SchemaInfo[]
+  schemas: readonly SchemaInfo[],
 ): Map<string, SchemaInfo[]> {
   const groups = new Map<string, SchemaInfo[]>();
 
@@ -290,7 +287,7 @@ function groupSchemasBySignature(
  */
 export function detectSchemaConflict(
   schemas: readonly z.ZodTypeAny[],
-  options: DetectSchemaConflictOptions = {}
+  options: DetectSchemaConflictOptions = {},
 ): DetailedSchemaConflictResult {
   // Only Anthropic has this issue - OpenAI uses automatic caching
   if (options.provider && options.provider !== 'anthropic') {
@@ -328,7 +325,7 @@ export function detectSchemaConflict(
   // Build conflict result
   const schemaGroups = Array.from(groups.values());
   const conflictingBranches = schemaGroups.map((group) =>
-    group.map((info) => info.branchIndex)
+    group.map((info) => info.branchIndex),
   );
 
   const branchCount = schemas.length;
@@ -380,7 +377,7 @@ export function detectSchemaConflict(
  */
 export function handleSchemaConflict(
   conflict: SchemaConflictResult,
-  behavior: SchemaConflictBehavior
+  behavior: SchemaConflictBehavior,
 ): string | undefined {
   if (!conflict.hasConflict) {
     return undefined;
@@ -390,7 +387,7 @@ export function handleSchemaConflict(
     case 'error':
       throw new Error(
         `Schema conflict detected: ${conflict.message}\n` +
-          'Consider: (1) universal schema, (2) generateText + post-process, (3) accept no cache sharing'
+          'Consider: (1) universal schema, (2) generateText + post-process, (3) accept no cache sharing',
       );
 
     case 'warn':
@@ -436,7 +433,7 @@ export function handleSchemaConflict(
  * ```
  */
 export function areSchemasCompatible(
-  schemas: readonly z.ZodTypeAny[]
+  schemas: readonly z.ZodTypeAny[],
 ): boolean {
   if (schemas.length <= 1) {
     return true;
@@ -444,7 +441,7 @@ export function areSchemasCompatible(
 
   const firstSignature = computeSchemaSignature(schemas[0]);
   return schemas.every(
-    (schema) => computeSchemaSignature(schema) === firstSignature
+    (schema) => computeSchemaSignature(schema) === firstSignature,
   );
 }
 
@@ -464,7 +461,7 @@ export function areSchemasCompatible(
  * ```
  */
 export function describeSchemasDifference(
-  schemas: readonly z.ZodTypeAny[]
+  schemas: readonly z.ZodTypeAny[],
 ): string {
   if (schemas.length === 0) {
     return 'No schemas provided';
@@ -474,7 +471,7 @@ export function describeSchemasDifference(
     return 'Only one schema provided';
   }
 
-  const result = detectSchemaConflict(schemas, { includeDetails: true });
+  const result = detectSchemaConflict(schemas, {includeDetails: true});
 
   if (!result.hasConflict) {
     return 'All schemas are identical';

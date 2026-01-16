@@ -36,4 +36,4 @@ export type {
 } from './strategies/index.js';
 
 // Main merge function
-export { merge as mergeResults } from './merge.js';
+export {merge as mergeResults} from './merge.js';
