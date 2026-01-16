@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import type { Owned } from './owned.js';
-import { ownedSchema } from './owned.js';
+import {z} from 'zod';
+import type {Owned} from './owned.js';
+import {ownedSchema} from './owned.js';
 
 /**
  * SemanticValue represents an LLM-generated value with semantic alternatives and reasoning.
@@ -207,7 +207,7 @@ export interface CreateSemanticValueOptions<T, S extends string> {
  * ```
  */
 export function createSemanticValue<T, S extends string>(
-  options: CreateSemanticValueOptions<T, S>
+  options: CreateSemanticValueOptions<T, S>,
 ): SemanticValue<T, S> {
   const {
     value,
@@ -227,7 +227,7 @@ export function createSemanticValue<T, S extends string>(
   for (const alt of alternatives) {
     if (alt.confidence < 0 || alt.confidence > 1) {
       throw new Error(
-        `Alternative confidence must be between 0 and 1, got ${alt.confidence}`
+        `Alternative confidence must be between 0 and 1, got ${alt.confidence}`,
       );
     }
   }
@@ -277,7 +277,7 @@ export function createSemanticValue<T, S extends string>(
  * ```
  */
 export function isSemanticValue(
-  value: unknown
+  value: unknown,
 ): value is SemanticValue<unknown, string> {
   if (
     typeof value !== 'object' ||
@@ -359,7 +359,7 @@ function generateTraceId(): string {
  * ```
  */
 export function alternativeSchema<T extends z.ZodTypeAny>(
-  valueSchema: T
+  valueSchema: T,
 ): z.ZodObject<{
   value: T;
   confidence: z.ZodNumber;
@@ -408,7 +408,7 @@ export function semanticValueSchema<
   S extends z.ZodTypeAny = z.ZodString,
 >(
   valueSchema: T,
-  scopeSchema?: S
+  scopeSchema?: S,
 ): z.ZodObject<{
   value: T;
   confidence: z.ZodNumber;

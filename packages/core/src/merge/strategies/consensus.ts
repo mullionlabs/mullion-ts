@@ -1,6 +1,6 @@
-import { createOwned } from '../../owned.js';
-import type { Owned } from '../../owned.js';
-import type { MergeStrategy, MergeResult } from '../types.js';
+import {createOwned} from '../../owned.js';
+import type {Owned} from '../../owned.js';
+import type {MergeStrategy, MergeResult} from '../types.js';
 
 /**
  * Behavior when consensus requirement is not met.
@@ -125,9 +125,9 @@ export interface RequireConsensusOptions<T> {
  */
 export function requireConsensus<T>(
   k: number,
-  options: RequireConsensusOptions<T> = {}
+  options: RequireConsensusOptions<T> = {},
 ): MergeStrategy<T, T> {
-  const { onFailure = 'low-confidence', tolerance = 0, equalityFn } = options;
+  const {onFailure = 'low-confidence', tolerance = 0, equalityFn} = options;
 
   // Validate k
   if (!Number.isInteger(k) || k < 1) {
@@ -144,7 +144,7 @@ export function requireConsensus<T>(
 
       if (k > results.length) {
         throw new Error(
-          `Consensus requirement impossible: k=${k} but only ${results.length} results provided`
+          `Consensus requirement impossible: k=${k} but only ${results.length} results provided`,
         );
       }
 
@@ -215,7 +215,7 @@ export function requireConsensus<T>(
 
       if (!consensusMet && onFailure === 'error') {
         throw new Error(
-          `Consensus requirement not met: needed ${k} agreeing branches, got max ${maxAgreement}`
+          `Consensus requirement not met: needed ${k} agreeing branches, got max ${maxAgreement}`,
         );
       }
 

@@ -9,10 +9,10 @@
  * - End-to-end tracing and confidence tracking
  */
 
-import { analyzeQuery, retrieveDocuments } from './retriever.js';
-import { generateResponseWithSources } from './generator.js';
-import type { UserQuery, RAGResponse } from './schemas.js';
-import { getProviderName, type ProviderConfig } from './provider.js';
+import {analyzeQuery, retrieveDocuments} from './retriever.js';
+import {generateResponseWithSources} from './generator.js';
+import type {UserQuery, RAGResponse} from './schemas.js';
+import {getProviderName, type ProviderConfig} from './provider.js';
 
 export interface RAGPipelineResult {
   query: UserQuery;
@@ -35,9 +35,9 @@ export async function executeRAGPipeline(
     topK?: number;
     verbose?: boolean;
     providerConfig?: ProviderConfig;
-  } = {}
+  } = {},
 ): Promise<RAGPipelineResult> {
-  const { topK = 3, verbose = true, providerConfig } = options;
+  const {topK = 3, verbose = true, providerConfig} = options;
   const startTime = Date.now();
 
   if (verbose) {
@@ -76,19 +76,19 @@ export async function executeRAGPipeline(
   if (userLevel < requiredLevel) {
     if (verbose) {
       console.log(
-        `   ⛔ ACCESS DENIED: Query requires ${analysis.value.requiredAccessLevel.toUpperCase()} access`
+        `   ⛔ ACCESS DENIED: Query requires ${analysis.value.requiredAccessLevel.toUpperCase()} access`,
       );
       console.log(`   User has: ${query.userAccessLevel.toUpperCase()}`);
     }
 
     throw new Error(
-      `Insufficient access: Query requires ${analysis.value.requiredAccessLevel} level, user has ${query.userAccessLevel}`
+      `Insufficient access: Query requires ${analysis.value.requiredAccessLevel} level, user has ${query.userAccessLevel}`,
     );
   }
 
   if (verbose) {
     console.log(
-      `   ✅ Access granted: User can access ${query.userAccessLevel.toUpperCase()} documents`
+      `   ✅ Access granted: User can access ${query.userAccessLevel.toUpperCase()} documents`,
     );
   }
 
@@ -123,7 +123,7 @@ export async function executeRAGPipeline(
     console.log(`   Found ${retrievedChunks.length} relevant documents:`);
     retrievedChunks.forEach((chunk, i) => {
       console.log(
-        `   ${i + 1}. ${chunk.documentTitle} (${chunk.accessLevel.toUpperCase()}, score: ${chunk.relevanceScore.toFixed(2)})`
+        `   ${i + 1}. ${chunk.documentTitle} (${chunk.accessLevel.toUpperCase()}, score: ${chunk.relevanceScore.toFixed(2)})`,
       );
     });
   }
@@ -133,15 +133,15 @@ export async function executeRAGPipeline(
   const result = await generateResponseWithSources(
     query,
     retrievedChunks,
-    providerConfig
+    providerConfig,
   );
 
   if (verbose) {
     console.log(
-      `   Response generated with ${result.response.sources.length} sources`
+      `   Response generated with ${result.response.sources.length} sources`,
     );
     console.log(
-      `   Highest Access Level: ${result.highestAccessLevel.toUpperCase()}`
+      `   Highest Access Level: ${result.highestAccessLevel.toUpperCase()}`,
     );
     console.log(`   Confidence: ${result.totalConfidence.toFixed(2)}`);
   }
@@ -158,14 +158,14 @@ export async function executeRAGPipeline(
     console.log(`\n📚 Sources Used:`);
     result.response.sources.forEach((source, i) => {
       console.log(
-        `   ${i + 1}. ${source.title} (${source.accessLevel.toUpperCase()})`
+        `   ${i + 1}. ${source.title} (${source.accessLevel.toUpperCase()})`,
       );
     });
     console.log(`\n📊 Metrics:`);
     console.log(`   Documents Retrieved: ${retrievedChunks.length}`);
     console.log(`   Documents Used: ${result.response.sources.length}`);
     console.log(
-      `   Highest Access Level: ${result.highestAccessLevel.toUpperCase()}`
+      `   Highest Access Level: ${result.highestAccessLevel.toUpperCase()}`,
     );
     console.log(`   Overall Confidence: ${result.totalConfidence.toFixed(2)}`);
     console.log(`   Execution Time: ${executionTime}ms`);
@@ -243,7 +243,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.log('#'.repeat(70));
 
       try {
-        await executeRAGPipeline(scenarios[i], { verbose: true });
+        await executeRAGPipeline(scenarios[i], {verbose: true});
       } catch (error) {
         if (error instanceof Error) {
           console.log(`\n❌ Error: ${error.message}\n`);
@@ -260,7 +260,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('📖 Key Takeaways:');
     console.log('   • Mullion enforces access control at retrieval time');
     console.log(
-      '   • Each scope (query-analysis, retriever, generator) is isolated'
+      '   • Each scope (query-analysis, retriever, generator) is isolated',
     );
     console.log('   • Confidence tracking flows through the entire pipeline');
     console.log('   • Users only see documents they have permission to access');

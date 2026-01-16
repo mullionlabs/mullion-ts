@@ -5,5 +5,5 @@
  */
 
 // OTLP HTTP exporter (zero dependencies)
-export type { OTLPHttpExporterOptions } from './otlp-http.js';
-export { OTLPHttpExporter, OTLPExporters } from './otlp-http.js';
+export type {OTLPHttpExporterOptions} from './otlp-http.js';
+export {OTLPHttpExporter, OTLPExporters} from './otlp-http.js';

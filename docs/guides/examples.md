@@ -39,9 +39,9 @@ This page contains comprehensive examples showing how to use Mullion for **type-
 ### Simple scoped execution
 
 ```ts
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
+import {z} from 'zod';
 
 const client = createMullionClient(openai('gpt-4o-mini'));
 
@@ -91,7 +91,7 @@ const pipeline = await client.scope('ingestion', async (ingestCtx) => {
 ### Customer support automation
 
 ```ts
-import { z } from 'zod';
+import {z} from 'zod';
 
 const SupportTicketSchema = z.object({
   category: z.enum(['billing', 'technical', 'account', 'general']),
@@ -116,7 +116,7 @@ async function processSupportTicket(customerMessage: string) {
 
     if (analysis.confidence < 0.85) {
       throw new Error(
-        `Low confidence analysis: ${analysis.confidence.toFixed(2)}`
+        `Low confidence analysis: ${analysis.confidence.toFixed(2)}`,
       );
     }
 
@@ -130,7 +130,7 @@ async function processSupportTicket(customerMessage: string) {
     const responseData = await ctx.infer(
       ResponseSchema,
       `Generate a response for a ${bridgedTicket.priority} priority ` +
-        `${bridgedTicket.category} ticket with ${bridgedTicket.sentiment} sentiment`
+        `${bridgedTicket.category} ticket with ${bridgedTicket.sentiment} sentiment`,
     );
 
     if (responseData.confidence < 0.8) {
@@ -155,7 +155,7 @@ async function processSupportTicket(customerMessage: string) {
 ### Document processing pipeline
 
 ```ts
-import { z } from 'zod';
+import {z} from 'zod';
 
 const DocumentMetadataSchema = z.object({
   title: z.string(),
@@ -187,7 +187,7 @@ const DocumentSummarySchema = z.object({
       task: z.string(),
       date: z.string(),
       priority: z.enum(['low', 'medium', 'high']),
-    })
+    }),
   ),
 });
 
@@ -208,17 +208,17 @@ async function processDocument(documentText: string) {
 
       const result = await ctx.infer(
         DocumentClassificationSchema,
-        `Classify document: ${bridgedMetadata.documentType} - ${documentText.substring(0, 1000)}`
+        `Classify document: ${bridgedMetadata.documentType} - ${documentText.substring(0, 1000)}`,
       );
 
       if (result.confidence < 0.9) {
         throw new Error(
-          `Security classification requires high confidence (got ${result.confidence})`
+          `Security classification requires high confidence (got ${result.confidence})`,
         );
       }
 
       return ctx.use(result);
-    }
+    },
   );
 
   // Step 3: generate summary (only if not restricted)
@@ -260,7 +260,7 @@ async function processDocument(documentText: string) {
 ### Multi-tenant SaaS platform
 
 ```ts
-import { z } from 'zod';
+import {z} from 'zod';
 
 interface TenantContext {
   tenantId: string;
@@ -312,7 +312,7 @@ async function processUserRequest(query: string, tenant: TenantContext) {
             dataUsed: z.array(z.string()),
             complianceNotes: z.string(),
           }),
-          `Process ${bridgedIntent.intent} request for tenant in ${tenant.dataRegion}`
+          `Process ${bridgedIntent.intent} request for tenant in ${tenant.dataRegion}`,
         );
 
         return {
@@ -322,7 +322,7 @@ async function processUserRequest(query: string, tenant: TenantContext) {
           region: tenant.dataRegion,
           traceId: result.traceId,
         };
-      }
+      },
     );
   });
 }
@@ -355,7 +355,7 @@ async function safeExample(adminToken: string, userQuery: string) {
 
     const response = await userCtx.infer(
       UserResponseSchema,
-      `Based on system insights: ${safeInsights.summary}, respond to: ${userQuery}`
+      `Based on system insights: ${safeInsights.summary}, respond to: ${userQuery}`,
     );
 
     return userCtx.use(response);
@@ -366,7 +366,7 @@ async function safeExample(adminToken: string, userQuery: string) {
 ### Data classification pipeline
 
 ```ts
-import { z } from 'zod';
+import {z} from 'zod';
 
 const DataClassificationSchema = z.object({
   classification: z.enum(['public', 'internal', 'confidential', 'secret']),
@@ -413,7 +413,7 @@ async function classifyAndProcess(data: string) {
 
   return await client.scope(`processing-${level}`, async (ctx) => {
     const bridgedClassification = ctx.bridge(
-      (classification as any).classification
+      (classification as any).classification,
     );
 
     const processing = await ctx.infer(
@@ -422,7 +422,7 @@ async function classifyAndProcess(data: string) {
         recommendations: z.array(z.string()),
         safeguards: z.array(z.string()),
       }),
-      `Process ${level} classified data with appropriate safeguards`
+      `Process ${level} classified data with appropriate safeguards`,
     );
 
     return {
@@ -507,15 +507,15 @@ async function parallelAnalysis(document: string) {
   const [sentiment, topics, entities] = await Promise.all([
     client.scope('sentiment-analysis', async (ctx) => {
       const result = await ctx.infer(SentimentSchema, document);
-      return { sentiment: ctx.use(result), confidence: result.confidence };
+      return {sentiment: ctx.use(result), confidence: result.confidence};
     }),
     client.scope('topic-extraction', async (ctx) => {
       const result = await ctx.infer(TopicSchema, document);
-      return { topics: ctx.use(result), confidence: result.confidence };
+      return {topics: ctx.use(result), confidence: result.confidence};
     }),
     client.scope('entity-recognition', async (ctx) => {
       const result = await ctx.infer(EntitySchema, document);
-      return { entities: ctx.use(result), confidence: result.confidence };
+      return {entities: ctx.use(result), confidence: result.confidence};
     }),
   ]);
 
@@ -536,7 +536,7 @@ async function parallelAnalysis(document: string) {
         sentiment: bridgedSentiment.sentiment,
         topics: bridgedTopics.topics,
         entities: bridgedEntities.entities,
-      })}`
+      })}`,
     );
 
     return {
@@ -550,7 +550,7 @@ async function parallelAnalysis(document: string) {
         bridgedSentiment.confidence,
         bridgedTopics.confidence,
         bridgedEntities.confidence,
-        merged.confidence
+        merged.confidence,
       ),
     };
   });
@@ -602,7 +602,7 @@ import mullion from '@mullion/eslint-plugin';
 
 export default [
   {
-    plugins: { mullion },
+    plugins: {mullion},
     rules: {
       // Example rule names — see the plugin README / reference docs for canonical names.
       // 'mullion/no-context-leak': 'error',

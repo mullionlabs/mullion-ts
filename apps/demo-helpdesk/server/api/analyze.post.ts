@@ -1,4 +1,4 @@
-import { processSupportTicketSafely } from '@mullion/template-helpdesk';
+import {processSupportTicketSafely} from '@mullion/template-helpdesk';
 
 /**
  * Analyze support ticket endpoint
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     await enforceRateLimit(event, user);
 
     const body = await readBody(event);
-    const { ticketText } = body;
+    const {ticketText} = body;
 
     if (!ticketText || typeof ticketText !== 'string') {
       throw createError({
@@ -25,8 +25,7 @@ export default defineEventHandler(async (event) => {
 
     // Execute the safe helpdesk flow using the template
     // This uses Mullion to enforce scope boundaries between admin and public contexts
-    // Note: The template uses a hardcoded sample ticket, so ticketText is not used yet
-    const result = await processSupportTicketSafely();
+    const result = await processSupportTicketSafely(undefined, ticketText);
 
     // Return the result with both admin and public views
     return {

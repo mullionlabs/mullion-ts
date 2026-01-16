@@ -21,9 +21,9 @@ The `fork()` API enables parallel execution of multiple LLM inferences sharing t
 ## Quick Start
 
 ```typescript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { anthropic } from '@ai-sdk/anthropic';
-import { categorical } from '@mullion/core';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {anthropic} from '@ai-sdk/anthropic';
+import {categorical} from '@mullion/core';
 
 const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 
@@ -47,7 +47,7 @@ const result = await client.scope('analysis', async (ctx) => {
   const quality = branches.quality; // Owned<QualityType, 'analysis'>
   const tags = branches.tags; // Owned<TagsType, 'analysis'>
 
-  return { compliance, quality, tags };
+  return {compliance, quality, tags};
 });
 ```
 
@@ -149,7 +149,7 @@ const result = await ctx.fork({
 Runs a custom warmup call before any branches, giving full control over cache content.
 
 ```typescript
-import { explicitWarmup } from '@mullion/ai-sdk';
+import {explicitWarmup} from '@mullion/ai-sdk';
 
 const result = await ctx.fork({
   branches: {
@@ -292,8 +292,8 @@ const result = await ctx.fork({
 Fork results are fully typed based on branch schemas:
 
 ```typescript
-const ComplianceSchema = z.object({ approved: z.boolean() });
-const QualitySchema = z.object({ score: z.number() });
+const ComplianceSchema = z.object({approved: z.boolean()});
+const QualitySchema = z.object({score: z.number()});
 
 const result = await ctx.fork({
   branches: {
@@ -318,7 +318,7 @@ const score: number = result.quality.value.score;
 Fork results are designed to work seamlessly with merge strategies:
 
 ```typescript
-import { categorical, continuous, object } from '@mullion/core';
+import {categorical, continuous, object} from '@mullion/core';
 
 const result = await ctx.fork({
   branches: {
@@ -362,7 +362,7 @@ const statsA = await result.a.context.getCacheStats();
 const statsB = await result.b.context.getCacheStats();
 const statsC = await result.c.context.getCacheStats();
 
-import { aggregateCacheMetrics } from '@mullion/ai-sdk';
+import {aggregateCacheMetrics} from '@mullion/ai-sdk';
 const totalStats = aggregateCacheMetrics([statsA, statsB, statsC]);
 
 console.log(`Total cache hits: ${totalStats.cacheReadTokens}`);
@@ -388,7 +388,7 @@ const expensiveCost = await result.expensive.context.getLastCallCost();
 console.log(`Cheap branch: $${cheapCost.netCost.toFixed(4)}`);
 console.log(`Expensive branch: $${expensiveCost.netCost.toFixed(4)}`);
 console.log(
-  `Total: $${(cheapCost.netCost + expensiveCost.netCost).toFixed(4)}`
+  `Total: $${(cheapCost.netCost + expensiveCost.netCost).toFixed(4)}`,
 );
 ```
 
@@ -399,7 +399,7 @@ console.log(
 Run multiple models for consensus:
 
 ```typescript
-import { requireConsensus, categorical } from '@mullion/core';
+import {requireConsensus, categorical} from '@mullion/core';
 
 const result = await ctx.fork({
   branches: {
@@ -471,7 +471,7 @@ const results = await Promise.all(
       },
       strategy: 'cache-optimized',
     });
-  })
+  }),
 );
 ```
 
@@ -637,7 +637,7 @@ console.log(ctx.cache.getSegments());
 ```typescript
 // Track costs per branch
 const costs = await Promise.all(
-  Object.values(result).map((r) => r.context.getLastCallCost())
+  Object.values(result).map((r) => r.context.getLastCallCost()),
 );
 
 costs.forEach((cost, i) => {

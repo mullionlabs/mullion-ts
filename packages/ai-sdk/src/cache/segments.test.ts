@@ -2,13 +2,13 @@
  * Tests for cache segments management
  */
 
-import { describe, expect, it, beforeEach } from 'vitest';
+import {describe, expect, it, beforeEach} from 'vitest';
 import {
   CacheSegmentManager,
   createCacheSegmentManager,
   type SegmentOptions,
 } from './segments.js';
-import { createDefaultCacheConfig, createUserContentConfig } from './types.js';
+import {createDefaultCacheConfig, createUserContentConfig} from './types.js';
 
 describe('CacheSegmentManager', () => {
   let manager: CacheSegmentManager;
@@ -23,7 +23,7 @@ describe('CacheSegmentManager', () => {
     manager = createCacheSegmentManager(
       'anthropic',
       'claude-3-5-sonnet-20241022',
-      config
+      config,
     );
   });
 
@@ -94,18 +94,18 @@ describe('CacheSegmentManager', () => {
       // Try to exceed breakpoint limit
       manager.segment(
         'key1',
-        'First segment with enough content to be valid for caching purposes and meet token thresholds.'
+        'First segment with enough content to be valid for caching purposes and meet token thresholds.',
       );
       manager.segment(
         'key2',
-        'Second segment also with enough content to be valid for caching and meet minimum token requirements.'
+        'Second segment also with enough content to be valid for caching and meet minimum token requirements.',
       );
 
       expect(() => {
         // This should fail because config has breakpoints: 2, so third segment exceeds limit
         manager.segment(
           'key3',
-          'Third segment that should fail due to breakpoint limit being exceeded in this test scenario.'
+          'Third segment that should fail due to breakpoint limit being exceeded in this test scenario.',
         );
       }).toThrow('Cache segment validation failed');
     });
@@ -115,7 +115,7 @@ describe('CacheSegmentManager', () => {
       manager.segment('key2', 'Second segment with adequate content length.');
 
       // This should succeed with force even though it exceeds breakpoint limit
-      manager.segment('key3', 'Third forced segment.', { force: true });
+      manager.segment('key3', 'Third forced segment.', {force: true});
 
       expect(manager.getSegments()).toHaveLength(3);
     });
@@ -169,7 +169,7 @@ describe('CacheSegmentManager', () => {
 
     it('generates unique keys for multiple system prompts', () => {
       manager.system(
-        'First system prompt with sufficient length for token requirements.'
+        'First system prompt with sufficient length for token requirements.',
       );
       // Add small delay to ensure different timestamps
       const now = Date.now();
@@ -177,7 +177,7 @@ describe('CacheSegmentManager', () => {
         /* busy wait */
       }
       manager.system(
-        'Second system prompt also with sufficient length for token requirements.'
+        'Second system prompt also with sufficient length for token requirements.',
       );
 
       const segments = manager.getSegments();
@@ -194,7 +194,7 @@ describe('CacheSegmentManager', () => {
     it('returns copy of segments (immutable)', () => {
       manager.segment(
         'test',
-        'Content with adequate length for testing purposes and meeting minimum token requirements.'
+        'Content with adequate length for testing purposes and meeting minimum token requirements.',
       );
 
       const segments1 = manager.getSegments();
@@ -220,7 +220,7 @@ describe('CacheSegmentManager', () => {
     it('validates successfully for compatible model', () => {
       manager.segment(
         'test',
-        'Valid content with adequate length for caching requirements.'
+        'Valid content with adequate length for caching requirements.',
       );
 
       const result = manager.validateForModel('claude-3-5-sonnet-20241022');
@@ -231,34 +231,34 @@ describe('CacheSegmentManager', () => {
 
     it('fails validation for unsupported model', () => {
       // Create a manager for OpenAI with gpt-3.5-turbo (which doesn't support caching)
-      const config = createDefaultCacheConfig({ enabled: true });
+      const config = createDefaultCacheConfig({enabled: true});
       const unsupportedManager = createCacheSegmentManager(
         'openai',
         'gpt-3.5-turbo',
-        config
+        config,
       );
       unsupportedManager.segment(
         'test',
         'Content for unsupported model test.',
-        { force: true }
+        {force: true},
       );
 
       const result = unsupportedManager.validateForModel('gpt-3.5-turbo'); // No caching support
 
       expect(result.valid).toBe(false);
       expect(result.errors).toContain(
-        "Caching is not supported for model 'gpt-3.5-turbo'"
+        "Caching is not supported for model 'gpt-3.5-turbo'",
       );
     });
 
     it('warns about low token counts', () => {
-      manager.segment('short', 'Short', { force: true }); // Very short content
+      manager.segment('short', 'Short', {force: true}); // Very short content
 
       const result = manager.validateForModel('claude-3-5-sonnet-20241022');
 
       expect(result.valid).toBe(true); // Warnings don't fail validation
       expect(
-        result.warnings.some((w) => w.includes('below provider minimum'))
+        result.warnings.some((w) => w.includes('below provider minimum')),
       ).toBe(true);
     });
 
@@ -267,21 +267,21 @@ describe('CacheSegmentManager', () => {
       manager.segment(
         'ttl-test',
         'Content with TTL specification for testing.',
-        { ttl: '1h' }
+        {ttl: '1h'},
       );
 
       // Validate against model that supports TTL
       const anthropicResult = manager.validateForModel(
-        'claude-3-5-sonnet-20241022'
+        'claude-3-5-sonnet-20241022',
       );
       expect(anthropicResult.valid).toBe(true);
 
       // Create OpenAI manager with TTL segments to test TTL warning
-      const config = createDefaultCacheConfig({ enabled: true });
+      const config = createDefaultCacheConfig({enabled: true});
       const openaiManager = createCacheSegmentManager(
         'openai',
         'gpt-4o',
-        config
+        config,
       );
       openaiManager.segment('ttl-test', 'Content with TTL for OpenAI.', {
         ttl: '1h',
@@ -291,7 +291,7 @@ describe('CacheSegmentManager', () => {
       // Validate against OpenAI model that doesn't support TTL
       const openaiResult = openaiManager.validateForModel('gpt-4o');
       expect(
-        openaiResult.warnings.some((w) => w.includes('does not support TTL'))
+        openaiResult.warnings.some((w) => w.includes('does not support TTL')),
       ).toBe(true);
     });
 
@@ -299,33 +299,33 @@ describe('CacheSegmentManager', () => {
       // Add more segments than the model supports
       manager.segment(
         'key1',
-        'First segment with sufficient content length for testing breakpoint validation.'
+        'First segment with sufficient content length for testing breakpoint validation.',
       );
       manager.segment(
         'key2',
-        'Second segment with sufficient content length for testing breakpoint validation.'
+        'Second segment with sufficient content length for testing breakpoint validation.',
       );
       manager.segment(
         'key3',
         'Third segment with sufficient content length for testing breakpoint validation.',
-        { force: true }
+        {force: true},
       );
       manager.segment(
         'key4',
         'Fourth segment with sufficient content length for testing breakpoint validation.',
-        { force: true }
+        {force: true},
       );
       manager.segment(
         'key5',
         'Fifth segment with sufficient content length for testing breakpoint validation.',
-        { force: true }
+        {force: true},
       ); // Exceeds Anthropic limit of 4
 
       const result = manager.validateForModel('claude-3-5-sonnet-20241022');
 
       expect(result.valid).toBe(false);
       expect(
-        result.errors.some((e) => e.includes('exceeds provider limit'))
+        result.errors.some((e) => e.includes('exceeds provider limit')),
       ).toBe(true);
     });
   });
@@ -355,7 +355,7 @@ describe('CacheSegmentManager', () => {
         const segments = manager.getSegments();
         const expected = segments.reduce(
           (sum, segment) => sum + segment.tokenCount,
-          0
+          0,
         );
 
         expect(total).toBe(expected);
@@ -425,7 +425,7 @@ describe('CacheSegmentManager', () => {
       it('returns true for short content with force', () => {
         const shortContent = 'Short';
 
-        const result = manager.shouldCache(shortContent, { force: true });
+        const result = manager.shouldCache(shortContent, {force: true});
 
         expect(result).toBe(true);
       });
@@ -459,12 +459,12 @@ describe('CacheSegmentManager', () => {
       const openaiManager = createCacheSegmentManager(
         'openai',
         'gpt-4o',
-        config
+        config,
       );
 
       openaiManager.segment(
         'test',
-        'Content for OpenAI automatic caching system test validation.'
+        'Content for OpenAI automatic caching system test validation.',
       );
 
       const segments = openaiManager.getSegments();
@@ -479,23 +479,23 @@ describe('CacheSegmentManager', () => {
       const haikuManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-haiku-20240307',
-        config
+        config,
       );
 
       // Short content should generate warnings due to higher threshold
       haikuManager.segment(
         'haiku-test',
         'Relatively short content for Haiku model.',
-        { force: true }
+        {force: true},
       );
 
       const validation = haikuManager.validateForModel(
-        'claude-3-haiku-20240307'
+        'claude-3-haiku-20240307',
       );
       expect(
         validation.warnings.some((w) =>
-          w.includes('below provider minimum of 2048')
-        )
+          w.includes('below provider minimum of 2048'),
+        ),
       ).toBe(true);
     });
 
@@ -504,19 +504,19 @@ describe('CacheSegmentManager', () => {
       const googleManager = createCacheSegmentManager(
         'google',
         'gemini-pro',
-        config
+        config,
       );
 
       googleManager.segment(
         'google-test',
         'Content for Google provider test.',
-        { force: true }
+        {force: true},
       );
 
       const validation = googleManager.validateForModel('gemini-pro');
       expect(validation.valid).toBe(false);
       expect(validation.errors).toContain(
-        "Caching is not supported for model 'gemini-pro'"
+        "Caching is not supported for model 'gemini-pro'",
       );
     });
   });
@@ -539,7 +539,7 @@ describe('CacheSegmentManager', () => {
       const userManager = createCacheSegmentManager(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        userConfig
+        userConfig,
       );
 
       userManager.segment(
@@ -547,7 +547,7 @@ describe('CacheSegmentManager', () => {
         'User provided data for processing and analysis.',
         {
           scope: 'allow-user-content',
-        }
+        },
       );
 
       const segments = userManager.getSegments();
@@ -570,7 +570,7 @@ describe('CacheSegmentManager', () => {
 
       manager.segment(
         specialKey,
-        'Content with special key characters for testing edge cases in key handling.'
+        'Content with special key characters for testing edge cases in key handling.',
       );
 
       const segments = manager.getSegments();
@@ -581,7 +581,7 @@ describe('CacheSegmentManager', () => {
       const complexObject = {
         nested: {
           array: [1, 2, 3],
-          object: { key: 'value' },
+          object: {key: 'value'},
         },
         nullValue: null,
         booleanValue: true,
@@ -616,13 +616,13 @@ describe('createCacheSegmentManager', () => {
     const manager = createCacheSegmentManager(
       'anthropic',
       'claude-3-5-sonnet-20241022',
-      config
+      config,
     );
 
     // Test that manager uses the configuration
     manager.segment(
       'test',
-      'Test content with adequate length for validation.'
+      'Test content with adequate length for validation.',
     );
 
     const segments = manager.getSegments();
@@ -636,7 +636,7 @@ describe('createCacheSegmentManager', () => {
     const anthropicManager = createCacheSegmentManager(
       'anthropic',
       'claude-3-5-sonnet-20241022',
-      config
+      config,
     );
     const openaiManager = createCacheSegmentManager('openai', 'gpt-4o', config);
 

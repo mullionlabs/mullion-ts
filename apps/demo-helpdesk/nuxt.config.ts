@@ -5,14 +5,14 @@ export default defineNuxtConfig({
   // Extend the demo-base layer
   extends: ['../demo-base'],
 
-  devtools: { enabled: true },
+  devtools: {enabled: true},
 
   app: {
     head: {
       title: 'Mullion Helpdesk Demo',
       meta: [
-        { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        {charset: 'utf-8'},
+        {name: 'viewport', content: 'width=device-width, initial-scale=1'},
         {
           name: 'description',
           content:

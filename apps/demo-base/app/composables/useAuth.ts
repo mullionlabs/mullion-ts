@@ -18,12 +18,12 @@ export const useAuth = () => {
 
   const signIn = async (): Promise<void> => {
     // Redirect to Google OAuth
-    await navigateTo('/api/auth/google', { external: true });
+    await navigateTo('/api/auth/google', {external: true});
   };
 
   const signOut = async (): Promise<void> => {
     try {
-      await $fetch('/api/auth/logout', { method: 'POST' });
+      await $fetch('/api/auth/logout', {method: 'POST'});
       user.value = null;
       await navigateTo('/');
     } catch (error: unknown) {

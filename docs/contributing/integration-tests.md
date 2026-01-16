@@ -67,9 +67,9 @@ pnpm add @ai-sdk/google
 Create `test-openai.js` in the repo root (or inside your test app):
 
 ```javascript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
+import {z} from 'zod';
 
 // Schema for testing
 const EmailSchema = z.object({
@@ -141,9 +141,9 @@ testOpenAI().catch(console.error);
 Create `test-anthropic.js`:
 
 ```javascript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { anthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {anthropic} from '@ai-sdk/anthropic';
+import {z} from 'zod';
 
 const ProductReviewSchema = z.object({
   rating: z.number().min(1).max(5).describe('Star rating 1-5'),
@@ -197,9 +197,9 @@ testAnthropic().catch(console.error);
 Create `test-bridging.js`:
 
 ```javascript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
+import {z} from 'zod';
 
 const DataSchema = z.object({
   content: z.string(),
@@ -221,12 +221,12 @@ async function testScopeBridging() {
       // Admin scope processes raw data
       const adminData = await adminCtx.infer(
         DataSchema,
-        'Internal memo: Please review Q4 budget allocation for the marketing team.'
+        'Internal memo: Please review Q4 budget allocation for the marketing team.',
       );
 
       console.log(
         '🔒 Admin scope classification:',
-        adminData.value.classification
+        adminData.value.classification,
       );
       console.log('   Confidence:', adminData.confidence);
 
@@ -241,7 +241,7 @@ async function testScopeBridging() {
         // Process the bridged data
         const processed = await processCtx.infer(
           ProcessedSchema,
-          `Summarize this: ${bridged.value.content}`
+          `Summarize this: ${bridged.value.content}`,
         );
 
         console.log('⚙️  Processing scope summary:', processed.value.summary);
@@ -273,9 +273,9 @@ testScopeBridging().catch(console.error);
 Create `test-edge-cases.js`:
 
 ```javascript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
+import {z} from 'zod';
 
 const StrictSchema = z.object({
   number: z.number().min(1).max(10),
@@ -293,7 +293,7 @@ async function testEdgeCases() {
     await client.scope('test-ambiguous', async (ctx) => {
       const result = await ctx.infer(
         StrictSchema,
-        'Maybe something between 5 and 7, probably B or C'
+        'Maybe something between 5 and 7, probably B or C',
       );
       console.log('  Result:', result.value);
       console.log('  Confidence:', result.confidence);
@@ -335,7 +335,7 @@ async function testEdgeCases() {
         z.object({
           text: z.string().describe('A very long detailed response'),
         }),
-        'Give me a detailed explanation'
+        'Give me a detailed explanation',
       );
 
       console.log('  Confidence from finish reason:', result.confidence);

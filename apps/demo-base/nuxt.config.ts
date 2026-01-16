@@ -1,7 +1,7 @@
-import { join } from 'path';
-import { createResolver } from 'nuxt/kit';
+import {join} from 'path';
+import {createResolver} from 'nuxt/kit';
 
-const { resolve } = createResolver(import.meta.url);
+const {resolve} = createResolver(import.meta.url);
 const currentDir = resolve('./');
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -19,19 +19,24 @@ export default defineNuxtConfig({
   runtimeConfig: {
     oauth: {
       google: {
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        clientId: '',
+        clientSecret: '',
       },
     },
     session: {
+      password: '',
       maxAge: 60 * 60 * 24 * 7, // 7 days
+    },
+    rateLimit: {
+      maxRequests: 20,
+      windowMs: 24 * 60 * 60 * 1000, // 24 hours
     },
   },
 
   // Nuxt 4 uses app/ directory by default
   // All application code is now in app/ directory
 
-  devtools: { enabled: true },
+  devtools: {enabled: true},
 
   typescript: {
     strict: true,

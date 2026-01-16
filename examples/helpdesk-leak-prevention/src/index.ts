@@ -23,7 +23,7 @@ export {
 // ============================================================================
 // Safe Flow (Production-Ready Implementation)
 // ============================================================================
-export { processSupportTicketSafely } from './safe-flow.js';
+export {processSupportTicketSafely} from './safe-flow.js';
 
 // ============================================================================
 // Unsafe Flow (Educational Examples - DO NOT USE IN PRODUCTION)

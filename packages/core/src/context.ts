@@ -1,4 +1,4 @@
-import type { Owned } from './owned.js';
+import type {Owned} from './owned.js';
 
 /**
  * Context represents an execution scope for LLM operations.
@@ -108,7 +108,7 @@ export interface Context<S extends string> {
   infer<T>(
     schema: Schema<T>,
     input: string,
-    options?: InferOptions
+    options?: InferOptions,
   ): Promise<Owned<T, S>>;
 
   /**

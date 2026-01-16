@@ -30,12 +30,12 @@ console.log('with access-level aware document handling using Mullion.\n');
 
 console.log('📖 Scenario:');
 console.log(
-  '   A corporate knowledge base with documents at different access levels:'
+  '   A corporate knowledge base with documents at different access levels:',
 );
 console.log('   • PUBLIC: Product docs, marketing materials');
 console.log('   • INTERNAL: Employee handbooks, project plans');
 console.log(
-  '   • CONFIDENTIAL: Financial data, trade secrets, security incidents\n'
+  '   • CONFIDENTIAL: Financial data, trade secrets, security incidents\n',
 );
 
 console.log('🔍 What Mullion Provides:');
@@ -49,10 +49,10 @@ console.log('📂 Pipeline Stages:\n');
 console.log('   1. Query Analysis → Understand user intent');
 console.log('   2. Access Control → Verify permissions');
 console.log(
-  '   3. Document Retrieval → Find relevant docs within access level'
+  '   3. Document Retrieval → Find relevant docs within access level',
 );
 console.log(
-  '   4. Response Generation → Create answer with source attribution\n'
+  '   4. Response Generation → Create answer with source attribution\n',
 );
 
 console.log('📂 Available Commands:\n');
@@ -69,7 +69,7 @@ console.log('   3. Run: npm run pipeline\n');
 
 console.log('💡 Key Features Demonstrated:\n');
 console.log(
-  '   ✅ FORK/MERGE: Parallel classification with consensus building'
+  '   ✅ FORK/MERGE: Parallel classification with consensus building',
 );
 console.log('   ✅ ACCESS CONTROL: Automatic filtering by user permissions');
 console.log('   ✅ SCOPED CONTEXTS: Each stage runs in isolated scope');
@@ -100,13 +100,13 @@ console.log('   6. Run src/pipeline.ts to see it all together\n');
 console.log('📖 Learn More:');
 console.log('   Documentation: https://github.com/mullionlabs/mullion-ts');
 console.log(
-  '   Report Issues: https://github.com/mullionlabs/mullion-ts/issues\n'
+  '   Report Issues: https://github.com/mullionlabs/mullion-ts/issues\n',
 );
 
 console.log('---\n');
 console.log(
-  '💡 TIP: Start with "npm run pipeline" to see the complete RAG flow,'
+  '💡 TIP: Start with "npm run pipeline" to see the complete RAG flow,',
 );
 console.log(
-  '    then explore individual components to understand each stage!\n'
+  '    then explore individual components to understand each stage!\n',
 );

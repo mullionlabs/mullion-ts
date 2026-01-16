@@ -1,3 +1,7 @@
+/**
+ * Google OAuth redirect endpoint
+ * Initiates OAuth flow with Google
+ */
 export default defineOAuthGoogleEventHandler({
   async onSuccess(event, {user}) {
     await setUserSession(event, {
@@ -9,9 +13,8 @@ export default defineOAuthGoogleEventHandler({
       },
     });
 
-    return sendRedirect(event, '/demo');
+    return sendRedirect(event, '/');
   },
-
   onError(event, error) {
     console.error('Google OAuth error:', error);
     return sendRedirect(event, '/?error=auth_failed');

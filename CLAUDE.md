@@ -256,11 +256,11 @@ await customerCtx.respond(safe.value);
 
   ```typescript
   // ✅ GOOD: Types imported separately
-  import { scope } from './scope.js';
-  import type { Owned, Context } from './types.js';
+  import {scope} from './scope.js';
+  import type {Owned, Context} from './types.js';
 
   // ❌ BAD: Types mixed with values
-  import { scope, Owned, Context } from './scope.js';
+  import {scope, Owned, Context} from './scope.js';
   ```
 
   (Enforced by `@typescript-eslint/consistent-type-imports`)

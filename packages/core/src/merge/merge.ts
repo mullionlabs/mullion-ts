@@ -1,5 +1,5 @@
-import type { Owned } from '../owned.js';
-import type { MergeStrategy, MergeResult } from './types.js';
+import type {Owned} from '../owned.js';
+import type {MergeStrategy, MergeResult} from './types.js';
 
 /**
  * Merges multiple Owned values into a single result using the specified strategy.
@@ -137,7 +137,7 @@ import type { MergeStrategy, MergeResult } from './types.js';
  */
 export function merge<T, R>(
   results: Owned<T, string>[],
-  strategy: MergeStrategy<T, R>
+  strategy: MergeStrategy<T, R>,
 ): MergeResult<R> {
   // Delegate to strategy's merge implementation
   return strategy.merge(results);

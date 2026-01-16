@@ -2,7 +2,7 @@
  * Tests for cache capabilities module
  */
 
-import { describe, expect, it } from 'vitest';
+import {describe, expect, it} from 'vitest';
 import {
   getCacheCapabilities,
   supportsCacheFeature,
@@ -18,7 +18,7 @@ describe('getCacheCapabilities', () => {
     it('returns correct capabilities for Claude 3.5 Sonnet', () => {
       const caps = getCacheCapabilities(
         'anthropic',
-        'claude-3-5-sonnet-20241022'
+        'claude-3-5-sonnet-20241022',
       );
 
       expect(caps).toEqual({
@@ -35,7 +35,7 @@ describe('getCacheCapabilities', () => {
     it('returns correct capabilities for Claude 3.5 Haiku (higher token threshold)', () => {
       const caps = getCacheCapabilities(
         'anthropic',
-        'claude-3-5-haiku-20241022'
+        'claude-3-5-haiku-20241022',
       );
 
       expect(caps).toEqual({
@@ -252,7 +252,7 @@ describe('getCacheCapabilities', () => {
 describe('supportsCacheFeature', () => {
   it('correctly identifies TTL support', () => {
     expect(
-      supportsCacheFeature('anthropic', 'claude-3-5-sonnet-20241022', 'ttl')
+      supportsCacheFeature('anthropic', 'claude-3-5-sonnet-20241022', 'ttl'),
     ).toBe(true);
     expect(supportsCacheFeature('openai', 'gpt-4o', 'ttl')).toBe(false);
   });
@@ -262,8 +262,8 @@ describe('supportsCacheFeature', () => {
       supportsCacheFeature(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        'toolCaching'
-      )
+        'toolCaching',
+      ),
     ).toBe(false);
     expect(supportsCacheFeature('openai', 'gpt-4o', 'toolCaching')).toBe(true);
     expect(supportsCacheFeature('openai', 'gpt-4', 'toolCaching')).toBe(false);
@@ -274,8 +274,8 @@ describe('supportsCacheFeature', () => {
       supportsCacheFeature(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        'automatic'
-      )
+        'automatic',
+      ),
     ).toBe(false);
     expect(supportsCacheFeature('openai', 'gpt-4o', 'automatic')).toBe(true);
   });
@@ -285,8 +285,8 @@ describe('supportsCacheFeature', () => {
       supportsCacheFeature(
         'anthropic',
         'claude-3-5-sonnet-20241022',
-        'unknown' as any
-      )
+        'unknown' as any,
+      ),
     ).toBe(false);
   });
 });
@@ -295,7 +295,7 @@ describe('getEffectiveBreakpointLimit', () => {
   it('returns actual limit for Anthropic models', () => {
     const limit = getEffectiveBreakpointLimit(
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
     expect(limit).toBe(4);
   });
@@ -314,7 +314,7 @@ describe('getEffectiveBreakpointLimit', () => {
     const limit = getEffectiveBreakpointLimit(
       'anthropic',
       'claude-3-opus-20240229',
-      100
+      100,
     );
     expect(limit).toBe(4); // ignores maxPractical when not Infinity
   });
@@ -323,10 +323,10 @@ describe('getEffectiveBreakpointLimit', () => {
 describe('isValidTtl', () => {
   it('validates TTL for Anthropic models', () => {
     expect(isValidTtl('anthropic', 'claude-3-5-sonnet-20241022', '5m')).toBe(
-      true
+      true,
     );
     expect(isValidTtl('anthropic', 'claude-3-5-sonnet-20241022', '1h')).toBe(
-      true
+      true,
     );
   });
 
@@ -345,7 +345,7 @@ describe('getRecommendedCacheStrategy', () => {
   it('recommends explicit segments for Anthropic models', () => {
     const strategy = getRecommendedCacheStrategy(
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
     expect(strategy).toBe('explicit-segments');
   });
@@ -374,7 +374,7 @@ describe('Model-specific token thresholds', () => {
     const haiku3 = getCacheCapabilities('anthropic', 'claude-3-haiku-20240307');
     const haiku35 = getCacheCapabilities(
       'anthropic',
-      'claude-3-5-haiku-20241022'
+      'claude-3-5-haiku-20241022',
     );
     const haiku45 = getCacheCapabilities('anthropic', 'claude-4-5-haiku');
 
@@ -386,11 +386,11 @@ describe('Model-specific token thresholds', () => {
   it('verifies Sonnet models use standard thresholds', () => {
     const sonnet3 = getCacheCapabilities(
       'anthropic',
-      'claude-3-sonnet-20240229'
+      'claude-3-sonnet-20240229',
     );
     const sonnet35 = getCacheCapabilities(
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(sonnet3.minTokens).toBe(1024);
@@ -425,7 +425,7 @@ describe('Type safety', () => {
   it('validates CacheCapabilities interface structure', () => {
     const caps: CacheCapabilities = getCacheCapabilities(
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     // Ensure all required properties exist
@@ -441,7 +441,7 @@ describe('Type safety', () => {
   it('validates supportedTtl array types', () => {
     const anthropicCaps = getCacheCapabilities(
       'anthropic',
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
     const openaiCaps = getCacheCapabilities('openai', 'gpt-4o');
 

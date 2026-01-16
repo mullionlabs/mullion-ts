@@ -161,7 +161,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   // Use imported logic - no duplication!
   const result = await executeRAGPipeline(body.query, {
-    providerConfig: { provider: 'openai' }, // Fixed provider for demo
+    providerConfig: {provider: 'openai'}, // Fixed provider for demo
   });
   return result;
 });
@@ -247,7 +247,7 @@ defineOptions({
   - [x] Source scope visualization
 - [x] `server/api/analyze.post.ts`:
   ```typescript
-  import { executeSafeHelpdeskFlow } from '@mullion/template-helpdesk';
+  import {executeSafeHelpdeskFlow} from '@mullion/template-helpdesk';
   // Auth check + rate limit + execute (placeholders for Task 13.5)
   ```
 
@@ -268,12 +268,12 @@ defineOptions({
   - [x] Response with sources and confidence
 - [x] `server/api/query.post.ts`:
   ```typescript
-  import { executeRAGPipeline } from '@mullion/template-rag-sensitive-data';
+  import {executeRAGPipeline} from '@mullion/template-rag-sensitive-data';
   // Auth check + rate limit + execute (placeholders for Task 13.5)
   ```
 - [x] `server/api/documents.get.ts`:
   ```typescript
-  import { sampleDocuments } from '@mullion/template-rag-sensitive-data';
+  import {sampleDocuments} from '@mullion/template-rag-sensitive-data';
   // Filter by user's selected role with access hierarchy
   ```
 

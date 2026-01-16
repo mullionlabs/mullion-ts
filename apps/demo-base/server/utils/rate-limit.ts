@@ -1,13 +1,5 @@
-import type { H3Event } from 'h3';
-import type { UserSession } from './auth';
-
-/**
- * Rate limit configuration
- */
-export const RATE_LIMIT = {
-  MAX_REQUESTS: 20,
-  WINDOW_MS: 24 * 60 * 60 * 1000, // 24 hours
-} as const;
+import type {H3Event} from 'h3';
+import type {UserSession} from './auth';
 
 /**
  * Rate limit status for a user
@@ -59,10 +51,12 @@ function getNextResetTime(): Date {
  * Get rate limit status for a user
  */
 export async function getRateLimitStatus(
-  userId: string
+  userId: string,
 ): Promise<RateLimitStatus> {
   const key = getRateLimitKey(userId);
   const entry = rateLimitStore.get(key);
+
+  const {rateLimit} = useRuntimeConfig();
 
   // If no entry or expired, reset
   if (!entry || shouldReset(entry.resetAt)) {
@@ -73,15 +67,15 @@ export async function getRateLimitStatus(
     });
 
     return {
-      remaining: RATE_LIMIT.MAX_REQUESTS,
-      limit: RATE_LIMIT.MAX_REQUESTS,
+      remaining: rateLimit.maxRequests,
+      limit: rateLimit.maxRequests,
       resetAt: resetAt.toISOString(),
     };
   }
 
   return {
-    remaining: Math.max(0, RATE_LIMIT.MAX_REQUESTS - entry.count),
-    limit: RATE_LIMIT.MAX_REQUESTS,
+    remaining: Math.max(0, rateLimit.maxRequests - entry.count),
+    limit: rateLimit.maxRequests,
     resetAt: entry.resetAt.toISOString(),
   };
 }
@@ -121,7 +115,7 @@ export async function incrementRateLimit(userId: string): Promise<void> {
  */
 export async function enforceRateLimit(
   event: H3Event,
-  user: UserSession
+  user: UserSession,
 ): Promise<void> {
   const limited = await isRateLimited(user.id);
 
@@ -151,7 +145,7 @@ export async function enforceRateLimit(
  * Useful for displaying current status to users
  */
 export async function getRateLimitForUser(
-  user: UserSession
+  user: UserSession,
 ): Promise<RateLimitStatus> {
   return getRateLimitStatus(user.id);
 }

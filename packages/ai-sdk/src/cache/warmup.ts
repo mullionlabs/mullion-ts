@@ -9,14 +9,14 @@
  * @module cache/warmup
  */
 
-import type { LanguageModel } from 'ai';
-import { generateText } from 'ai';
-import type { Context, WarmupExecutor, WarmupResult } from '@mullion/core';
-import { registerWarmupExecutor } from '@mullion/core';
+import type {LanguageModel} from 'ai';
+import {generateText} from 'ai';
+import type {Context, WarmupExecutor, WarmupResult} from '@mullion/core';
+import {registerWarmupExecutor} from '@mullion/core';
 
-import type { CacheSegmentManager } from './segments.js';
-import type { Provider } from './capabilities.js';
-import { getCacheCapabilities } from './capabilities.js';
+import type {CacheSegmentManager} from './segments.js';
+import type {Provider} from './capabilities.js';
+import {getCacheCapabilities} from './capabilities.js';
 
 /**
  * Configuration for warmup operations.
@@ -86,7 +86,7 @@ const DEFAULT_WARMUP_MAX_TOKENS = 10;
  */
 export async function explicitWarmup(
   config: WarmupConfig,
-  cacheManager?: CacheSegmentManager
+  cacheManager?: CacheSegmentManager,
 ): Promise<WarmupResult> {
   const startTime = Date.now();
 
@@ -202,7 +202,7 @@ export interface FirstBranchWarmupResult<T> {
  */
 export async function firstBranchWarmup<T, S extends string>(
   firstBranch: (ctx: Context<S>) => Promise<T>,
-  ctx: Context<S>
+  ctx: Context<S>,
 ): Promise<FirstBranchWarmupResult<T>> {
   const startTime = Date.now();
 
@@ -217,7 +217,7 @@ export async function firstBranchWarmup<T, S extends string>(
     durationMs: Date.now() - startTime,
   };
 
-  return { firstResult, warmup };
+  return {firstResult, warmup};
 }
 
 /**
@@ -253,7 +253,7 @@ export async function firstBranchWarmup<T, S extends string>(
  */
 export function createWarmupExecutor(
   config: WarmupConfig,
-  cacheManager?: CacheSegmentManager
+  cacheManager?: CacheSegmentManager,
 ): WarmupExecutor {
   const capabilities = getCacheCapabilities(config.provider, config.model);
 
@@ -262,7 +262,7 @@ export function createWarmupExecutor(
       capabilities.supported && !capabilities.isAutomatic,
 
     async explicitWarmup<S extends string>(
-      _ctx: Context<S>
+      _ctx: Context<S>,
     ): Promise<WarmupResult> {
       return explicitWarmup(config, cacheManager);
     },
@@ -300,7 +300,7 @@ export function createWarmupExecutor(
  */
 export function setupWarmupExecutor(
   config: WarmupConfig,
-  cacheManager?: CacheSegmentManager
+  cacheManager?: CacheSegmentManager,
 ): WarmupExecutor {
   const executor = createWarmupExecutor(config, cacheManager);
   registerWarmupExecutor(executor);
@@ -329,7 +329,7 @@ export function setupWarmupExecutor(
  */
 export function estimateWarmupCost(
   cacheManager?: CacheSegmentManager,
-  systemPrompt?: string
+  systemPrompt?: string,
 ): number {
   let totalTokens = 0;
 
@@ -384,7 +384,7 @@ export function estimateWarmupCost(
 export function shouldWarmup(
   config: WarmupConfig,
   cacheManager?: CacheSegmentManager,
-  branchCount = 0
+  branchCount = 0,
 ): boolean {
   const capabilities = getCacheCapabilities(config.provider, config.model);
 

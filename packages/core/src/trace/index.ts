@@ -19,10 +19,10 @@ export type {
   EndSpanOptions,
 } from './types.js';
 
-export { isMullionSpan, isSpanContext } from './types.js';
+export {isMullionSpan, isSpanContext} from './types.js';
 
 // Trace collector for in-memory span management
-export type { SpanExporter, TraceCollectorOptions } from './collector.js';
+export type {SpanExporter, TraceCollectorOptions} from './collector.js';
 export {
   TraceCollector,
   getGlobalTraceCollector,
@@ -31,11 +31,11 @@ export {
 } from './collector.js';
 
 // Trace exporters for observability backends
-export type { OTLPHttpExporterOptions } from './exporters/index.js';
-export { OTLPHttpExporter, OTLPExporters } from './exporters/index.js';
+export type {OTLPHttpExporterOptions} from './exporters/index.js';
+export {OTLPHttpExporter, OTLPExporters} from './exporters/index.js';
 
 // One-liner setup helpers for quick configuration
-export type { SetupTracingOptions } from './setup.js';
+export type {SetupTracingOptions} from './setup.js';
 export {
   setupMullionTracing,
   TracingPresets,

@@ -277,7 +277,7 @@ const DEFAULT_CAPABILITIES: CacheCapabilities = {
  */
 export function getCacheCapabilities(
   provider: Provider,
-  model: string
+  model: string,
 ): CacheCapabilities {
   switch (provider) {
     case 'anthropic': {
@@ -368,7 +368,7 @@ export function getCacheCapabilities(
 export function supportsCacheFeature(
   provider: Provider,
   model: string,
-  feature: 'ttl' | 'toolCaching' | 'automatic'
+  feature: 'ttl' | 'toolCaching' | 'automatic',
 ): boolean {
   const caps = getCacheCapabilities(provider, model);
 
@@ -407,7 +407,7 @@ export function supportsCacheFeature(
 export function getEffectiveBreakpointLimit(
   provider: Provider,
   model: string,
-  maxPractical = 10
+  maxPractical = 10,
 ): number {
   const caps = getCacheCapabilities(provider, model);
   return caps.maxBreakpoints === Infinity ? maxPractical : caps.maxBreakpoints;
@@ -435,7 +435,7 @@ export function getEffectiveBreakpointLimit(
 export function isValidTtl(
   provider: Provider,
   model: string,
-  ttl: '5m' | '1h'
+  ttl: '5m' | '1h',
 ): boolean {
   const caps = getCacheCapabilities(provider, model);
   return caps.supportsTtl && caps.supportedTtl.includes(ttl);
@@ -459,7 +459,7 @@ export function isValidTtl(
  */
 export function getRecommendedCacheStrategy(
   provider: Provider,
-  model: string
+  model: string,
 ): 'explicit-segments' | 'automatic-optimization' | 'disabled' {
   const caps = getCacheCapabilities(provider, model);
 

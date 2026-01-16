@@ -60,7 +60,7 @@ pnpm typecheck
 This app uses `@mullion/template-helpdesk` for the core logic:
 
 ```typescript
-import { executeSafeHelpdeskFlow } from '@mullion/template-helpdesk';
+import {executeSafeHelpdeskFlow} from '@mullion/template-helpdesk';
 
 const result = await executeSafeHelpdeskFlow(ticketText);
 ```

@@ -17,7 +17,7 @@ export const useRateLimit = () => {
 
   const isLimitReached = computed(() => remaining.value <= 0);
   const hasWarning = computed(
-    () => remaining.value <= 5 && remaining.value > 0
+    () => remaining.value <= 5 && remaining.value > 0,
   );
 
   const fetchRateLimit = async (): Promise<void> => {

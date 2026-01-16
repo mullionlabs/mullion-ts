@@ -3,9 +3,9 @@
  * @module cost/calculator
  */
 
-import type { CacheStats } from '../cache/metrics.js';
-import { getPricing } from './pricing.js';
-import type { ModelPricing } from './pricing.js';
+import type {CacheStats} from '../cache/metrics.js';
+import {getPricing} from './pricing.js';
+import type {ModelPricing} from './pricing.js';
 
 /**
  * Token usage information from API response
@@ -67,7 +67,7 @@ export function calculateCost(
   usage: TokenUsage,
   cacheStats: CacheStats | null,
   model: string,
-  pricingOverrides?: Partial<ModelPricing>
+  pricingOverrides?: Partial<ModelPricing>,
 ): CostBreakdown {
   const pricing = getPricing(model, pricingOverrides);
 
@@ -146,7 +146,7 @@ export function estimateCost(
   estimatedOutputTokens: number,
   model: string,
   useCache = false,
-  pricingOverrides?: Partial<ModelPricing>
+  pricingOverrides?: Partial<ModelPricing>,
 ): CostBreakdown {
   const pricing = getPricing(model, pricingOverrides);
 
@@ -200,12 +200,12 @@ export function estimateCost(
  * ```
  */
 export function calculateBatchCost(
-  calls: { usage: TokenUsage; cacheStats: CacheStats | null }[],
+  calls: {usage: TokenUsage; cacheStats: CacheStats | null}[],
   model: string,
-  pricingOverrides?: Partial<ModelPricing>
+  pricingOverrides?: Partial<ModelPricing>,
 ): CostBreakdown {
   const costs = calls.map((call) =>
-    calculateCost(call.usage, call.cacheStats, model, pricingOverrides)
+    calculateCost(call.usage, call.cacheStats, model, pricingOverrides),
   );
 
   // Sum all costs
@@ -213,7 +213,7 @@ export function calculateBatchCost(
   const totalOutputCost = costs.reduce((sum, c) => sum + c.outputCost, 0);
   const totalCacheWriteCost = costs.reduce(
     (sum, c) => sum + c.cacheWriteCost,
-    0
+    0,
   );
   const totalCacheReadCost = costs.reduce((sum, c) => sum + c.cacheReadCost, 0);
   const totalCost = costs.reduce((sum, c) => sum + c.totalCost, 0);
@@ -259,9 +259,9 @@ export function formatCostBreakdown(
   options: {
     showBreakdown?: boolean;
     decimals?: number;
-  } = {}
+  } = {},
 ): string {
-  const { showBreakdown = true, decimals = 4 } = options;
+  const {showBreakdown = true, decimals = 4} = options;
 
   const format = (value: number) => `$${value.toFixed(decimals)}`;
 
@@ -306,7 +306,7 @@ export function formatCostBreakdown(
  */
 export function compareCosts(
   actual: CostBreakdown,
-  estimated: CostBreakdown
+  estimated: CostBreakdown,
 ): {
   difference: number;
   differencePercent: number;

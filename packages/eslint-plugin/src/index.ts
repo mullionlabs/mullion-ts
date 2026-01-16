@@ -23,7 +23,7 @@ const rules = {
  */
 const recommended = {
   plugins: {
-    '@mullion': { rules },
+    '@mullion': {rules},
   },
   rules: {
     '@mullion/no-context-leak': 'error',
@@ -36,7 +36,7 @@ const recommended = {
  */
 const strict = {
   plugins: {
-    '@mullion': { rules },
+    '@mullion': {rules},
   },
   rules: {
     '@mullion/no-context-leak': 'error',
@@ -59,4 +59,4 @@ export default {
 };
 
 // Named exports for compatibility
-export { rules, configs, recommended, strict };
+export {rules, configs, recommended, strict};

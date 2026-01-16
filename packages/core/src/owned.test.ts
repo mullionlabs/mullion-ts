@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
-import { createOwned, isOwned, ownedSchema, type Owned } from './owned.js';
+import {describe, it, expect} from 'vitest';
+import {z} from 'zod';
+import {createOwned, isOwned, ownedSchema, type Owned} from './owned.js';
 
 describe('Owned', () => {
   describe('createOwned', () => {
@@ -29,7 +29,7 @@ describe('Owned', () => {
     it('should use custom traceId when provided', () => {
       const customTraceId = 'custom-trace-123';
       const owned = createOwned({
-        value: { data: 'test' },
+        value: {data: 'test'},
         scope: 'custom-scope',
         traceId: customTraceId,
       });
@@ -43,7 +43,7 @@ describe('Owned', () => {
           value: 'test',
           scope: 'test-scope',
           confidence: -0.1,
-        })
+        }),
       ).toThrow('Confidence must be between 0 and 1');
     });
 
@@ -53,7 +53,7 @@ describe('Owned', () => {
           value: 'test',
           scope: 'test-scope',
           confidence: 1.5,
-        })
+        }),
       ).toThrow('Confidence must be between 0 and 1');
     });
 
@@ -80,18 +80,18 @@ describe('Owned', () => {
       }
 
       const owned = createOwned<User, 'admin'>({
-        value: { id: 1, name: 'Alice' },
+        value: {id: 1, name: 'Alice'},
         scope: 'admin',
         confidence: 0.99,
       });
 
-      expect(owned.value).toEqual({ id: 1, name: 'Alice' });
+      expect(owned.value).toEqual({id: 1, name: 'Alice'});
       expect(owned.__scope).toBe('admin');
     });
 
     it('should generate unique trace IDs', () => {
-      const owned1 = createOwned({ value: 'test1', scope: 'scope1' });
-      const owned2 = createOwned({ value: 'test2', scope: 'scope2' });
+      const owned1 = createOwned({value: 'test1', scope: 'scope1'});
+      const owned2 = createOwned({value: 'test2', scope: 'scope2'});
 
       expect(owned1.traceId).not.toBe(owned2.traceId);
     });
@@ -238,7 +238,7 @@ describe('Owned', () => {
 
       const schema = ownedSchema(UserSchema);
       const owned = createOwned({
-        value: { id: 1, name: 'Alice', email: 'alice@example.com' },
+        value: {id: 1, name: 'Alice', email: 'alice@example.com'},
         scope: 'admin',
       });
 
@@ -297,7 +297,7 @@ describe('Owned', () => {
     it('should validate scope with union schema', () => {
       const schema = ownedSchema(
         z.string(),
-        z.union([z.literal('admin'), z.literal('user')])
+        z.union([z.literal('admin'), z.literal('user')]),
       );
 
       const adminOwned = createOwned({

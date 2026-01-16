@@ -18,8 +18,8 @@ Cost transparency features:
 ### Basic Cost Tracking
 
 ```typescript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { anthropic } from '@ai-sdk/anthropic';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {anthropic} from '@ai-sdk/anthropic';
 
 const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 
@@ -36,7 +36,7 @@ const result = await client.scope('analysis', async (ctx) => {
   console.log(`Actual: $${actual.totalCost.toFixed(4)}`);
   console.log(`Cache saved: $${actual.cacheSavings.toFixed(4)}`);
   console.log(
-    `Difference: ${(((actual.totalCost - estimate.totalCost) / estimate.totalCost) * 100).toFixed(1)}%`
+    `Difference: ${(((actual.totalCost - estimate.totalCost) / estimate.totalCost) * 100).toFixed(1)}%`,
   );
 
   return ctx.use(data);
@@ -48,7 +48,7 @@ const result = await client.scope('analysis', async (ctx) => {
 ### Estimating Input Tokens
 
 ```typescript
-import { estimateTokens } from '@mullion/ai-sdk';
+import {estimateTokens} from '@mullion/ai-sdk';
 
 const text = 'Your input text here...';
 
@@ -80,16 +80,16 @@ This is conservative (tends to overestimate) to avoid cost surprises.
 ### Estimating Cache Segments
 
 ```typescript
-import { estimateTokensForSegments } from '@mullion/ai-sdk';
+import {estimateTokensForSegments} from '@mullion/ai-sdk';
 
 const segments = [
-  { content: systemPrompt, type: 'system' },
-  { content: documentation, type: 'developer' },
+  {content: systemPrompt, type: 'system'},
+  {content: documentation, type: 'developer'},
 ];
 
 const estimate = estimateTokensForSegments(
   segments,
-  'claude-3-5-sonnet-20241022'
+  'claude-3-5-sonnet-20241022',
 );
 console.log(estimate);
 // {
@@ -108,7 +108,7 @@ console.log(estimate);
 ### Getting Pricing for a Model
 
 ```typescript
-import { getPricing } from '@mullion/ai-sdk';
+import {getPricing} from '@mullion/ai-sdk';
 
 const pricing = getPricing('claude-3-5-sonnet-20241022');
 console.log(pricing);
@@ -150,7 +150,7 @@ _MTok = 1 million tokens_
 Override or add pricing:
 
 ```typescript
-import { importPricingFromJSON, PRICING_DATA } from '@mullion/ai-sdk';
+import {importPricingFromJSON, PRICING_DATA} from '@mullion/ai-sdk';
 
 // Add custom model
 PRICING_DATA['custom-model-v1'] = {
@@ -178,7 +178,7 @@ importPricingFromJSON(customPricing);
 ### Exporting Pricing Data
 
 ```typescript
-import { exportPricingAsJSON } from '@mullion/ai-sdk';
+import {exportPricingAsJSON} from '@mullion/ai-sdk';
 
 const pricingJson = exportPricingAsJSON();
 fs.writeFileSync('pricing.json', JSON.stringify(pricingJson, null, 2));
@@ -189,7 +189,7 @@ fs.writeFileSync('pricing.json', JSON.stringify(pricingJson, null, 2));
 ### Single Inference Cost
 
 ```typescript
-import { calculateCost } from '@mullion/ai-sdk';
+import {calculateCost} from '@mullion/ai-sdk';
 
 const cost = calculateCost({
   modelId: 'claude-3-5-sonnet-20241022',
@@ -255,14 +255,14 @@ Savings: $0.015 - $0.0015 = $0.0135 (90%)
 ### Batch Cost Analysis
 
 ```typescript
-import { calculateBatchCost } from '@mullion/ai-sdk';
+import {calculateBatchCost} from '@mullion/ai-sdk';
 
 const costs = calculateBatchCost([
-  { modelId: 'gpt-4o', usage: { inputTokens: 1000, outputTokens: 200 } },
-  { modelId: 'gpt-4o', usage: { inputTokens: 1500, outputTokens: 300 } },
+  {modelId: 'gpt-4o', usage: {inputTokens: 1000, outputTokens: 200}},
+  {modelId: 'gpt-4o', usage: {inputTokens: 1500, outputTokens: 300}},
   {
     modelId: 'claude-3-5-sonnet-20241022',
-    usage: { inputTokens: 2000, outputTokens: 400 },
+    usage: {inputTokens: 2000, outputTokens: 400},
   },
 ]);
 
@@ -284,7 +284,7 @@ console.log(costs);
 ### Compare Estimate vs Actual
 
 ```typescript
-import { compareCosts } from '@mullion/ai-sdk';
+import {compareCosts} from '@mullion/ai-sdk';
 
 const estimate = await ctx.estimateNextCallCost(schema, input);
 const result = await ctx.infer(schema, input);
@@ -335,7 +335,7 @@ const estimate = await ctx.estimateNextCallCost(schema, input, {
 ### Human-Readable Output
 
 ```typescript
-import { formatCostBreakdown } from '@mullion/ai-sdk';
+import {formatCostBreakdown} from '@mullion/ai-sdk';
 
 const cost = await ctx.getLastCallCost();
 const formatted = formatCostBreakdown(cost);
@@ -370,7 +370,7 @@ async function monitoredInference(ctx, schema, input) {
 
   if (dailySpend + estimate.totalCost > DAILY_BUDGET) {
     throw new Error(
-      `Budget exceeded: $${dailySpend.toFixed(2)} + $${estimate.totalCost.toFixed(4)} > $${DAILY_BUDGET}`
+      `Budget exceeded: $${dailySpend.toFixed(2)} + $${estimate.totalCost.toFixed(4)} > $${DAILY_BUDGET}`,
     );
   }
 
@@ -400,7 +400,7 @@ class CostTracker {
     requestId: string,
     ctx: Context,
     schema: any,
-    input: string
+    input: string,
   ) {
     const result = await ctx.infer(schema, input);
     const cost = await ctx.getLastCallCost();
@@ -413,7 +413,7 @@ class CostTracker {
   getTotalCost(): number {
     return Array.from(this.costs.values()).reduce(
       (sum, cost) => sum + cost.netCost,
-      0
+      0,
     );
   }
 
@@ -468,20 +468,20 @@ const result = await ctx.fork({
 const branchCosts = await Promise.all(
   Object.keys(result).map(async (branchName) => {
     const cost = await result[branchName].context.getLastCallCost();
-    return { branch: branchName, cost };
-  })
+    return {branch: branchName, cost};
+  }),
 );
 
-const totalCost = branchCosts.reduce((sum, { cost }) => sum + cost.netCost, 0);
+const totalCost = branchCosts.reduce((sum, {cost}) => sum + cost.netCost, 0);
 const totalSavings = branchCosts.reduce(
-  (sum, { cost }) => sum + cost.cacheSavings,
-  0
+  (sum, {cost}) => sum + cost.cacheSavings,
+  0,
 );
 
 console.log(`Fork total cost: $${totalCost.toFixed(4)}`);
 console.log(`Fork total savings: $${totalSavings.toFixed(4)}`);
 console.log(
-  `Cache efficiency: ${((totalSavings / totalCost) * 100).toFixed(1)}%`
+  `Cache efficiency: ${((totalSavings / totalCost) * 100).toFixed(1)}%`,
 );
 ```
 
@@ -494,7 +494,7 @@ console.log(
 const estimate = await ctx.estimateNextCallCost(schema, largeDocument);
 
 if (estimate.totalCost > 0.1) {
-  logger.warn('High cost operation', { estimate });
+  logger.warn('High cost operation', {estimate});
   // Maybe use smaller model or cached alternative
 }
 
@@ -510,7 +510,7 @@ const result = await ctx.infer(schema, input);
 const actual = await ctx.getLastCallCost();
 
 const accuracy = Math.abs(
-  (actual.netCost - estimate.totalCost) / estimate.totalCost
+  (actual.netCost - estimate.totalCost) / estimate.totalCost,
 );
 
 if (accuracy > 0.5) {
@@ -536,7 +536,7 @@ const report = calculateBatchCost(
   dailyCosts.map((c) => ({
     modelId: c.modelId,
     usage: c.breakdown,
-  }))
+  })),
 );
 
 logger.info('Daily cost report', report);

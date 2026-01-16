@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { estimateTokens, estimateTokensForSegments } from './tokens.js';
+import {describe, it, expect} from 'vitest';
+import {estimateTokens, estimateTokensForSegments} from './tokens.js';
 
 describe('estimateTokens', () => {
   describe('empty text', () => {
@@ -166,7 +166,7 @@ describe('estimateTokens', () => {
     it('should handle JSON string', () => {
       const json = JSON.stringify({
         key: 'value',
-        nested: { data: [1, 2, 3] },
+        nested: {data: [1, 2, 3]},
       });
       const result = estimateTokens(json, 'gpt-4');
       expect(result.count).toBeGreaterThan(0);
@@ -248,7 +248,7 @@ describe('estimateTokensForSegments', () => {
     const gptResult = estimateTokensForSegments(segments, 'gpt-4');
     const claudeResult = estimateTokensForSegments(
       segments,
-      'claude-3-5-sonnet-20241022'
+      'claude-3-5-sonnet-20241022',
     );
 
     expect(gptResult.model).toBe('gpt-4');

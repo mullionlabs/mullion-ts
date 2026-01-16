@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {describe, it, expect, beforeEach, vi} from 'vitest';
 import {
   TraceCollector,
   getGlobalTraceCollector,
@@ -6,7 +6,7 @@ import {
   clearGlobalTraceCollector,
   type SpanExporter,
 } from './collector.js';
-import type { MullionSpan } from './types.js';
+import type {MullionSpan} from './types.js';
 
 describe('trace/collector', () => {
   describe('TraceCollector - Zero Overhead (No Exporter)', () => {
@@ -40,14 +40,14 @@ describe('trace/collector', () => {
     });
 
     it('should not collect spans without exporter', async () => {
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       expect(collector.getSpans()).toHaveLength(0);
     });
 
     it('should not track active spans without exporter', () => {
-      collector.startSpan({ name: 'test' });
+      collector.startSpan({name: 'test'});
       expect(collector.getActiveSpans()).toHaveLength(0);
     });
   });
@@ -66,7 +66,7 @@ describe('trace/collector', () => {
         shutdown: vi.fn(),
       };
 
-      collector = new TraceCollector({ exporter: mockExporter });
+      collector = new TraceCollector({exporter: mockExporter});
     });
 
     it('should be enabled when exporter configured', () => {
@@ -115,8 +115,8 @@ describe('trace/collector', () => {
     });
 
     it('should track active spans', async () => {
-      const ctx1 = collector.startSpan({ name: 'span1' });
-      const ctx2 = collector.startSpan({ name: 'span2' });
+      const ctx1 = collector.startSpan({name: 'span1'});
+      const ctx2 = collector.startSpan({name: 'span2'});
 
       const activeSpans = collector.getActiveSpans();
       expect(activeSpans).toHaveLength(2);
@@ -205,8 +205,8 @@ describe('trace/collector', () => {
     });
 
     it('should generate unique trace IDs for root spans', async () => {
-      const ctx1 = collector.startSpan({ name: 'span1' });
-      const ctx2 = collector.startSpan({ name: 'span2' });
+      const ctx1 = collector.startSpan({name: 'span1'});
+      const ctx2 = collector.startSpan({name: 'span2'});
 
       expect(ctx1.traceId).not.toBe(ctx2.traceId);
 
@@ -215,8 +215,8 @@ describe('trace/collector', () => {
     });
 
     it('should generate unique span IDs', async () => {
-      const ctx1 = collector.startSpan({ name: 'span1' });
-      const ctx2 = collector.startSpan({ name: 'span2' });
+      const ctx1 = collector.startSpan({name: 'span1'});
+      const ctx2 = collector.startSpan({name: 'span2'});
 
       expect(ctx1.spanId).not.toBe(ctx2.spanId);
 
@@ -225,7 +225,7 @@ describe('trace/collector', () => {
     });
 
     it('should default span kind to internal', async () => {
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       const span = collector.getSpans()[0];
@@ -233,7 +233,7 @@ describe('trace/collector', () => {
     });
 
     it('should default span status to ok', async () => {
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       const span = collector.getSpans()[0];
@@ -250,7 +250,7 @@ describe('trace/collector', () => {
       ];
 
       for (const kind of kinds) {
-        const ctx = collector.startSpan({ name: `test-${kind}`, kind });
+        const ctx = collector.startSpan({name: `test-${kind}`, kind});
         await collector.endSpan(ctx);
       }
 
@@ -263,8 +263,8 @@ describe('trace/collector', () => {
     });
 
     it('should clear all spans', async () => {
-      const ctx1 = collector.startSpan({ name: 'span1' });
-      const _ctx2 = collector.startSpan({ name: 'span2' });
+      const ctx1 = collector.startSpan({name: 'span1'});
+      const _ctx2 = collector.startSpan({name: 'span2'});
 
       await collector.endSpan(ctx1);
 
@@ -309,7 +309,7 @@ describe('trace/collector', () => {
     });
 
     it('should auto-export spans when enabled', async () => {
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       expect(mockExporter.export).toHaveBeenCalledTimes(1);
@@ -318,10 +318,10 @@ describe('trace/collector', () => {
     });
 
     it('should export multiple spans individually with auto-export', async () => {
-      const ctx1 = collector.startSpan({ name: 'span1' });
+      const ctx1 = collector.startSpan({name: 'span1'});
       await collector.endSpan(ctx1);
 
-      const ctx2 = collector.startSpan({ name: 'span2' });
+      const ctx2 = collector.startSpan({name: 'span2'});
       await collector.endSpan(ctx2);
 
       expect(mockExporter.export).toHaveBeenCalledTimes(2);
@@ -350,10 +350,10 @@ describe('trace/collector', () => {
     });
 
     it('should buffer spans when auto-export disabled', async () => {
-      const ctx1 = collector.startSpan({ name: 'span1' });
+      const ctx1 = collector.startSpan({name: 'span1'});
       await collector.endSpan(ctx1);
 
-      const ctx2 = collector.startSpan({ name: 'span2' });
+      const ctx2 = collector.startSpan({name: 'span2'});
       await collector.endSpan(ctx2);
 
       expect(mockExporter.export).not.toHaveBeenCalled();
@@ -361,10 +361,10 @@ describe('trace/collector', () => {
     });
 
     it('should flush spans manually', async () => {
-      const ctx1 = collector.startSpan({ name: 'span1' });
+      const ctx1 = collector.startSpan({name: 'span1'});
       await collector.endSpan(ctx1);
 
-      const ctx2 = collector.startSpan({ name: 'span2' });
+      const ctx2 = collector.startSpan({name: 'span2'});
       await collector.endSpan(ctx2);
 
       await collector.flush();
@@ -404,7 +404,7 @@ describe('trace/collector', () => {
     it('should auto-flush when buffer reaches max spans', async () => {
       // Create 5 spans (at limit)
       for (let i = 0; i < 5; i++) {
-        const ctx = collector.startSpan({ name: `span${i}` });
+        const ctx = collector.startSpan({name: `span${i}`});
         await collector.endSpan(ctx);
       }
 
@@ -412,7 +412,7 @@ describe('trace/collector', () => {
       expect(collector.getSpans()).toHaveLength(5);
 
       // Create one more span (exceeds limit, triggers flush of all 6)
-      const ctx = collector.startSpan({ name: 'span5' });
+      const ctx = collector.startSpan({name: 'span5'});
       await collector.endSpan(ctx);
 
       expect(mockExporter.export).toHaveBeenCalledTimes(1);
@@ -443,7 +443,7 @@ describe('trace/collector', () => {
     });
 
     it('should handle exporter errors gracefully', async () => {
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       await expect(collector.flush()).resolves.not.toThrow();
@@ -451,7 +451,7 @@ describe('trace/collector', () => {
     });
 
     it('should re-add spans to buffer on export failure', async () => {
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       expect(collector.getSpans()).toHaveLength(1);
@@ -484,7 +484,7 @@ describe('trace/collector', () => {
     });
 
     it('should flush and shutdown gracefully', async () => {
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       await collector.shutdown();
@@ -498,7 +498,7 @@ describe('trace/collector', () => {
     it('should not collect spans after shutdown', async () => {
       await collector.shutdown();
 
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       expect(collector.getSpans()).toHaveLength(0);
@@ -544,7 +544,7 @@ describe('trace/collector', () => {
     });
 
     it('should switch exporters and flush pending spans', async () => {
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       await collector.setExporter(mockExporter2);
@@ -553,7 +553,7 @@ describe('trace/collector', () => {
       expect(mockExporter1.shutdown).toHaveBeenCalledTimes(1);
       expect(exported1).toHaveLength(1);
 
-      const ctx2 = collector.startSpan({ name: 'test2' });
+      const ctx2 = collector.startSpan({name: 'test2'});
       await collector.endSpan(ctx2);
       await collector.flush();
 
@@ -568,7 +568,7 @@ describe('trace/collector', () => {
 
       expect(collector.isEnabled()).toBe(false);
 
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       expect(collector.getSpans()).toHaveLength(0);

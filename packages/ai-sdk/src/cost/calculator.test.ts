@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect} from 'vitest';
 import {
   calculateCost,
   estimateCost,
@@ -6,8 +6,8 @@ import {
   formatCostBreakdown,
   compareCosts,
 } from './calculator.js';
-import type { TokenUsage, CostBreakdown } from './calculator.js';
-import type { CacheStats } from '../cache/metrics.js';
+import type {TokenUsage, CostBreakdown} from './calculator.js';
+import type {CacheStats} from '../cache/metrics.js';
 
 describe('calculateCost', () => {
   describe('without caching', () => {
@@ -102,7 +102,7 @@ describe('calculateCost', () => {
       const cost = calculateCost(
         usage,
         cacheStats,
-        'claude-3-5-sonnet-20241022'
+        'claude-3-5-sonnet-20241022',
       );
 
       // 2000 non-cached * $3/1M = $0.006
@@ -141,7 +141,7 @@ describe('calculateCost', () => {
       const cost = calculateCost(
         usage,
         cacheStats,
-        'claude-3-5-sonnet-20241022'
+        'claude-3-5-sonnet-20241022',
       );
 
       expect(cost.inputCost).toBeCloseTo(0.03, 4);
@@ -175,7 +175,7 @@ describe('calculateCost', () => {
       const cost = calculateCost(
         usage,
         cacheStats,
-        'claude-3-5-sonnet-20241022'
+        'claude-3-5-sonnet-20241022',
       );
 
       expect(cost.cacheWriteCost).toBeGreaterThan(0);
@@ -265,7 +265,7 @@ describe('calculateCost', () => {
       const cost = calculateCost(
         usage,
         cacheStats,
-        'claude-3-5-sonnet-20241022'
+        'claude-3-5-sonnet-20241022',
       );
 
       expect(cost.savings).toBeGreaterThan(2.0);
@@ -322,15 +322,15 @@ describe('calculateBatchCost', () => {
   it('should sum costs from multiple calls', () => {
     const calls = [
       {
-        usage: { inputTokens: 1000, outputTokens: 100 },
+        usage: {inputTokens: 1000, outputTokens: 100},
         cacheStats: null,
       },
       {
-        usage: { inputTokens: 2000, outputTokens: 200 },
+        usage: {inputTokens: 2000, outputTokens: 200},
         cacheStats: null,
       },
       {
-        usage: { inputTokens: 3000, outputTokens: 300 },
+        usage: {inputTokens: 3000, outputTokens: 300},
         cacheStats: null,
       },
     ];
@@ -347,7 +347,7 @@ describe('calculateBatchCost', () => {
   it('should aggregate cache costs', () => {
     const calls = [
       {
-        usage: { inputTokens: 10000, outputTokens: 500 },
+        usage: {inputTokens: 10000, outputTokens: 500},
         cacheStats: {
           provider: 'anthropic' as const,
           cacheWriteTokens: 10000,
@@ -360,7 +360,7 @@ describe('calculateBatchCost', () => {
         },
       },
       {
-        usage: { inputTokens: 10000, outputTokens: 500 },
+        usage: {inputTokens: 10000, outputTokens: 500},
         cacheStats: {
           provider: 'anthropic' as const,
           cacheWriteTokens: 0,
@@ -394,16 +394,16 @@ describe('calculateBatchCost', () => {
   it('should handle single call', () => {
     const calls = [
       {
-        usage: { inputTokens: 1000, outputTokens: 100 },
+        usage: {inputTokens: 1000, outputTokens: 100},
         cacheStats: null,
       },
     ];
 
     const total = calculateBatchCost(calls, 'gpt-4');
     const single = calculateCost(
-      { inputTokens: 1000, outputTokens: 100 },
+      {inputTokens: 1000, outputTokens: 100},
       null,
-      'gpt-4'
+      'gpt-4',
     );
 
     expect(total.totalCost).toBeCloseTo(single.totalCost, 4);
@@ -482,7 +482,7 @@ describe('formatCostBreakdown', () => {
       pricing: {} as any,
     };
 
-    const formatted = formatCostBreakdown(cost, { decimals: 2 });
+    const formatted = formatCostBreakdown(cost, {decimals: 2});
 
     expect(formatted).toContain('$0.12');
     expect(formatted).not.toContain('$0.1234');
@@ -501,7 +501,7 @@ describe('formatCostBreakdown', () => {
       pricing: {} as any,
     };
 
-    const formatted = formatCostBreakdown(cost, { showBreakdown: false });
+    const formatted = formatCostBreakdown(cost, {showBreakdown: false});
 
     expect(formatted).toBe('Total: $0.3300');
     expect(formatted).not.toContain('Input:');
@@ -512,9 +512,9 @@ describe('compareCosts', () => {
   it('should compare exact match', () => {
     const estimate = estimateCost(10000, 500, 'gpt-4');
     const actual = calculateCost(
-      { inputTokens: 10000, outputTokens: 500 },
+      {inputTokens: 10000, outputTokens: 500},
       null,
-      'gpt-4'
+      'gpt-4',
     );
 
     const comparison = compareCosts(actual, estimate);
@@ -528,9 +528,9 @@ describe('compareCosts', () => {
   it('should detect underestimate', () => {
     const estimate = estimateCost(10000, 500, 'gpt-4');
     const actual = calculateCost(
-      { inputTokens: 15000, outputTokens: 500 },
+      {inputTokens: 15000, outputTokens: 500},
       null,
-      'gpt-4'
+      'gpt-4',
     );
 
     const comparison = compareCosts(actual, estimate);
@@ -543,9 +543,9 @@ describe('compareCosts', () => {
   it('should detect overestimate', () => {
     const estimate = estimateCost(10000, 500, 'gpt-4');
     const actual = calculateCost(
-      { inputTokens: 5000, outputTokens: 500 },
+      {inputTokens: 5000, outputTokens: 500},
       null,
-      'gpt-4'
+      'gpt-4',
     );
 
     const comparison = compareCosts(actual, estimate);

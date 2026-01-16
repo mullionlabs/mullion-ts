@@ -25,7 +25,7 @@ import mullion from '@mullion/eslint-plugin';
 
 export default [
   {
-    plugins: { mullion },
+    plugins: {mullion},
     rules: {
       // Example names — adjust to the exact rule list in the package README.
       // 'mullion/no-context-leak': 'error',

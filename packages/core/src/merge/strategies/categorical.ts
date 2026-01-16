@@ -1,6 +1,6 @@
-import { createOwned } from '../../owned.js';
-import type { Owned } from '../../owned.js';
-import type { MergeStrategy, MergeResult } from '../types.js';
+import {createOwned} from '../../owned.js';
+import type {Owned} from '../../owned.js';
+import type {MergeStrategy, MergeResult} from '../types.js';
 
 /**
  * Options for configuring weighted vote strategy.
@@ -81,9 +81,9 @@ export interface WeightedVoteOptions {
  * ```
  */
 export function weightedVote<T>(
-  options: WeightedVoteOptions = {}
+  options: WeightedVoteOptions = {},
 ): MergeStrategy<T, T> {
-  const { minConfidence = 0, tiebreaker = 'highest-confidence' } = options;
+  const {minConfidence = 0, tiebreaker = 'highest-confidence'} = options;
 
   return {
     name: 'weighted-vote',
@@ -114,14 +114,14 @@ export function weightedVote<T>(
 
       if (validResults.length === 0) {
         throw new Error(
-          `All results rejected: confidence below threshold (${minConfidence})`
+          `All results rejected: confidence below threshold (${minConfidence})`,
         );
       }
 
       // Count votes weighted by confidence
       const votes = new Map<
         T,
-        { weight: number; indices: number[]; maxConfidence: number }
+        {weight: number; indices: number[]; maxConfidence: number}
       >();
 
       validResults.forEach((result) => {
@@ -133,7 +133,7 @@ export function weightedVote<T>(
           current.indices.push(originalIndex);
           current.maxConfidence = Math.max(
             current.maxConfidence,
-            result.confidence
+            result.confidence,
           );
         } else {
           votes.set(result.value, {
@@ -177,7 +177,7 @@ export function weightedVote<T>(
       // Calculate confidence and consensus
       const totalWeight = validResults.reduce(
         (sum, r) => sum + r.confidence,
-        0
+        0,
       );
       const confidence = winningVotes.weight / totalWeight;
       const consensusLevel = winningVotes.weight / totalWeight;

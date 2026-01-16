@@ -37,7 +37,7 @@
     getLastCallCost(): CostBreakdown | null;
     estimateNextCallCost(
       prompt: string,
-      estimatedOutputTokens?: number
+      estimatedOutputTokens?: number,
     ): CostBreakdown;
   }
   ```
@@ -244,8 +244,8 @@
   ```
 
   ```typescript
-  import { createMullionClient } from '@mullion/ai-sdk';
-  import { openai } from '@ai-sdk/openai';
+  import {createMullionClient} from '@mullion/ai-sdk';
+  import {openai} from '@ai-sdk/openai';
 
   const client = createMullionClient(openai('gpt-4'));
 

@@ -1,6 +1,6 @@
-import { createOwned } from '../../owned.js';
-import type { Owned } from '../../owned.js';
-import type { MergeStrategy, MergeResult } from '../types.js';
+import {createOwned} from '../../owned.js';
+import type {Owned} from '../../owned.js';
+import type {MergeStrategy, MergeResult} from '../types.js';
 
 /**
  * Result of weighted average merge that includes dispersion metrics.
@@ -101,15 +101,15 @@ export interface WeightedAverageOptions {
  * ```
  */
 export function weightedAverage(
-  options: WeightedAverageOptions = {}
+  options: WeightedAverageOptions = {},
 ): MergeStrategy<number, WeightedAverageResult> {
-  const { minConfidence = 0, outlierThreshold = 0 } = options;
+  const {minConfidence = 0, outlierThreshold = 0} = options;
 
   return {
     name: 'weighted-average',
 
     merge(
-      results: Owned<number, string>[]
+      results: Owned<number, string>[],
     ): MergeResult<WeightedAverageResult> {
       if (results.length === 0) {
         throw new Error('Cannot merge empty results array');
@@ -136,7 +136,7 @@ export function weightedAverage(
 
       if (validResults.length === 0) {
         throw new Error(
-          `All results rejected: confidence below threshold (${minConfidence})`
+          `All results rejected: confidence below threshold (${minConfidence})`,
         );
       }
 
@@ -172,11 +172,11 @@ export function weightedAverage(
       // Calculate weighted average
       const totalWeight = validResults.reduce(
         (sum, r) => sum + r.confidence,
-        0
+        0,
       );
       const weightedSum = validResults.reduce(
         (sum, r) => sum + r.value * r.confidence,
-        0
+        0,
       );
       const average = weightedSum / totalWeight;
 

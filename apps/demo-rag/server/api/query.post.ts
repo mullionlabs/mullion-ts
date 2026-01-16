@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     await enforceRateLimit(event, user);
 
     const body = await readBody(event);
-    const { query, role } = body;
+    const {query, role} = body;
 
     if (!query || typeof query !== 'string') {
       throw createError({
@@ -36,26 +36,37 @@ export default defineEventHandler(async (event) => {
 
     // Execute the RAG pipeline using the template
     // This uses Mullion's fork/merge patterns with access control
-    const result: RAGPipelineResult = await executeRAGPipeline(query, {
-      accessLevel: role,
-      providerConfig: {
-        provider: 'mock', // Will use real provider when API keys are available
+    // Provider is auto-detected from environment variables (OPENAI_API_KEY or ANTHROPIC_API_KEY)
+    const result: RAGPipelineResult = await executeRAGPipeline(
+      {
+        query,
+        userAccessLevel: role,
+        context: 'Demo app query',
       },
-    });
+      {
+        verbose: false,
+        // providerConfig: undefined - auto-detects from env vars
+      },
+    );
 
-    // Return the result with answer, sources, and cost
+    // Return the result with answer, sources, and metrics
     return {
-      answer: result.answer.response,
-      confidence: result.answer.confidence,
-      sources: result.retrievedDocuments.map((doc) => ({
-        title: doc.title,
-        excerpt: doc.content.substring(0, 150) + '...',
+      answer: result.response.answer,
+      confidence: result.response.confidence,
+      sources: result.response.sources.map((source) => ({
+        title: source.title,
+        excerpt: `${source.accessLevel.toUpperCase()} document`,
       })),
       cost: {
-        inputTokens: result.totalTokens?.input ?? 0,
-        outputTokens: result.totalTokens?.output ?? 0,
-        totalCost: result.estimatedCost ?? 0,
-        cacheHit: (result.cacheStats?.hits ?? 0) > 0,
+        inputTokens: 0,
+        outputTokens: 0,
+        totalCost: 0,
+        cacheHit: false,
+      },
+      metrics: {
+        documentsRetrieved: result.metrics.documentsRetrieved,
+        documentsUsed: result.metrics.documentsUsed,
+        executionTimeMs: result.metrics.executionTimeMs,
       },
     };
   } catch (error: unknown) {

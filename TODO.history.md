@@ -541,9 +541,9 @@ This task involves auto-instrumenting Mullion's core operations (`infer()`, `bri
 **Manual Tracing (Available Now):**
 
 ```typescript
-import { getGlobalTraceCollector, setupMullionTracing } from '@mullion/core';
+import {getGlobalTraceCollector, setupMullionTracing} from '@mullion/core';
 
-setupMullionTracing({ endpoint: 'http://localhost:4318/v1/traces' });
+setupMullionTracing({endpoint: 'http://localhost:4318/v1/traces'});
 
 const result = await scope('admin', async (ctx) => {
   const collector = getGlobalTraceCollector();
@@ -560,7 +560,7 @@ const result = await scope('admin', async (ctx) => {
 
   try {
     const data = await ctx.infer(Schema, input);
-    await collector.endSpan(spanCtx, { status: 'ok' });
+    await collector.endSpan(spanCtx, {status: 'ok'});
     return data;
   } catch (error) {
     await collector.endSpan(spanCtx, {

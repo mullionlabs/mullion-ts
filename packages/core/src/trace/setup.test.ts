@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import {
   setupMullionTracing,
   TracingPresets,
@@ -146,7 +146,7 @@ describe('trace/setup', () => {
       expect(collector.isEnabled()).toBe(true);
 
       // Should be able to use the collector
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       expect(collector.getSpans()).toHaveLength(1);
@@ -222,7 +222,7 @@ describe('trace/setup', () => {
     it('should setup Grafana with correct endpoint and header', () => {
       const collector = TracingPresets.grafana(
         'tempo-prod-01-eu-west-0',
-        'test-api-key'
+        'test-api-key',
       );
 
       expect(collector.isEnabled()).toBe(true);
@@ -234,7 +234,7 @@ describe('trace/setup', () => {
         'test-api-key',
         {
           serviceName: 'my-app',
-        }
+        },
       );
 
       expect(collector.isEnabled()).toBe(true);
@@ -244,7 +244,7 @@ describe('trace/setup', () => {
   describe('TracingPresets.custom', () => {
     it('should setup custom endpoint', () => {
       const collector = TracingPresets.custom(
-        'https://my-otel-collector.com/v1/traces'
+        'https://my-otel-collector.com/v1/traces',
       );
 
       expect(collector.isEnabled()).toBe(true);
@@ -258,7 +258,7 @@ describe('trace/setup', () => {
           headers: {
             Authorization: 'Bearer token',
           },
-        }
+        },
       );
 
       expect(collector.isEnabled()).toBe(true);
@@ -294,7 +294,7 @@ describe('trace/setup', () => {
       });
 
       const collector = getGlobalTraceCollector();
-      const ctx = collector.startSpan({ name: 'test' });
+      const ctx = collector.startSpan({name: 'test'});
       await collector.endSpan(ctx);
 
       expect(collector.getSpans()).toHaveLength(1);

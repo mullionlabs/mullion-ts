@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { z } from 'zod';
+import {describe, it, expect, vi, beforeEach} from 'vitest';
+import {z} from 'zod';
 import {
   createMullionClient,
   extractConfidenceFromFinishReason,
 } from './client.js';
-import type { LanguageModel, FinishReason } from 'ai';
+import type {LanguageModel, FinishReason} from 'ai';
 
 // Mock the generateObject function from 'ai'
 vi.mock('ai', async () => {
@@ -15,7 +15,7 @@ vi.mock('ai', async () => {
   };
 });
 
-import { generateObject } from 'ai';
+import {generateObject} from 'ai';
 
 const mockGenerateObject = vi.mocked(generateObject);
 
@@ -54,9 +54,9 @@ describe('createMullionClient', () => {
     });
 
     mockGenerateObject.mockResolvedValueOnce({
-      object: { name: 'Alice', age: 30 },
+      object: {name: 'Alice', age: 30},
       finishReason: 'stop',
-      usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+      usage: {promptTokens: 10, completionTokens: 5, totalTokens: 15},
       warnings: undefined,
       request: {} as never,
       response: {} as never,
@@ -77,7 +77,7 @@ describe('createMullionClient', () => {
       system: undefined,
     });
 
-    expect(result.value).toEqual({ name: 'Alice', age: 30 });
+    expect(result.value).toEqual({name: 'Alice', age: 30});
     expect(result.__scope).toBe('user-processing');
     expect(result.confidence).toBe(1.0);
     expect(result.traceId).toBeDefined();
@@ -92,9 +92,9 @@ describe('createMullionClient', () => {
     });
 
     mockGenerateObject.mockResolvedValueOnce({
-      object: { category: 'support' },
+      object: {category: 'support'},
       finishReason: 'stop',
-      usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+      usage: {promptTokens: 10, completionTokens: 5, totalTokens: 15},
       warnings: undefined,
       request: {} as never,
       response: {} as never,
@@ -123,12 +123,12 @@ describe('createMullionClient', () => {
     const mockModel = {} as LanguageModel;
     const client = createMullionClient(mockModel);
 
-    const TestSchema = z.object({ data: z.string() });
+    const TestSchema = z.object({data: z.string()});
 
     mockGenerateObject.mockResolvedValue({
-      object: { data: 'test' },
+      object: {data: 'test'},
       finishReason: 'stop',
-      usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+      usage: {promptTokens: 10, completionTokens: 5, totalTokens: 15},
       warnings: undefined,
       request: {} as never,
       response: {} as never,
@@ -141,7 +141,7 @@ describe('createMullionClient', () => {
       return await client.scope('target', async (targetCtx) => {
         const bridged = targetCtx.bridge(sourceData);
 
-        expect(bridged.value).toEqual({ data: 'test' });
+        expect(bridged.value).toEqual({data: 'test'});
         expect(bridged.__scope).toBe('target');
         expect(bridged.traceId).toBe(sourceData.traceId);
 
@@ -149,19 +149,19 @@ describe('createMullionClient', () => {
       });
     });
 
-    expect(result.value).toEqual({ data: 'test' });
+    expect(result.value).toEqual({data: 'test'});
   });
 
   it('should throw error when using value from wrong scope', async () => {
     const mockModel = {} as LanguageModel;
     const client = createMullionClient(mockModel);
 
-    const TestSchema = z.object({ data: z.string() });
+    const TestSchema = z.object({data: z.string()});
 
     mockGenerateObject.mockResolvedValue({
-      object: { data: 'test' },
+      object: {data: 'test'},
       finishReason: 'stop',
-      usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+      usage: {promptTokens: 10, completionTokens: 5, totalTokens: 15},
       warnings: undefined,
       request: {} as never,
       response: {} as never,
@@ -184,12 +184,12 @@ describe('createMullionClient', () => {
     const mockModel = {} as LanguageModel;
     const client = createMullionClient(mockModel);
 
-    const TestSchema = z.object({ data: z.string() });
+    const TestSchema = z.object({data: z.string()});
 
     mockGenerateObject.mockResolvedValue({
-      object: { data: 'test' },
+      object: {data: 'test'},
       finishReason: 'stop',
-      usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+      usage: {promptTokens: 10, completionTokens: 5, totalTokens: 15},
       warnings: undefined,
       request: {} as never,
       response: {} as never,
@@ -200,11 +200,11 @@ describe('createMullionClient', () => {
       const data = await ctx.infer(TestSchema, 'Get data');
       const unwrapped = ctx.use(data);
 
-      expect(unwrapped).toEqual({ data: 'test' });
+      expect(unwrapped).toEqual({data: 'test'});
       return unwrapped;
     });
 
-    expect(result).toEqual({ data: 'test' });
+    expect(result).toEqual({data: 'test'});
   });
 
   describe('confidence extraction', () => {
@@ -212,12 +212,12 @@ describe('createMullionClient', () => {
       const mockModel = {} as LanguageModel;
       const client = createMullionClient(mockModel);
 
-      const TestSchema = z.object({ data: z.string() });
+      const TestSchema = z.object({data: z.string()});
 
       mockGenerateObject.mockResolvedValueOnce({
-        object: { data: 'test' },
+        object: {data: 'test'},
         finishReason: 'stop',
-        usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+        usage: {promptTokens: 10, completionTokens: 5, totalTokens: 15},
         warnings: undefined,
         request: {} as never,
         response: {} as never,
@@ -235,12 +235,12 @@ describe('createMullionClient', () => {
       const mockModel = {} as LanguageModel;
       const client = createMullionClient(mockModel);
 
-      const TestSchema = z.object({ data: z.string() });
+      const TestSchema = z.object({data: z.string()});
 
       mockGenerateObject.mockResolvedValueOnce({
-        object: { data: 'truncated' },
+        object: {data: 'truncated'},
         finishReason: 'length',
-        usage: { promptTokens: 10, completionTokens: 100, totalTokens: 110 },
+        usage: {promptTokens: 10, completionTokens: 100, totalTokens: 110},
         warnings: undefined,
         request: {} as never,
         response: {} as never,
@@ -258,12 +258,12 @@ describe('createMullionClient', () => {
       const mockModel = {} as LanguageModel;
       const client = createMullionClient(mockModel);
 
-      const TestSchema = z.object({ data: z.string() });
+      const TestSchema = z.object({data: z.string()});
 
       mockGenerateObject.mockResolvedValueOnce({
-        object: { data: 'filtered' },
+        object: {data: 'filtered'},
         finishReason: 'content-filter',
-        usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+        usage: {promptTokens: 10, completionTokens: 5, totalTokens: 15},
         warnings: undefined,
         request: {} as never,
         response: {} as never,
@@ -281,12 +281,12 @@ describe('createMullionClient', () => {
       const mockModel = {} as LanguageModel;
       const client = createMullionClient(mockModel);
 
-      const TestSchema = z.object({ data: z.string() });
+      const TestSchema = z.object({data: z.string()});
 
       mockGenerateObject.mockResolvedValueOnce({
-        object: { data: 'error-result' },
+        object: {data: 'error-result'},
         finishReason: 'error',
-        usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+        usage: {promptTokens: 10, completionTokens: 5, totalTokens: 15},
         warnings: undefined,
         request: {} as never,
         response: {} as never,

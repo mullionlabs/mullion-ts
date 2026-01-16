@@ -84,7 +84,7 @@ A “bridge” is a deliberate boundary crossing. The key is that it must be:
 In Mullion, you typically create trust boundaries with `scope(...)`. Each scope gets a `Context<S>` that can `infer(...)` scoped values and enforces that you can only `use(...)` values that belong to that scope.
 
 ```ts
-import { scope } from '@mullion/core';
+import {scope} from '@mullion/core';
 
 // Admin scope generates a scoped value
 const adminNotes = await scope('admin', async (adminCtx) => {
@@ -122,7 +122,7 @@ Type-level scoping catches the straightforward case: passing a scoped value wher
 But many real leaks look like this:
 
 ```ts
-import { scope } from '@mullion/core';
+import {scope} from '@mullion/core';
 
 let leaked: any;
 

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { createMullionClient } from './client.js';
+import {describe, it, expect} from 'vitest';
+import {createMullionClient} from './client.js';
 
 // Mock language model for testing
 const createMockModel = (usage: {
@@ -10,7 +10,7 @@ const createMockModel = (usage: {
     provider: 'test-provider',
     modelId: 'gpt-4',
     doGenerate: async () => ({
-      text: JSON.stringify({ value: 'test' }),
+      text: JSON.stringify({value: 'test'}),
       finishReason: 'stop' as const,
       usage,
     }),

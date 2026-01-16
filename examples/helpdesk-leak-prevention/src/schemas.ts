@@ -5,7 +5,7 @@
  * in the customer support ticket handling scenario.
  */
 
-import { z } from 'zod';
+import {z} from 'zod';
 
 /**
  * Schema for analyzing support tickets with internal admin notes.
@@ -16,6 +16,7 @@ import { z } from 'zod';
 export const TicketAnalysisSchema = z.object({
   // Public information - safe to share with customer
   ticketId: z.string().describe('Unique ticket identifier'),
+  summary: z.string().describe('Brief summary of the ticket content'),
   category: z
     .enum(['billing', 'technical', 'account', 'general'])
     .describe('Ticket category'),
@@ -30,11 +31,14 @@ export const TicketAnalysisSchema = z.object({
   internalNotes: z
     .string()
     .describe(
-      'Admin-only notes with sensitive context (customer history, previous complaints, internal policies, etc.)'
+      'Admin-only notes with sensitive context (customer history, previous complaints, internal policies, etc.)',
     ),
   riskLevel: z
     .enum(['none', 'low', 'medium', 'high'])
     .describe('Risk level for company (churn risk, legal exposure, etc.)'),
+  recommendedActions: z
+    .array(z.string())
+    .describe('Internal recommended actions for support staff'),
   suggestedCompensation: z
     .string()
     .optional()
@@ -73,10 +77,11 @@ export type CustomerResponse = z.infer<typeof CustomerResponseSchema>;
  */
 export const SanitizedTicketSchema = z.object({
   ticketId: z.string(),
+  summary: z.string(),
   category: z.enum(['billing', 'technical', 'account', 'general']),
   priority: z.enum(['low', 'medium', 'high', 'urgent']),
   sentiment: z.enum(['positive', 'neutral', 'frustrated', 'angry']),
-  // Note: internalNotes, riskLevel, suggestedCompensation are intentionally excluded
+  // Note: internalNotes, riskLevel, recommendedActions, suggestedCompensation are intentionally excluded
 });
 
 export type SanitizedTicket = z.infer<typeof SanitizedTicketSchema>;

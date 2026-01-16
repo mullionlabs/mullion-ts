@@ -212,23 +212,23 @@ const DEFAULT_PRICING: ModelPricing = {
  */
 export function getPricing(
   model: string,
-  overrides?: Partial<ModelPricing>
+  overrides?: Partial<ModelPricing>,
 ): ModelPricing {
   // Try exact match first
   const exactMatch = PRICING_DATA[model];
   if (exactMatch) {
-    return overrides ? { ...exactMatch, ...overrides } : exactMatch;
+    return overrides ? {...exactMatch, ...overrides} : exactMatch;
   }
 
   // Try fuzzy match for model families
   const fuzzyMatch = findFuzzyMatch(model);
   if (fuzzyMatch) {
-    return overrides ? { ...fuzzyMatch, ...overrides } : fuzzyMatch;
+    return overrides ? {...fuzzyMatch, ...overrides} : fuzzyMatch;
   }
 
   // Fall back to default pricing
-  const defaultWithModel = { ...DEFAULT_PRICING, model };
-  return overrides ? { ...defaultWithModel, ...overrides } : defaultWithModel;
+  const defaultWithModel = {...DEFAULT_PRICING, model};
+  return overrides ? {...defaultWithModel, ...overrides} : defaultWithModel;
 }
 
 /**
@@ -317,7 +317,7 @@ export function getAllPricing(): ModelPricing[] {
  * ```
  */
 export function getPricingByProvider(
-  provider: 'anthropic' | 'openai'
+  provider: 'anthropic' | 'openai',
 ): ModelPricing[] {
   return Object.values(PRICING_DATA).filter((p) => p.provider === provider);
 }
@@ -342,7 +342,7 @@ export function getPricingByProvider(
  */
 export function calculateCacheWritePricing(
   basePricing: ModelPricing,
-  ttl: '5m' | '1h'
+  ttl: '5m' | '1h',
 ): number {
   if (basePricing.provider === 'openai') {
     // OpenAI has free automatic caching
@@ -398,7 +398,7 @@ export function exportPricingAsJSON(pretty = true): string {
  * ```
  */
 export function importPricingFromJSON(
-  json: string
+  json: string,
 ): Record<string, ModelPricing> {
   return JSON.parse(json) as Record<string, ModelPricing>;
 }

@@ -6,10 +6,10 @@
  * cost savings from cache utilization.
  */
 
-import type { Provider } from './capabilities.js';
-import { getCacheCapabilities } from './capabilities.js';
+import type {Provider} from './capabilities.js';
+import {getCacheCapabilities} from './capabilities.js';
 
-import type { CacheTTL } from './types.js';
+import type {CacheTTL} from './types.js';
 
 /**
  * Provider-agnostic cache statistics.
@@ -106,23 +106,23 @@ export interface OpenAICacheMetrics {
  * Prices in USD per 1M tokens (typical industry standard).
  * Updated as of January 2025 - should be reviewed regularly.
  */
-const TOKEN_PRICING: Record<string, { input: number; output: number }> = {
+const TOKEN_PRICING: Record<string, {input: number; output: number}> = {
   // Anthropic Claude models (per 1M tokens)
-  'claude-3-5-sonnet-20241022': { input: 3.0, output: 15.0 },
-  'claude-3-5-haiku-20241022': { input: 0.25, output: 1.25 },
-  'claude-3-opus-20240229': { input: 15.0, output: 75.0 },
-  'claude-3-sonnet-20240229': { input: 3.0, output: 15.0 },
-  'claude-3-haiku-20240307': { input: 0.25, output: 1.25 },
+  'claude-3-5-sonnet-20241022': {input: 3.0, output: 15.0},
+  'claude-3-5-haiku-20241022': {input: 0.25, output: 1.25},
+  'claude-3-opus-20240229': {input: 15.0, output: 75.0},
+  'claude-3-sonnet-20240229': {input: 3.0, output: 15.0},
+  'claude-3-haiku-20240307': {input: 0.25, output: 1.25},
 
   // OpenAI models (per 1M tokens)
-  'gpt-4o': { input: 2.5, output: 10.0 },
-  'gpt-4o-mini': { input: 0.15, output: 0.6 },
-  'gpt-4-turbo': { input: 10.0, output: 30.0 },
-  'gpt-4': { input: 30.0, output: 60.0 },
-  'gpt-3.5-turbo': { input: 0.5, output: 1.5 },
+  'gpt-4o': {input: 2.5, output: 10.0},
+  'gpt-4o-mini': {input: 0.15, output: 0.6},
+  'gpt-4-turbo': {input: 10.0, output: 30.0},
+  'gpt-4': {input: 30.0, output: 60.0},
+  'gpt-3.5-turbo': {input: 0.5, output: 1.5},
 
   // Default fallback pricing (conservative estimate)
-  default: { input: 5.0, output: 15.0 },
+  default: {input: 5.0, output: 15.0},
 } as const;
 
 /**
@@ -139,7 +139,7 @@ const TOKEN_PRICING: Record<string, { input: number; output: number }> = {
 export function parseAnthropicMetrics(
   usage: AnthropicCacheMetrics,
   provider: 'anthropic' = 'anthropic',
-  model: string
+  model: string,
 ): CacheStats {
   const inputTokens = usage.input_tokens || 0;
   const outputTokens = usage.output_tokens || 0;
@@ -188,7 +188,7 @@ export function parseAnthropicMetrics(
 export function parseOpenAIMetrics(
   usage: OpenAICacheMetrics,
   provider: 'openai' = 'openai',
-  model: string
+  model: string,
 ): CacheStats {
   const inputTokens = usage.prompt_tokens || 0;
   const outputTokens = usage.completion_tokens || 0;
@@ -239,14 +239,14 @@ export function parseOpenAIMetrics(
 export function parseCacheMetrics(
   usage: Record<string, unknown>,
   provider: Provider,
-  model: string
+  model: string,
 ): CacheStats {
   switch (provider) {
     case 'anthropic':
       return parseAnthropicMetrics(
         usage as AnthropicCacheMetrics,
         'anthropic',
-        model
+        model,
       );
 
     case 'openai':
@@ -290,24 +290,24 @@ export function aggregateCacheMetrics(metrics: CacheStats[]): CacheStats {
       savedTokens: 0,
       cacheHitRate: 0,
       estimatedSavingsUsd: 0,
-      raw: { aggregatedFrom: 0 },
+      raw: {aggregatedFrom: 0},
     };
   }
 
   const cacheWriteTokens = metrics.reduce(
     (sum, m) => sum + m.cacheWriteTokens,
-    0
+    0,
   );
   const cacheReadTokens = metrics.reduce(
     (sum, m) => sum + m.cacheReadTokens,
-    0
+    0,
   );
   const inputTokens = metrics.reduce((sum, m) => sum + m.inputTokens, 0);
   const outputTokens = metrics.reduce((sum, m) => sum + m.outputTokens, 0);
   const savedTokens = metrics.reduce((sum, m) => sum + m.savedTokens, 0);
   const estimatedSavingsUsd = metrics.reduce(
     (sum, m) => sum + m.estimatedSavingsUsd,
-    0
+    0,
   );
 
   const cacheHitRate = inputTokens > 0 ? cacheReadTokens / inputTokens : 0;
@@ -347,7 +347,7 @@ export function estimateCacheSavings(
   contentTokens: number,
   requestCount: number,
   provider: Provider,
-  model: string
+  model: string,
 ): {
   readonly potentialSavedTokens: number;
   readonly potentialSavedUsd: number;

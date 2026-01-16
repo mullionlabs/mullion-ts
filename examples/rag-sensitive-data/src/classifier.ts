@@ -8,8 +8,8 @@
  * - Scope-based tracking of classification results
  */
 
-import { createMullionClient } from '@mullion/ai-sdk';
-import { fork } from '@mullion/core';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {fork} from '@mullion/core';
 import {
   DocumentClassification,
   ClassificationConsensus,
@@ -27,8 +27,8 @@ import {
  */
 export async function classifyDocument(
   document: Document,
-  providerConfig?: ProviderConfig
-): Promise<{ classification: DocumentClassification; confidence: number }> {
+  providerConfig?: ProviderConfig,
+): Promise<{classification: DocumentClassification; confidence: number}> {
   const model = getLanguageModel(providerConfig);
 
   if (!model) {
@@ -82,7 +82,7 @@ Classification criteria:
  */
 export async function classifyDocumentWithConsensus(
   document: Document,
-  providerConfig?: ProviderConfig
+  providerConfig?: ProviderConfig,
 ): Promise<ClassificationConsensus> {
   const model = getLanguageModel(providerConfig);
 
@@ -175,7 +175,7 @@ function calculateAgreement(levels: AccessLevel[]): number {
       acc[level] = (acc[level] || 0) + 1;
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   const maxCount = Math.max(...Object.values(counts));
@@ -226,7 +226,7 @@ function getMockConsensus(document: Document): ClassificationConsensus {
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
-    const { SAMPLE_DOCUMENTS } = await import('./data/sample-docs.js');
+    const {SAMPLE_DOCUMENTS} = await import('./data/sample-docs.js');
 
     console.log('🔍 Document Classifier Demo\n');
 
@@ -241,15 +241,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.log(`📄 Document: ${doc.title}`);
       console.log(`   Actual Level: ${doc.accessLevel.toUpperCase()}\n`);
 
-      const { classification, confidence } = await classifyDocument(doc);
+      const {classification, confidence} = await classifyDocument(doc);
       console.log(
-        `   Classified as: ${classification.accessLevel.toUpperCase()}`
+        `   Classified as: ${classification.accessLevel.toUpperCase()}`,
       );
       console.log(`   Confidence: ${confidence.toFixed(2)}`);
       console.log(`   Reasoning: ${classification.reasoning}`);
       if (classification.sensitiveTopics.length > 0) {
         console.log(
-          `   Sensitive Topics: ${classification.sensitiveTopics.join(', ')}`
+          `   Sensitive Topics: ${classification.sensitiveTopics.join(', ')}`,
         );
       }
       console.log();
@@ -258,17 +258,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     // Demonstrate consensus classification
     console.log('🔀 Consensus Classification (Fork/Merge)\n');
     const testDoc = SAMPLE_DOCUMENTS.find(
-      (d) => d.accessLevel === 'confidential'
+      (d) => d.accessLevel === 'confidential',
     )!;
     console.log(`📄 Document: ${testDoc.title}\n`);
 
     const consensus = await classifyDocumentWithConsensus(testDoc);
     console.log(
-      `   Final Access Level: ${consensus.finalAccessLevel.toUpperCase()}`
+      `   Final Access Level: ${consensus.finalAccessLevel.toUpperCase()}`,
     );
     console.log(`   Agreement Score: ${consensus.agreementScore.toFixed(2)}`);
     console.log(
-      `   Participating Models: ${consensus.participatingModels.join(', ')}`
+      `   Participating Models: ${consensus.participatingModels.join(', ')}`,
     );
     console.log(`   Sensitive Topics: ${consensus.sensitiveTopics.join(', ')}`);
   })();

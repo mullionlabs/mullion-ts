@@ -8,8 +8,8 @@
  * @module fork/types
  */
 
-import type { Context } from '../context.js';
-import type { Owned } from '../owned.js';
+import type {Context} from '../context.js';
+import type {Owned} from '../owned.js';
 
 /**
  * Strategy for parallel execution of fork branches.
@@ -164,7 +164,7 @@ export type SchemaConflictBehavior =
  * @template S - Scope identifier of the parent context
  */
 export type ForkBranch<T, S extends string> = (
-  ctx: Context<S>
+  ctx: Context<S>,
 ) => Promise<Owned<T, S>>;
 
 /**

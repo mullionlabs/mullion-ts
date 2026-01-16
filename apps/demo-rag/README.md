@@ -72,7 +72,7 @@ import {
 
 const result = await executeRAGPipeline(query, {
   accessLevel: role,
-  providerConfig: { provider: 'mock' },
+  providerConfig: {provider: 'mock'},
 });
 ```
 

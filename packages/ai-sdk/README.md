@@ -45,9 +45,9 @@ This package provides a seamless integration between Mullion and the Vercel AI S
 ### Basic Usage
 
 ```typescript
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
+import {z} from 'zod';
 
 // Create a client with your preferred model
 const client = createMullionClient(openai('gpt-4'));
@@ -97,7 +97,7 @@ Works with all Vercel AI SDK providers:
 ### OpenAI
 
 ```typescript
-import { openai } from '@ai-sdk/openai';
+import {openai} from '@ai-sdk/openai';
 
 const client = createMullionClient(openai('gpt-4'));
 // or
@@ -107,7 +107,7 @@ const client = createMullionClient(openai('gpt-3.5-turbo'));
 ### Anthropic
 
 ```typescript
-import { anthropic } from '@ai-sdk/anthropic';
+import {anthropic} from '@ai-sdk/anthropic';
 
 const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 ```
@@ -115,7 +115,7 @@ const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 ### Google
 
 ```typescript
-import { google } from '@ai-sdk/google';
+import {google} from '@ai-sdk/google';
 
 const client = createMullionClient(google('gemini-1.5-pro'));
 ```
@@ -123,7 +123,7 @@ const client = createMullionClient(google('gemini-1.5-pro'));
 ### Custom Providers
 
 ```typescript
-import { createOpenAI } from '@ai-sdk/openai';
+import {createOpenAI} from '@ai-sdk/openai';
 
 const customProvider = createOpenAI({
   apiKey: process.env.CUSTOM_API_KEY,
@@ -271,7 +271,7 @@ console.log(`Difference: $${diff.toFixed(4)}`);
 ### Token Estimation
 
 ```typescript
-import { estimateTokens } from '@mullion/ai-sdk';
+import {estimateTokens} from '@mullion/ai-sdk';
 
 const estimate = estimateTokens(text, 'gpt-4');
 console.log(`${estimate.tokens} tokens (${estimate.method})`);
@@ -280,7 +280,7 @@ console.log(`${estimate.tokens} tokens (${estimate.method})`);
 ### Pricing API
 
 ```typescript
-import { getPricing, PRICING_DATA } from '@mullion/ai-sdk';
+import {getPricing, PRICING_DATA} from '@mullion/ai-sdk';
 
 const pricing = getPricing('claude-3-5-sonnet-20241022');
 console.log(`Input: $${pricing.inputTokenPrice}/token`);
@@ -318,14 +318,14 @@ const result = await ctx.fork({
 
 // Aggregate cache stats
 const stats = await Promise.all(
-  Object.values(result).map((r) => r.context.getCacheStats())
+  Object.values(result).map((r) => r.context.getCacheStats()),
 );
 ```
 
 ### Schema Conflict Detection
 
 ```typescript
-import { detectSchemaConflict } from '@mullion/ai-sdk';
+import {detectSchemaConflict} from '@mullion/ai-sdk';
 
 const result = await ctx.fork({
   branches: {
@@ -365,14 +365,14 @@ async function processWithConfidence<T>(
   ctx: Context<string>,
   schema: z.ZodType<T>,
   input: string,
-  minConfidence = 0.8
+  minConfidence = 0.8,
 ): Promise<T> {
   const result = await ctx.infer(schema, input);
 
   if (result.confidence < minConfidence) {
     throw new Error(
       `Low confidence: ${result.confidence.toFixed(2)} < ${minConfidence}. ` +
-        `Trace ID: ${result.traceId}`
+        `Trace ID: ${result.traceId}`,
     );
   }
 
@@ -574,7 +574,7 @@ import mullion from '@mullion/eslint-plugin';
 
 export default [
   {
-    plugins: { '@mullion': mullion },
+    plugins: {'@mullion': mullion},
     rules: {
       '@mullion/no-context-leak': 'error',
       '@mullion/require-confidence-check': 'warn',

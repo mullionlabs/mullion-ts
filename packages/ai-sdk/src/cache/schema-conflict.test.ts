@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
+import {describe, it, expect} from 'vitest';
+import {z} from 'zod';
 
 import {
   computeSchemaSignature,
@@ -12,8 +12,8 @@ import {
 describe('schema-conflict', () => {
   describe('computeSchemaSignature', () => {
     it('should return same signature for identical schemas', () => {
-      const schema1 = z.object({ name: z.string() });
-      const schema2 = z.object({ name: z.string() });
+      const schema1 = z.object({name: z.string()});
+      const schema2 = z.object({name: z.string()});
 
       const sig1 = computeSchemaSignature(schema1);
       const sig2 = computeSchemaSignature(schema2);
@@ -22,8 +22,8 @@ describe('schema-conflict', () => {
     });
 
     it('should return different signatures for different schemas', () => {
-      const schema1 = z.object({ name: z.string() });
-      const schema2 = z.object({ age: z.number() });
+      const schema1 = z.object({name: z.string()});
+      const schema2 = z.object({age: z.number()});
 
       const sig1 = computeSchemaSignature(schema1);
       const sig2 = computeSchemaSignature(schema2);
@@ -58,10 +58,10 @@ describe('schema-conflict', () => {
       const schema3 = z.array(z.number());
 
       expect(computeSchemaSignature(schema1)).toBe(
-        computeSchemaSignature(schema2)
+        computeSchemaSignature(schema2),
       );
       expect(computeSchemaSignature(schema1)).not.toBe(
-        computeSchemaSignature(schema3)
+        computeSchemaSignature(schema3),
       );
     });
 
@@ -71,23 +71,23 @@ describe('schema-conflict', () => {
       const schema3 = z.enum(['x', 'y', 'z']);
 
       expect(computeSchemaSignature(schema1)).toBe(
-        computeSchemaSignature(schema2)
+        computeSchemaSignature(schema2),
       );
       expect(computeSchemaSignature(schema1)).not.toBe(
-        computeSchemaSignature(schema3)
+        computeSchemaSignature(schema3),
       );
     });
 
     it('should handle optional fields', () => {
-      const schema1 = z.object({ name: z.string().optional() });
-      const schema2 = z.object({ name: z.string().optional() });
-      const schema3 = z.object({ name: z.string() });
+      const schema1 = z.object({name: z.string().optional()});
+      const schema2 = z.object({name: z.string().optional()});
+      const schema3 = z.object({name: z.string()});
 
       expect(computeSchemaSignature(schema1)).toBe(
-        computeSchemaSignature(schema2)
+        computeSchemaSignature(schema2),
       );
       expect(computeSchemaSignature(schema1)).not.toBe(
-        computeSchemaSignature(schema3)
+        computeSchemaSignature(schema3),
       );
     });
 
@@ -96,7 +96,7 @@ describe('schema-conflict', () => {
       const schema2 = z.union([z.string(), z.number()]);
 
       expect(computeSchemaSignature(schema1)).toBe(
-        computeSchemaSignature(schema2)
+        computeSchemaSignature(schema2),
       );
     });
 
@@ -106,10 +106,10 @@ describe('schema-conflict', () => {
       const schema3 = z.literal('world');
 
       expect(computeSchemaSignature(schema1)).toBe(
-        computeSchemaSignature(schema2)
+        computeSchemaSignature(schema2),
       );
       expect(computeSchemaSignature(schema1)).not.toBe(
-        computeSchemaSignature(schema3)
+        computeSchemaSignature(schema3),
       );
     });
 
@@ -118,27 +118,27 @@ describe('schema-conflict', () => {
       const schema2 = z.string().nullable();
 
       expect(computeSchemaSignature(schema1)).toBe(
-        computeSchemaSignature(schema2)
+        computeSchemaSignature(schema2),
       );
     });
 
     it('should include description in signature', () => {
-      const schema1 = z.object({ name: z.string() }).describe('User schema');
-      const schema2 = z.object({ name: z.string() }).describe('User schema');
-      const schema3 = z.object({ name: z.string() }).describe('Other schema');
+      const schema1 = z.object({name: z.string()}).describe('User schema');
+      const schema2 = z.object({name: z.string()}).describe('User schema');
+      const schema3 = z.object({name: z.string()}).describe('Other schema');
 
       expect(computeSchemaSignature(schema1)).toBe(
-        computeSchemaSignature(schema2)
+        computeSchemaSignature(schema2),
       );
       expect(computeSchemaSignature(schema1)).not.toBe(
-        computeSchemaSignature(schema3)
+        computeSchemaSignature(schema3),
       );
     });
   });
 
   describe('detectSchemaConflict', () => {
     it('should detect no conflict for identical schemas', () => {
-      const schema = z.object({ name: z.string() });
+      const schema = z.object({name: z.string()});
 
       const result = detectSchemaConflict([schema, schema, schema]);
 
@@ -148,9 +148,9 @@ describe('schema-conflict', () => {
     });
 
     it('should detect conflict for different schemas', () => {
-      const RiskSchema = z.object({ risk: z.string() });
-      const OpportunitySchema = z.object({ opportunity: z.string() });
-      const SummarySchema = z.object({ summary: z.string() });
+      const RiskSchema = z.object({risk: z.string()});
+      const OpportunitySchema = z.object({opportunity: z.string()});
+      const SummarySchema = z.object({summary: z.string()});
 
       const result = detectSchemaConflict([
         RiskSchema,
@@ -165,8 +165,8 @@ describe('schema-conflict', () => {
     });
 
     it('should group branches by schema', () => {
-      const SchemaA = z.object({ a: z.string() });
-      const SchemaB = z.object({ b: z.string() });
+      const SchemaA = z.object({a: z.string()});
+      const SchemaB = z.object({b: z.string()});
 
       // Branches 0 and 2 use SchemaA, branches 1 and 3 use SchemaB
       const result = detectSchemaConflict([SchemaA, SchemaB, SchemaA, SchemaB]);
@@ -189,7 +189,7 @@ describe('schema-conflict', () => {
     });
 
     it('should handle single schema', () => {
-      const schema = z.object({ name: z.string() });
+      const schema = z.object({name: z.string()});
 
       const result = detectSchemaConflict([schema]);
 
@@ -197,8 +197,8 @@ describe('schema-conflict', () => {
     });
 
     it('should skip conflict detection for non-Anthropic providers', () => {
-      const SchemaA = z.object({ a: z.string() });
-      const SchemaB = z.object({ b: z.string() });
+      const SchemaA = z.object({a: z.string()});
+      const SchemaB = z.object({b: z.string()});
 
       const result = detectSchemaConflict([SchemaA, SchemaB], {
         provider: 'openai',
@@ -209,21 +209,21 @@ describe('schema-conflict', () => {
     });
 
     it('should include suggestions in conflict result', () => {
-      const SchemaA = z.object({ a: z.string() });
-      const SchemaB = z.object({ b: z.string() });
+      const SchemaA = z.object({a: z.string()});
+      const SchemaB = z.object({b: z.string()});
 
       const result = detectSchemaConflict([SchemaA, SchemaB]);
 
       expect(result.suggestions).toBeDefined();
       expect(result.suggestions.length).toBeGreaterThan(0);
       expect(
-        result.suggestions.some((s) => s.includes('universal schema'))
+        result.suggestions.some((s) => s.includes('universal schema')),
       ).toBe(true);
     });
 
     it('should include schema groups in result', () => {
-      const SchemaA = z.object({ a: z.string() });
-      const SchemaB = z.object({ b: z.string() });
+      const SchemaA = z.object({a: z.string()});
+      const SchemaB = z.object({b: z.string()});
 
       const result = detectSchemaConflict([SchemaA, SchemaB], {
         includeDetails: true,
@@ -271,7 +271,7 @@ describe('schema-conflict', () => {
       };
 
       expect(() => handleSchemaConflict(conflict, 'error')).toThrow(
-        /Schema conflict detected/
+        /Schema conflict detected/,
       );
     });
 
@@ -292,25 +292,25 @@ describe('schema-conflict', () => {
     });
 
     it('should return true for single schema', () => {
-      const schema = z.object({ name: z.string() });
+      const schema = z.object({name: z.string()});
       expect(areSchemasCompatible([schema])).toBe(true);
     });
 
     it('should return true for identical schemas', () => {
-      const schema = z.object({ name: z.string() });
+      const schema = z.object({name: z.string()});
       expect(areSchemasCompatible([schema, schema, schema])).toBe(true);
     });
 
     it('should return false for different schemas', () => {
-      const SchemaA = z.object({ a: z.string() });
-      const SchemaB = z.object({ b: z.string() });
+      const SchemaA = z.object({a: z.string()});
+      const SchemaB = z.object({b: z.string()});
 
       expect(areSchemasCompatible([SchemaA, SchemaB])).toBe(false);
     });
 
     it('should return true for structurally identical schemas', () => {
-      const schema1 = z.object({ name: z.string(), age: z.number() });
-      const schema2 = z.object({ name: z.string(), age: z.number() });
+      const schema1 = z.object({name: z.string(), age: z.number()});
+      const schema2 = z.object({name: z.string(), age: z.number()});
 
       expect(areSchemasCompatible([schema1, schema2])).toBe(true);
     });
@@ -323,20 +323,20 @@ describe('schema-conflict', () => {
     });
 
     it('should return message for single schema', () => {
-      const schema = z.object({ name: z.string() });
+      const schema = z.object({name: z.string()});
       const result = describeSchemasDifference([schema]);
       expect(result).toBe('Only one schema provided');
     });
 
     it('should return message for identical schemas', () => {
-      const schema = z.object({ name: z.string() });
+      const schema = z.object({name: z.string()});
       const result = describeSchemasDifference([schema, schema]);
       expect(result).toBe('All schemas are identical');
     });
 
     it('should describe different schemas', () => {
-      const SchemaA = z.object({ a: z.string() }).describe('Schema A');
-      const SchemaB = z.object({ b: z.string() }).describe('Schema B');
+      const SchemaA = z.object({a: z.string()}).describe('Schema A');
+      const SchemaB = z.object({b: z.string()}).describe('Schema B');
 
       const result = describeSchemasDifference([SchemaA, SchemaB]);
 
@@ -346,8 +346,8 @@ describe('schema-conflict', () => {
     });
 
     it('should show branch groupings', () => {
-      const SchemaA = z.object({ a: z.string() });
-      const SchemaB = z.object({ b: z.string() });
+      const SchemaA = z.object({a: z.string()});
+      const SchemaB = z.object({b: z.string()});
 
       const result = describeSchemasDifference([SchemaA, SchemaB, SchemaA]);
 
@@ -365,7 +365,7 @@ describe('schema-conflict', () => {
             severity: z.enum(['low', 'medium', 'high', 'critical']),
             description: z.string(),
             mitigation: z.string().optional(),
-          })
+          }),
         ),
         overallRiskLevel: z.enum(['low', 'medium', 'high', 'critical']),
         summary: z.string(),
@@ -378,7 +378,7 @@ describe('schema-conflict', () => {
             potential: z.enum(['low', 'medium', 'high']),
             description: z.string(),
             timeline: z.string().optional(),
-          })
+          }),
         ),
         topOpportunity: z.string(),
         summary: z.string(),

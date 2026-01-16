@@ -8,11 +8,13 @@
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
     "@nuxt/ui": "catalog:",
     "@iconify-json/lucide": "^1.2.16",
+    "marked": "^14.1.3",
     "nuxt": "catalog:",
     "nuxt-auth-utils": "^0.5.7",
     "tailwindcss": "catalog:",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "typescript": "catalog:",
-    "sass": "catalog:"
+    "sass": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }

@@ -8,8 +8,8 @@
  * - Access-level filtering
  */
 
-import { createMullionClient } from '@mullion/ai-sdk';
-import type { Owned } from '@mullion/core';
+import {createMullionClient} from '@mullion/ai-sdk';
+import type {Owned} from '@mullion/core';
 import {
   QueryAnalysis,
   type UserQuery,
@@ -21,14 +21,14 @@ import {
   filterDocumentsByAccess,
   scoreDocumentRelevance,
 } from './data/sample-docs.js';
-import { getLanguageModel, type ProviderConfig } from './provider.js';
+import {getLanguageModel, type ProviderConfig} from './provider.js';
 
 /**
  * Analyze user query to understand intent and required access level
  */
 export async function analyzeQuery(
   query: UserQuery,
-  providerConfig?: ProviderConfig
+  providerConfig?: ProviderConfig,
 ): Promise<Owned<QueryAnalysis, 'query-analysis'>> {
   const model = getLanguageModel(providerConfig);
 
@@ -86,7 +86,7 @@ Consider:
  */
 export async function retrieveDocuments(
   query: UserQuery,
-  topK: number = 3
+  topK: number = 3,
 ): Promise<RetrievedChunk[]> {
   console.log(`\n🔍 Retrieving documents for query: "${query.query}"`);
   console.log(`   User Access Level: ${query.userAccessLevel.toUpperCase()}`);
@@ -94,11 +94,11 @@ export async function retrieveDocuments(
   // Step 1: Filter documents by user's access level
   const accessibleDocs = filterDocumentsByAccess(
     SAMPLE_DOCUMENTS,
-    query.userAccessLevel
+    query.userAccessLevel,
   );
 
   console.log(
-    `   Accessible Documents: ${accessibleDocs.length}/${SAMPLE_DOCUMENTS.length}`
+    `   Accessible Documents: ${accessibleDocs.length}/${SAMPLE_DOCUMENTS.length}`,
   );
 
   // Step 2: Score documents by relevance
@@ -116,7 +116,7 @@ export async function retrieveDocuments(
   console.log(`   Top ${topK} Relevant Documents:`);
   topDocs.forEach((d, i) => {
     console.log(
-      `   ${i + 1}. ${d.document.title} (score: ${d.score.toFixed(2)}, level: ${d.document.accessLevel})`
+      `   ${i + 1}. ${d.document.title} (score: ${d.score.toFixed(2)}, level: ${d.document.accessLevel})`,
     );
   });
 
@@ -168,7 +168,7 @@ function extractRelevantExcerpt(content: string, query: string): string {
  * Mock query analysis for demo without API key
  */
 function getMockQueryAnalysis(
-  query: UserQuery
+  query: UserQuery,
 ): Owned<QueryAnalysis, 'query-analysis'> {
   const queryLower = query.query.toLowerCase();
 
@@ -283,7 +283,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         console.log(`   Level: ${chunk.accessLevel.toUpperCase()}`);
         console.log(`   Relevance: ${chunk.relevanceScore.toFixed(2)}`);
         console.log(
-          `   Excerpt: ${chunk.excerpt.substring(0, 100)}${chunk.excerpt.length > 100 ? '...' : ''}`
+          `   Excerpt: ${chunk.excerpt.substring(0, 100)}${chunk.excerpt.length > 100 ? '...' : ''}`,
         );
       });
     }

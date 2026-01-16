@@ -1,19 +1,19 @@
-import { describe, it, expect } from 'vitest';
-import { createOwned } from '../../owned.js';
-import type { Owned } from '../../owned.js';
-import { categorical } from './categorical.js';
-import { continuous } from './continuous.js';
-import { object } from './object.js';
-import { array } from './array.js';
-import { custom } from './custom.js';
+import {describe, it, expect} from 'vitest';
+import {createOwned} from '../../owned.js';
+import type {Owned} from '../../owned.js';
+import {categorical} from './categorical.js';
+import {continuous} from './continuous.js';
+import {object} from './object.js';
+import {array} from './array.js';
+import {custom} from './custom.js';
 
 describe('Merge Strategies', () => {
   describe('categorical.weightedVote', () => {
     it('should select value with highest weighted votes', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'urgent', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'normal', confidence: 0.6, scope: 'b1' }),
-        createOwned({ value: 'urgent', confidence: 0.8, scope: 'b2' }),
+        createOwned({value: 'urgent', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'normal', confidence: 0.6, scope: 'b1'}),
+        createOwned({value: 'urgent', confidence: 0.8, scope: 'b2'}),
       ];
 
       const strategy = categorical.weightedVote<string>();
@@ -29,9 +29,9 @@ describe('Merge Strategies', () => {
 
     it('should handle unanimous decision', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'yes', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'yes', confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 'yes', confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 'yes', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'yes', confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 'yes', confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = categorical.weightedVote<string>();
@@ -44,9 +44,9 @@ describe('Merge Strategies', () => {
 
     it('should reject values below minimum confidence', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'B', confidence: 0.3, scope: 'b1' }),
-        createOwned({ value: 'A', confidence: 0.8, scope: 'b2' }),
+        createOwned({value: 'A', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'B', confidence: 0.3, scope: 'b1'}),
+        createOwned({value: 'A', confidence: 0.8, scope: 'b2'}),
       ];
 
       const strategy = categorical.weightedVote<string>({
@@ -58,15 +58,15 @@ describe('Merge Strategies', () => {
       expect(result.provenance.rejectedValues).toHaveLength(1);
       expect(result.provenance.rejectedValues[0].branch).toBe(1);
       expect(result.provenance.rejectedValues[0].reason).toContain(
-        'confidence below threshold'
+        'confidence below threshold',
       );
     });
 
     it('should use highest-confidence tiebreaker', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.7, scope: 'b0' }),
-        createOwned({ value: 'B', confidence: 0.9, scope: 'b1' }),
-        createOwned({ value: 'C', confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 'A', confidence: 0.7, scope: 'b0'}),
+        createOwned({value: 'B', confidence: 0.9, scope: 'b1'}),
+        createOwned({value: 'C', confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = categorical.weightedVote<string>({
@@ -85,8 +85,8 @@ describe('Merge Strategies', () => {
 
     it('should throw when all results rejected', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'A', confidence: 0.3, scope: 'b0' }),
-        createOwned({ value: 'B', confidence: 0.2, scope: 'b1' }),
+        createOwned({value: 'A', confidence: 0.3, scope: 'b0'}),
+        createOwned({value: 'B', confidence: 0.2, scope: 'b1'}),
       ];
 
       const strategy = categorical.weightedVote<string>({
@@ -100,9 +100,9 @@ describe('Merge Strategies', () => {
   describe('continuous.weightedAverage', () => {
     it('should calculate weighted average', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 42.5, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 38.2, confidence: 0.7, scope: 'b1' }),
-        createOwned({ value: 40.1, confidence: 0.8, scope: 'b2' }),
+        createOwned({value: 42.5, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 38.2, confidence: 0.7, scope: 'b1'}),
+        createOwned({value: 40.1, confidence: 0.8, scope: 'b2'}),
       ];
 
       const strategy = continuous.weightedAverage();
@@ -120,12 +120,12 @@ describe('Merge Strategies', () => {
     it('should detect and reject outliers', () => {
       // Use many values to make outlier detection effective
       const results: Owned<number, string>[] = [
-        createOwned({ value: 100, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 102, confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 101, confidence: 0.85, scope: 'b2' }),
-        createOwned({ value: 99, confidence: 0.9, scope: 'b3' }),
-        createOwned({ value: 103, confidence: 0.8, scope: 'b4' }),
-        createOwned({ value: 1000, confidence: 0.7, scope: 'b5' }), // Outlier
+        createOwned({value: 100, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 102, confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 101, confidence: 0.85, scope: 'b2'}),
+        createOwned({value: 99, confidence: 0.9, scope: 'b3'}),
+        createOwned({value: 103, confidence: 0.8, scope: 'b4'}),
+        createOwned({value: 1000, confidence: 0.7, scope: 'b5'}), // Outlier
       ];
 
       const strategy = continuous.weightedAverage({
@@ -140,9 +140,9 @@ describe('Merge Strategies', () => {
 
     it('should handle zero dispersion (perfect agreement)', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 42, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 42, confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 42, confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 42, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 42, confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 42, confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = continuous.weightedAverage();
@@ -155,9 +155,9 @@ describe('Merge Strategies', () => {
 
     it('should reject values below minimum confidence', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 100, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 200, confidence: 0.3, scope: 'b1' }),
-        createOwned({ value: 105, confidence: 0.8, scope: 'b2' }),
+        createOwned({value: 100, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 200, confidence: 0.3, scope: 'b1'}),
+        createOwned({value: 105, confidence: 0.8, scope: 'b2'}),
       ];
 
       const strategy = continuous.weightedAverage({
@@ -185,17 +185,17 @@ describe('Merge Strategies', () => {
 
       const results: Owned<TestObj, string>[] = [
         createOwned({
-          value: { category: 'urgent', priority: 9, assignee: 'alice' },
+          value: {category: 'urgent', priority: 9, assignee: 'alice'},
           confidence: 0.9,
           scope: 'b0',
         }),
         createOwned({
-          value: { category: 'normal', priority: 7, assignee: 'alice' },
+          value: {category: 'normal', priority: 7, assignee: 'alice'},
           confidence: 0.7,
           scope: 'b1',
         }),
         createOwned({
-          value: { category: 'urgent', priority: 8, assignee: 'bob' },
+          value: {category: 'urgent', priority: 8, assignee: 'bob'},
           confidence: 0.8,
           scope: 'b2',
         }),
@@ -214,7 +214,7 @@ describe('Merge Strategies', () => {
       // Should have conflicts for all fields
       expect(result.conflicts.length).toBeGreaterThan(0);
       expect(result.conflicts.every((c) => c.resolution === 'voted')).toBe(
-        true
+        true,
       );
     });
 
@@ -226,17 +226,17 @@ describe('Merge Strategies', () => {
 
       const results: Owned<TestObj, string>[] = [
         createOwned({
-          value: { a: 'x', b: 1 },
+          value: {a: 'x', b: 1},
           confidence: 0.7,
           scope: 'b0',
         }),
         createOwned({
-          value: { a: 'y', b: 2 },
+          value: {a: 'y', b: 2},
           confidence: 0.9,
           scope: 'b1',
         }),
         createOwned({
-          value: { a: 'z', b: 3 },
+          value: {a: 'z', b: 3},
           confidence: 0.6,
           scope: 'b2',
         }),
@@ -248,7 +248,7 @@ describe('Merge Strategies', () => {
       const result = strategy.merge(results);
 
       // Should take all fields from branch 1 (highest confidence)
-      expect(result.value.value).toEqual({ a: 'y', b: 2 });
+      expect(result.value.value).toEqual({a: 'y', b: 2});
     });
 
     it('should use first strategy', () => {
@@ -257,8 +257,8 @@ describe('Merge Strategies', () => {
       }
 
       const results: Owned<TestObj, string>[] = [
-        createOwned({ value: { a: 'first' }, confidence: 0.5, scope: 'b0' }),
-        createOwned({ value: { a: 'second' }, confidence: 0.9, scope: 'b1' }),
+        createOwned({value: {a: 'first'}, confidence: 0.5, scope: 'b0'}),
+        createOwned({value: {a: 'second'}, confidence: 0.9, scope: 'b1'}),
       ];
 
       const strategy = object.fieldwise<TestObj>({
@@ -276,8 +276,8 @@ describe('Merge Strategies', () => {
       }
 
       const results: Owned<TestObj, string>[] = [
-        createOwned({ value: { a: 'x', b: 1 }, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: { a: 'y' }, confidence: 0.8, scope: 'b1' }),
+        createOwned({value: {a: 'x', b: 1}, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: {a: 'y'}, confidence: 0.8, scope: 'b1'}),
       ];
 
       const strategy = object.fieldwise<TestObj>();
@@ -292,8 +292,8 @@ describe('Merge Strategies', () => {
       }
 
       const results: Owned<TestObj, string>[] = [
-        createOwned({ value: { a: 'x', b: 1 }, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: { a: 'y' }, confidence: 0.8, scope: 'b1' }),
+        createOwned({value: {a: 'x', b: 1}, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: {a: 'y'}, confidence: 0.8, scope: 'b1'}),
       ];
 
       const strategy = object.fieldwise<TestObj>({
@@ -306,7 +306,7 @@ describe('Merge Strategies', () => {
     });
 
     it('should throw on empty results', () => {
-      const strategy = object.fieldwise<{ a: string }>();
+      const strategy = object.fieldwise<{a: string}>();
       expect(() => strategy.merge([])).toThrow('Cannot merge empty results');
     });
   });
@@ -319,8 +319,8 @@ describe('Merge Strategies', () => {
           confidence: 0.9,
           scope: 'b0',
         }),
-        createOwned({ value: ['tag2', 'tag4'], confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: ['tag1', 'tag5'], confidence: 0.7, scope: 'b2' }),
+        createOwned({value: ['tag2', 'tag4'], confidence: 0.8, scope: 'b1'}),
+        createOwned({value: ['tag1', 'tag5'], confidence: 0.7, scope: 'b2'}),
       ];
 
       const strategy = array.concat<string>();
@@ -328,14 +328,14 @@ describe('Merge Strategies', () => {
 
       expect(result.value.value).toHaveLength(5);
       expect(result.value.value).toEqual(
-        expect.arrayContaining(['tag1', 'tag2', 'tag3', 'tag4', 'tag5'])
+        expect.arrayContaining(['tag1', 'tag2', 'tag3', 'tag4', 'tag5']),
       );
     });
 
     it('should keep duplicates when configured', () => {
       const results: Owned<string[], string>[] = [
-        createOwned({ value: ['a', 'b'], confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: ['a', 'c'], confidence: 0.8, scope: 'b1' }),
+        createOwned({value: ['a', 'b'], confidence: 0.9, scope: 'b0'}),
+        createOwned({value: ['a', 'c'], confidence: 0.8, scope: 'b1'}),
       ];
 
       const strategy = array.concat<string>({
@@ -356,16 +356,16 @@ describe('Merge Strategies', () => {
       const results: Owned<Item[], string>[] = [
         createOwned({
           value: [
-            { id: '1', name: 'Alice' },
-            { id: '2', name: 'Bob' },
+            {id: '1', name: 'Alice'},
+            {id: '2', name: 'Bob'},
           ],
           confidence: 0.9,
           scope: 'b0',
         }),
         createOwned({
           value: [
-            { id: '1', name: 'Alice' },
-            { id: '3', name: 'Carol' },
+            {id: '1', name: 'Alice'},
+            {id: '3', name: 'Carol'},
           ],
           confidence: 0.8,
           scope: 'b1',
@@ -404,9 +404,9 @@ describe('Merge Strategies', () => {
 
     it('should reject arrays below minimum confidence', () => {
       const results: Owned<string[], string>[] = [
-        createOwned({ value: ['a', 'b'], confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: ['c', 'd'], confidence: 0.3, scope: 'b1' }),
-        createOwned({ value: ['e', 'f'], confidence: 0.8, scope: 'b2' }),
+        createOwned({value: ['a', 'b'], confidence: 0.9, scope: 'b0'}),
+        createOwned({value: ['c', 'd'], confidence: 0.3, scope: 'b1'}),
+        createOwned({value: ['e', 'f'], confidence: 0.8, scope: 'b2'}),
       ];
 
       const strategy = array.concat<string>({
@@ -428,9 +428,9 @@ describe('Merge Strategies', () => {
   describe('custom', () => {
     it('should execute custom merge function', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 10, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 20, confidence: 0.8, scope: 'b1' }),
-        createOwned({ value: 30, confidence: 0.7, scope: 'b2' }),
+        createOwned({value: 10, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 20, confidence: 0.8, scope: 'b1'}),
+        createOwned({value: 30, confidence: 0.7, scope: 'b2'}),
       ];
 
       // Median strategy
@@ -448,8 +448,8 @@ describe('Merge Strategies', () => {
 
     it('should use custom confidence calculation', () => {
       const results: Owned<string, string>[] = [
-        createOwned({ value: 'abc', confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 'abx', confidence: 0.8, scope: 'b1' }),
+        createOwned({value: 'abc', confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 'abx', confidence: 0.8, scope: 'b1'}),
       ];
 
       // Common prefix with confidence based on prefix length
@@ -476,7 +476,7 @@ describe('Merge Strategies', () => {
               results.length;
             return merged.length / avgLength;
           },
-        }
+        },
       );
 
       const result = strategy.merge(results);
@@ -487,8 +487,8 @@ describe('Merge Strategies', () => {
 
     it('should use custom consensus calculation', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 1, confidence: 0.9, scope: 'b0' }),
-        createOwned({ value: 2, confidence: 0.8, scope: 'b1' }),
+        createOwned({value: 1, confidence: 0.9, scope: 'b0'}),
+        createOwned({value: 2, confidence: 0.8, scope: 'b1'}),
       ];
 
       const strategy = custom<number, number>((results) => results[0].value, {
@@ -502,7 +502,7 @@ describe('Merge Strategies', () => {
 
     it('should throw if merge function throws', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 1, confidence: 0.9, scope: 'b0' }),
+        createOwned({value: 1, confidence: 0.9, scope: 'b0'}),
       ];
 
       const strategy = custom<number, number>(() => {
@@ -510,13 +510,13 @@ describe('Merge Strategies', () => {
       });
 
       expect(() => strategy.merge(results)).toThrow(
-        'Custom merge function failed'
+        'Custom merge function failed',
       );
     });
 
     it('should throw if confidence is out of range', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 1, confidence: 0.9, scope: 'b0' }),
+        createOwned({value: 1, confidence: 0.9, scope: 'b0'}),
       ];
 
       const strategy = custom<number, number>((results) => results[0].value, {
@@ -528,7 +528,7 @@ describe('Merge Strategies', () => {
 
     it('should throw if consensus is out of range', () => {
       const results: Owned<number, string>[] = [
-        createOwned({ value: 1, confidence: 0.9, scope: 'b0' }),
+        createOwned({value: 1, confidence: 0.9, scope: 'b0'}),
       ];
 
       const strategy = custom<number, number>((results) => results[0].value, {

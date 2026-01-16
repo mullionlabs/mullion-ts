@@ -1,6 +1,6 @@
-import { createOwned } from '../../owned.js';
-import type { Owned } from '../../owned.js';
-import type { MergeStrategy, MergeResult } from '../types.js';
+import {createOwned} from '../../owned.js';
+import type {Owned} from '../../owned.js';
+import type {MergeStrategy, MergeResult} from '../types.js';
 
 /**
  * User-provided custom merge function.
@@ -26,7 +26,7 @@ export interface CustomOptions {
    */
   calculateConfidence?: <T, R>(
     results: Owned<T, string>[],
-    mergedValue: R
+    mergedValue: R,
   ) => number;
 
   /**
@@ -39,7 +39,7 @@ export interface CustomOptions {
    */
   calculateConsensus?: <T, R>(
     results: Owned<T, string>[],
-    mergedValue: R
+    mergedValue: R,
   ) => number;
 }
 
@@ -134,7 +134,7 @@ export interface CustomOptions {
  */
 export function custom<T, R>(
   mergeFn: CustomMergeFn<T, R>,
-  options: CustomOptions = {}
+  options: CustomOptions = {},
 ): MergeStrategy<T, R> {
   const {
     calculateConfidence = (results) =>
@@ -156,7 +156,7 @@ export function custom<T, R>(
         mergedValue = mergeFn(results);
       } catch (error) {
         throw new Error(
-          `Custom merge function failed: ${error instanceof Error ? error.message : String(error)}`
+          `Custom merge function failed: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
 
@@ -167,14 +167,14 @@ export function custom<T, R>(
       // Validate confidence is in range
       if (confidence < 0 || confidence > 1) {
         throw new Error(
-          `Custom calculateConfidence returned invalid value: ${confidence} (must be 0-1)`
+          `Custom calculateConfidence returned invalid value: ${confidence} (must be 0-1)`,
         );
       }
 
       // Validate consensus is in range
       if (consensusLevel < 0 || consensusLevel > 1) {
         throw new Error(
-          `Custom calculateConsensus returned invalid value: ${consensusLevel} (must be 0-1)`
+          `Custom calculateConsensus returned invalid value: ${consensusLevel} (must be 0-1)`,
         );
       }
 

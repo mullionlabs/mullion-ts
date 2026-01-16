@@ -5,8 +5,8 @@
  * abstractions and provider-specific adapters as specified in Task 7.2.
  */
 
-import type { Provider } from './capabilities.js';
-import { getCacheCapabilities } from './capabilities.js';
+import type {Provider} from './capabilities.js';
+import {getCacheCapabilities} from './capabilities.js';
 
 /**
  * Time-to-live durations for cache entries.
@@ -132,7 +132,7 @@ export interface ValidationResult {
  * @returns Validation result
  */
 export function validateTtlOrdering(
-  segments: { ttl?: CacheTTL }[]
+  segments: {ttl?: CacheTTL}[],
 ): ValidationResult {
   const errors: string[] = [];
 
@@ -152,7 +152,7 @@ export function validateTtlOrdering(
       if (currentTtlValue > previousTtlValue) {
         errors.push(
           `Segment ${i} TTL '${segment.ttl}' is longer than previous segment. ` +
-            'TTL values must be ordered from longest to shortest in the same request.'
+            'TTL values must be ordered from longest to shortest in the same request.',
         );
       }
 
@@ -178,14 +178,14 @@ export function validateTtlOrdering(
 export function validateBreakpointLimit(
   count: number,
   provider: Provider,
-  model: string
+  model: string,
 ): ValidationResult {
   const capabilities = getCacheCapabilities(provider, model);
   const errors: string[] = [];
 
   if (count > capabilities.maxBreakpoints) {
     errors.push(
-      `Requested ${count} breakpoints exceeds provider limit of ${capabilities.maxBreakpoints}`
+      `Requested ${count} breakpoints exceeds provider limit of ${capabilities.maxBreakpoints}`,
     );
   }
 
@@ -207,7 +207,7 @@ export function validateBreakpointLimit(
 export function validateMinTokens(
   tokens: number,
   provider: Provider,
-  model: string
+  model: string,
 ): ValidationResult {
   const capabilities = getCacheCapabilities(provider, model);
   const errors: string[] = [];
@@ -215,7 +215,7 @@ export function validateMinTokens(
 
   if (tokens < capabilities.minTokens) {
     warnings.push(
-      `Content has ${tokens} tokens, below provider minimum of ${capabilities.minTokens} for effective caching`
+      `Content has ${tokens} tokens, below provider minimum of ${capabilities.minTokens} for effective caching`,
     );
   }
 
@@ -241,7 +241,7 @@ export function createAnthropicAdapter(model: string): AnthropicCacheAdapter {
       const ttl = config.ttl ?? '5m';
       const breakpoints = Math.min(
         Math.max(config.breakpoints ?? 1, 0), // Ensure non-negative
-        capabilities.maxBreakpoints
+        capabilities.maxBreakpoints,
       );
 
       // Only include cache control if caching is enabled and supported
@@ -275,7 +275,7 @@ export function createOpenAIAdapter(model: string): OpenAICacheAdapter {
       return {
         autoCaching: config.enabled && capabilities.supported,
         toolCaching: capabilities.supportsToolCaching
-          ? { enabled: config.enabled }
+          ? {enabled: config.enabled}
           : undefined,
       };
     },
@@ -289,7 +289,7 @@ export function createOpenAIAdapter(model: string): OpenAICacheAdapter {
  * @returns Complete cache configuration with defaults
  */
 export function createDefaultCacheConfig(
-  overrides: Partial<CacheConfig> = {}
+  overrides: Partial<CacheConfig> = {},
 ): CacheConfig {
   return {
     enabled: true,
@@ -309,7 +309,7 @@ export function createDefaultCacheConfig(
  * @returns Cache configuration safe for user content
  */
 export function createUserContentConfig(
-  overrides: Partial<CacheConfig> = {}
+  overrides: Partial<CacheConfig> = {},
 ): CacheConfig {
   return createDefaultCacheConfig({
     scope: 'allow-user-content',
@@ -328,7 +328,7 @@ export function createUserContentConfig(
  * @returns Cache configuration optimized for developer content
  */
 export function createDeveloperContentConfig(
-  overrides: Partial<CacheConfig> = {}
+  overrides: Partial<CacheConfig> = {},
 ): CacheConfig {
   return createDefaultCacheConfig({
     scope: 'developer-content',

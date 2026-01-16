@@ -2,21 +2,30 @@
   <div class="rag-demo">
     <RateLimitNotice />
 
-    <AccessDenied v-if="!isAuthenticated" :show-info="true" />
+    <AccessDenied
+      v-if="!isAuthenticated"
+      :show-info="true"
+    />
 
-    <div v-else class="demo-content">
+    <div
+      v-else
+      class="demo-content"
+    >
       <div class="demo-header">
         <h1 class="demo-title">Interactive RAG Demo</h1>
         <p class="demo-description">
-          Query documents with different access levels and see how Mullion enforces role-based
-          boundaries.
+          Query documents with different access levels and see how Mullion
+          enforces role-based boundaries.
         </p>
       </div>
 
       <div class="demo-grid">
         <!-- Left Column: Configuration and Query -->
         <div class="config-column">
-          <UCard variant="outline" class="config-card">
+          <UCard
+            variant="outline"
+            class="config-card"
+          >
             <template #header>
               <h2 class="card-title">Configuration</h2>
             </template>
@@ -25,24 +34,63 @@
               <div class="form-group">
                 <label class="form-label">Your Role</label>
                 <div class="role-selector">
-                  <button
+                  <div
                     v-for="role in roles"
                     :key="role.value"
-                    class="role-button"
-                    :class="{ active: selectedRole === role.value }"
-                    @click="selectedRole = role.value"
+                    class="role-button-wrapper"
                   >
-                    <UIcon :name="role.icon" class="role-icon" />
-                    <span class="role-name">{{ role.label }}</span>
-                    <UBadge :color="role.color" size="xs" variant="soft" class="role-badge">
-                      {{ role.access }}
-                    </UBadge>
-                  </button>
+                    <button
+                      class="role-button"
+                      :class="{active: selectedRole === role.value}"
+                      @click="selectedRole = role.value"
+                    >
+                      <UIcon
+                        :name="role.icon"
+                        class="role-icon"
+                      />
+                      <span class="role-name">{{ role.label }}</span>
+                      <UBadge
+                        :color="role.color"
+                        size="xs"
+                        variant="soft"
+                        class="role-badge"
+                      >
+                        {{ role.access }}
+                      </UBadge>
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <label class="form-label">Your Query</label>
+
+                <!-- Query Suggestions -->
+                <UAlert
+                  color="info"
+                  variant="soft"
+                  icon="i-lucide-lightbulb"
+                  class="query-suggestions"
+                >
+                  <template #title>
+                    <span class="suggestions-title"
+                      >Example queries for {{ selectedRole }}:</span
+                    >
+                  </template>
+                  <template #description>
+                    <ul class="suggestions-list">
+                      <li
+                        v-for="suggestion in currentRoleSuggestions"
+                        :key="suggestion"
+                        class="suggestion-item"
+                        @click="query = suggestion"
+                      >
+                        {{ suggestion }}
+                      </li>
+                    </ul>
+                  </template>
+                </UAlert>
+
                 <textarea
                   v-model="query"
                   class="form-textarea"
@@ -68,23 +116,40 @@
           </UCard>
 
           <!-- Accessible Documents -->
-          <UCard variant="outline" class="documents-card">
+          <UCard
+            variant="outline"
+            class="documents-card"
+          >
             <template #header>
-              <h2 class="card-title">Accessible Documents ({{ accessibleDocs.length }})</h2>
+              <h2 class="card-title">
+                Accessible Documents ({{ accessibleDocs.length }})
+              </h2>
             </template>
 
-            <div v-if="accessibleDocs.length === 0" class="empty-state">
-              <UIcon name="i-lucide-file-x" class="empty-icon" />
+            <div
+              v-if="accessibleDocs.length === 0"
+              class="empty-state"
+            >
+              <UIcon
+                name="i-lucide-file-x"
+                class="empty-icon"
+              />
               <p class="empty-text">Loading documents...</p>
             </div>
 
-            <div v-else class="documents-list">
+            <div
+              v-else
+              class="documents-list"
+            >
               <div
                 v-for="doc in accessibleDocs"
                 :key="doc.id"
                 class="document-item"
               >
-                <UIcon name="i-lucide-file-text" class="document-icon" />
+                <UIcon
+                  name="i-lucide-file-text"
+                  class="document-icon"
+                />
                 <div class="document-info">
                   <div class="document-title">{{ doc.title }}</div>
                   <UBadge
@@ -102,14 +167,30 @@
 
         <!-- Right Column: Results -->
         <div class="results-column">
-          <div v-if="result" class="results-section">
-            <ResultCard title="Answer" :confidence="result.confidence" :scope="selectedRole">
+          <div
+            v-if="result"
+            class="results-section"
+          >
+            <ResultCard
+              title="Answer"
+              :confidence="result.confidence"
+              :scope="selectedRole"
+            >
               <div class="answer-content">
-                <p class="answer-text">{{ result.answer }}</p>
+                <div
+                  class="answer-text"
+                  v-html="formattedAnswer"
+                ></div>
 
-                <div v-if="result.sources && result.sources.length > 0" class="sources-section">
+                <div
+                  v-if="result.sources && result.sources.length > 0"
+                  class="sources-section"
+                >
                   <h3 class="sources-title">
-                    <UIcon name="i-lucide-book-open" class="sources-icon" />
+                    <UIcon
+                      name="i-lucide-book-open"
+                      class="sources-icon"
+                    />
                     Sources ({{ result.sources.length }})
                   </h3>
                   <div class="sources-list">
@@ -120,7 +201,9 @@
                     >
                       <div class="source-header">
                         <span class="source-number">{{ index + 1 }}</span>
-                        <span class="source-title-text">{{ source.title }}</span>
+                        <span class="source-title-text">{{
+                          source.title
+                        }}</span>
                       </div>
                       <p class="source-excerpt">{{ source.excerpt }}</p>
                     </div>
@@ -148,12 +231,23 @@
             />
           </div>
 
-          <div v-else-if="!result && !error" class="placeholder-state">
-            <UIcon name="i-lucide-search" class="placeholder-icon" />
-            <p class="placeholder-text">Enter a query to search the documents</p>
+          <div
+            v-else-if="!result && !error"
+            class="placeholder-state"
+          >
+            <UIcon
+              name="i-lucide-search"
+              class="placeholder-icon"
+            />
+            <p class="placeholder-text">
+              Enter a query to search the documents
+            </p>
           </div>
 
-          <div v-if="error" class="error-section">
+          <div
+            v-if="error"
+            class="error-section"
+          >
             <UAlert
               color="error"
               variant="soft"
@@ -169,12 +263,14 @@
 </template>
 
 <script lang="ts" setup>
+import {marked} from 'marked';
+
 defineOptions({
   name: 'RAGDemo',
 });
 
-const { isAuthenticated, fetchUser } = useAuth();
-const { isLimitReached, fetchRateLimit, decrementRemaining } = useRateLimit();
+const {isAuthenticated, fetchUser} = useAuth();
+const {isLimitReached, fetchRateLimit, decrementRemaining} = useRateLimit();
 
 const roles = [
   {
@@ -226,6 +322,33 @@ const result = ref<{
 } | null>(null);
 const error = ref<string | null>(null);
 
+const formattedAnswer = computed(() => {
+  if (!result.value?.answer) return '';
+  return marked.parse(result.value.answer, {async: false}) as string;
+});
+
+const querySuggestions: Record<string, string[]> = {
+  public: [
+    'What features does the product offer?',
+    'How do I get started with the platform?',
+    'What are the pricing plans?',
+  ],
+  internal: [
+    'What is our product roadmap for Q4?',
+    'What are our employee benefits?',
+    'How does the customer success onboarding process work?',
+  ],
+  confidential: [
+    'What were our Q3 financial results?',
+    'Tell me about the security incident in January',
+    'What is the status of our patent application?',
+  ],
+};
+
+const currentRoleSuggestions = computed(() => {
+  return querySuggestions[selectedRole.value] || [];
+});
+
 const getRoleColor = (accessLevel: string) => {
   const role = roles.find((r) => r.value === accessLevel.toLowerCase());
   return role?.color || 'neutral';
@@ -234,7 +357,7 @@ const getRoleColor = (accessLevel: string) => {
 const fetchDocuments = async () => {
   try {
     const docs = await $fetch('/api/documents', {
-      params: { role: selectedRole.value },
+      params: {role: selectedRole.value},
     });
     accessibleDocs.value = docs as typeof accessibleDocs.value;
   } catch (err) {
@@ -366,10 +489,15 @@ onMounted(() => {
   gap: 0.5rem;
 }
 
+.role-button-wrapper {
+  min-height: 52px;
+}
+
 .role-button {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid var(--ui-border);
   border-radius: 0.5rem;
@@ -432,6 +560,40 @@ onMounted(() => {
 .form-actions {
   display: flex;
   justify-content: stretch;
+}
+
+.query-suggestions {
+  margin-bottom: 1rem;
+}
+
+.suggestions-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.suggestion-item {
+  padding: 0.5rem 0.75rem;
+  background-color: var(--ui-bg-elevated);
+  border: 1px solid var(--ui-border);
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--ui-text);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+    border-color: var(--ui-primary);
+  }
 }
 
 .documents-list {
@@ -513,6 +675,49 @@ onMounted(() => {
   font-size: 1rem;
   line-height: 1.8;
   color: var(--ui-text);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+
+  // Markdown HTML styling
+  p {
+    margin: 0 0 0.5em 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--ui-text);
+  }
+
+  ol {
+    margin: 0.5em 0 0.75em 0;
+    padding-left: 1.5em;
+    list-style-type: decimal;
+    list-style-position: outside;
+  }
+
+  ul {
+    margin: 0.5em 0 0.75em 0;
+    padding-left: 1.5em;
+    list-style-type: disc;
+    list-style-position: outside;
+  }
+
+  li {
+    margin: 0.25em 0;
+    padding-left: 0.25em;
+  }
+
+  code {
+    background-color: var(--ui-bg-elevated);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.875em;
+  }
 }
 
 .sources-section {

@@ -1,6 +1,6 @@
-import { RuleTester } from '@typescript-eslint/rule-tester';
+import {RuleTester} from '@typescript-eslint/rule-tester';
 import * as tsParser from '@typescript-eslint/parser';
-import { afterAll, describe, it } from 'vitest';
+import {afterAll, describe, it} from 'vitest';
 import rule from './no-context-leak.js';
 
 // Configure RuleTester to use Vitest
@@ -140,7 +140,7 @@ ruleTester.run('no-context-leak', rule, {
           return internalData.value;
         }
       `,
-      options: [{ allowedPairs: [['internal', 'public']] }],
+      options: [{allowedPairs: [['internal', 'public']]}],
     },
 
     // Test: Type annotations don't trigger - OK

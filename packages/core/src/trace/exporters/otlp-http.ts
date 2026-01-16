@@ -20,8 +20,8 @@
  * @module trace/exporters/otlp-http
  */
 
-import type { SpanExporter } from '../collector.js';
-import type { MullionSpan } from '../types.js';
+import type {SpanExporter} from '../collector.js';
+import type {MullionSpan} from '../types.js';
 
 /**
  * Configuration options for OTLP HTTP exporter.
@@ -120,7 +120,7 @@ interface OTLPExportRequest {
     readonly resource: {
       readonly attributes: readonly {
         key: string;
-        value: { stringValue: string };
+        value: {stringValue: string};
       }[];
     };
     readonly scopeSpans: readonly {
@@ -254,7 +254,7 @@ export class OTLPHttpExporter implements SpanExporter {
             attributes: [
               {
                 key: 'service.name',
-                value: { stringValue: this.serviceName },
+                value: {stringValue: this.serviceName},
               },
             ],
           },
@@ -363,18 +363,18 @@ export class OTLPHttpExporter implements SpanExporter {
       .filter(([, value]) => value !== undefined)
       .map(([key, value]) => {
         if (typeof value === 'string') {
-          return { key, value: { stringValue: value } };
+          return {key, value: {stringValue: value}};
         } else if (typeof value === 'number') {
           return Number.isInteger(value)
-            ? { key, value: { intValue: value } }
-            : { key, value: { doubleValue: value } };
+            ? {key, value: {intValue: value}}
+            : {key, value: {doubleValue: value}};
         } else if (typeof value === 'boolean') {
-          return { key, value: { boolValue: value } };
+          return {key, value: {boolValue: value}};
         } else if (Array.isArray(value)) {
           // OTLP supports array values, but for simplicity, convert to JSON string
-          return { key, value: { stringValue: JSON.stringify(value) } };
+          return {key, value: {stringValue: JSON.stringify(value)}};
         } else {
-          return { key, value: { stringValue: String(value) } };
+          return {key, value: {stringValue: String(value)}};
         }
       });
   }
@@ -400,7 +400,7 @@ export class OTLPHttpExporter implements SpanExporter {
 
       if (!response.ok) {
         throw new Error(
-          `OTLP export failed: ${response.status} ${response.statusText}`
+          `OTLP export failed: ${response.status} ${response.statusText}`,
         );
       }
     } finally {
@@ -449,7 +449,7 @@ export const OTLPExporters = {
    */
   honeycomb: (
     apiKey: string,
-    options?: Partial<OTLPHttpExporterOptions>
+    options?: Partial<OTLPHttpExporterOptions>,
   ): OTLPHttpExporter => {
     return new OTLPHttpExporter({
       url: 'https://api.honeycomb.io/v1/traces',
@@ -474,7 +474,7 @@ export const OTLPExporters = {
    */
   custom: (
     url: string,
-    options?: Partial<OTLPHttpExporterOptions>
+    options?: Partial<OTLPHttpExporterOptions>,
   ): OTLPHttpExporter => {
     return new OTLPHttpExporter({
       url,

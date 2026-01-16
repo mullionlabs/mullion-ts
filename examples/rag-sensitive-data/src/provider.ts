@@ -7,9 +7,9 @@
  * - Anthropic (via ANTHROPIC_API_KEY)
  */
 
-import { openai } from '@ai-sdk/openai';
-import { anthropic } from '@ai-sdk/anthropic';
-import type { LanguageModelV1 } from 'ai';
+import {openai} from '@ai-sdk/openai';
+import {anthropic} from '@ai-sdk/anthropic';
+import type {LanguageModelV1} from 'ai';
 
 export type ProviderType = 'mock' | 'openai' | 'anthropic';
 
@@ -22,7 +22,7 @@ export interface ProviderConfig {
  * Get the appropriate language model based on provider selection
  */
 export function getLanguageModel(
-  config?: ProviderConfig
+  config?: ProviderConfig,
 ): LanguageModelV1 | null {
   const providerType = config?.type || detectProviderFromEnv();
 
@@ -30,7 +30,7 @@ export function getLanguageModel(
     case 'openai':
       if (!process.env.OPENAI_API_KEY) {
         console.warn(
-          '⚠️  OpenAI selected but OPENAI_API_KEY not set. Using mock.'
+          '⚠️  OpenAI selected but OPENAI_API_KEY not set. Using mock.',
         );
         return null;
       }
@@ -39,7 +39,7 @@ export function getLanguageModel(
     case 'anthropic':
       if (!process.env.ANTHROPIC_API_KEY) {
         console.warn(
-          '⚠️  Anthropic selected but ANTHROPIC_API_KEY not set. Using mock.'
+          '⚠️  Anthropic selected but ANTHROPIC_API_KEY not set. Using mock.',
         );
         return null;
       }

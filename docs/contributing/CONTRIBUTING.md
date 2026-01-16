@@ -164,11 +164,11 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
 
   ```typescript
   // ✅ GOOD
-  import { scope } from './scope.js';
-  import type { Owned, Context } from './types.js';
+  import {scope} from './scope.js';
+  import type {Owned, Context} from './types.js';
 
   // ❌ BAD
-  import { scope, Owned, Context } from './scope.js';
+  import {scope, Owned, Context} from './scope.js';
   ```
 
 ### Naming Conventions
@@ -234,7 +234,7 @@ pnpm test -- --coverage
 ### Test Structure
 
 ```typescript
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect} from 'vitest';
 
 describe('feature name', () => {
   it('should handle the happy path', () => {
@@ -259,7 +259,7 @@ describe('feature name', () => {
 Every ESLint rule must have both valid and invalid test cases:
 
 ```typescript
-import { RuleTester } from '@typescript-eslint/rule-tester';
+import {RuleTester} from '@typescript-eslint/rule-tester';
 import rule from './no-context-leak';
 
 const ruleTester = new RuleTester();
@@ -279,7 +279,7 @@ ruleTester.run('no-context-leak', rule, {
         const data = await adminCtx.infer(Schema, input);
         await publicCtx.respond(data.value); // leak!
       `,
-      errors: [{ messageId: 'contextLeak' }],
+      errors: [{messageId: 'contextLeak'}],
     },
   ],
 });

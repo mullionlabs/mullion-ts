@@ -15,8 +15,8 @@ npm install -D @mullion/eslint-plugin
 ## 1) Create a client (AI SDK adapter)
 
 ```ts
-import { createMullionClient } from '@mullion/ai-sdk';
-import { openai } from '@ai-sdk/openai';
+import {createMullionClient} from '@mullion/ai-sdk';
+import {openai} from '@ai-sdk/openai';
 
 export const client = createMullionClient(openai('gpt-4o-mini'));
 ```
@@ -26,7 +26,7 @@ export const client = createMullionClient(openai('gpt-4o-mini'));
 Mullion encourages schema-first LLM outputs (e.g. Zod):
 
 ```ts
-import { z } from 'zod';
+import {z} from 'zod';
 
 export const TicketSchema = z.object({
   severity: z.enum(['low', 'high', 'critical']),
@@ -39,7 +39,7 @@ export const TicketSchema = z.object({
 Scopes are the unit of trust + provenance.
 
 ```ts
-import { TicketSchema } from './schemas';
+import {TicketSchema} from './schemas';
 
 const ticket = await client.scope('triage', async (ctx) => {
   const result = await ctx.infer(TicketSchema, "User can't login.");

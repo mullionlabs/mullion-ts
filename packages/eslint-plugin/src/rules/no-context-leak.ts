@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-import { ESLintUtils } from '@typescript-eslint/utils';
-import type { TSESTree } from '@typescript-eslint/utils';
+import {ESLintUtils} from '@typescript-eslint/utils';
+import type {TSESTree} from '@typescript-eslint/utils';
 import type * as ts from 'typescript';
 
 /**
@@ -43,7 +43,7 @@ type Options = [
 
 const createRule = ESLintUtils.RuleCreator(
   (name) =>
-    `https://github.com/mullionlabs/mullion-ts/blob/main/packages/eslint-plugin/docs/rules/${name}.md`
+    `https://github.com/mullionlabs/mullion-ts/blob/main/packages/eslint-plugin/docs/rules/${name}.md`,
 );
 
 export default createRule<Options, MessageIds>({
@@ -66,7 +66,7 @@ export default createRule<Options, MessageIds>({
             type: 'array',
             items: {
               type: 'array',
-              items: { type: 'string' },
+              items: {type: 'string'},
               minItems: 2,
               maxItems: 2,
             },
@@ -88,7 +88,7 @@ export default createRule<Options, MessageIds>({
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
-    const options = context.options[0] || { allowedPairs: [] };
+    const options = context.options[0] || {allowedPairs: []};
 
     /**
      * Helper: Check if a TypeScript type is Owned<T, S>
@@ -145,7 +145,7 @@ export default createRule<Options, MessageIds>({
 
       return options.allowedPairs.some(
         ([a, b]) =>
-          (a === scope1 && b === scope2) || (a === scope2 && b === scope1)
+          (a === scope1 && b === scope2) || (a === scope2 && b === scope1),
       );
     }
 
@@ -153,7 +153,7 @@ export default createRule<Options, MessageIds>({
      * Helper: Get the Context<S> scope from a parameter type
      */
     function getContextScopeFromParameter(
-      param: TSESTree.Parameter
+      param: TSESTree.Parameter,
     ): string | null {
       const tsNode = parserServices.esTreeNodeToTSNodeMap.get(param);
       const type = checker.getTypeAtLocation(tsNode);
@@ -205,7 +205,7 @@ export default createRule<Options, MessageIds>({
         node:
           | TSESTree.FunctionDeclaration
           | TSESTree.FunctionExpression
-          | TSESTree.ArrowFunctionExpression
+          | TSESTree.ArrowFunctionExpression,
       ) {
         // Check parameters for Context<S>
         for (const param of node.params) {

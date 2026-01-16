@@ -1,4 +1,4 @@
-import { sampleDocuments } from '@mullion/template-rag-sensitive-data';
+import {sampleDocuments} from '@mullion/template-rag-sensitive-data';
 
 /**
  * Documents listing endpoint

@@ -1,4 +1,4 @@
-import type { Owned } from '../owned.js';
+import type {Owned} from '../owned.js';
 
 /**
  * Represents how values from multiple branches should be resolved when they disagree.

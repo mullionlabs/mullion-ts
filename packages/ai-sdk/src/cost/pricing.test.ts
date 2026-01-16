@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect} from 'vitest';
 import {
   getPricing,
   getAllPricing,
@@ -397,7 +397,7 @@ describe('importPricingFromJSON', () => {
 
     expect(imported['gpt-4'].inputPer1M).toBe(PRICING_DATA['gpt-4'].inputPer1M);
     expect(imported['claude-3-5-sonnet-20241022'].outputPer1M).toBe(
-      PRICING_DATA['claude-3-5-sonnet-20241022'].outputPer1M
+      PRICING_DATA['claude-3-5-sonnet-20241022'].outputPer1M,
     );
   });
 

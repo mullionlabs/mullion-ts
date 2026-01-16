@@ -8,14 +8,14 @@
  * - Source attribution and confidence tracking
  */
 
-import { createMullionClient } from '@mullion/ai-sdk';
+import {createMullionClient} from '@mullion/ai-sdk';
 import {
   RAGResponse,
   type UserQuery,
   type RetrievedChunk,
   type AccessLevel,
 } from './schemas.js';
-import { getLanguageModel, type ProviderConfig } from './provider.js';
+import {getLanguageModel, type ProviderConfig} from './provider.js';
 
 /**
  * Generate response from retrieved documents
@@ -27,7 +27,7 @@ import { getLanguageModel, type ProviderConfig } from './provider.js';
 export async function generateResponse(
   query: UserQuery,
   retrievedChunks: RetrievedChunk[],
-  providerConfig?: ProviderConfig
+  providerConfig?: ProviderConfig,
 ): Promise<RAGResponse> {
   const model = getLanguageModel(providerConfig);
 
@@ -44,7 +44,7 @@ export async function generateResponse(
         (chunk, i) => `
 [Source ${i + 1}: ${chunk.documentTitle} - ${chunk.accessLevel.toUpperCase()}]
 ${chunk.excerpt}
-`
+`,
       )
       .join('\n');
 
@@ -86,7 +86,7 @@ Please provide a comprehensive answer based on the context above. Cite your sour
 export async function generateResponseWithSources(
   query: UserQuery,
   retrievedChunks: RetrievedChunk[],
-  providerConfig?: ProviderConfig
+  providerConfig?: ProviderConfig,
 ): Promise<{
   response: RAGResponse;
   sources: RetrievedChunk[];
@@ -96,7 +96,7 @@ export async function generateResponseWithSources(
   const response = await generateResponse(
     query,
     retrievedChunks,
-    providerConfig
+    providerConfig,
   );
 
   // Determine highest access level used
@@ -126,7 +126,7 @@ export async function generateResponseWithSources(
  */
 function getMockResponse(
   query: UserQuery,
-  retrievedChunks: RetrievedChunk[]
+  retrievedChunks: RetrievedChunk[],
 ): RAGResponse {
   const sources = retrievedChunks.map((chunk) => ({
     documentId: chunk.documentId,
@@ -210,7 +210,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('📚 Using sources:');
     mockChunks.forEach((chunk, i) => {
       console.log(
-        `   ${i + 1}. ${chunk.documentTitle} (${chunk.accessLevel}, relevance: ${chunk.relevanceScore})`
+        `   ${i + 1}. ${chunk.documentTitle} (${chunk.accessLevel}, relevance: ${chunk.relevanceScore})`,
       );
     });
 
@@ -223,11 +223,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('Sources:');
     result.response.sources.forEach((source, i) => {
       console.log(
-        `   ${i + 1}. ${source.title} (${source.accessLevel.toUpperCase()})`
+        `   ${i + 1}. ${source.title} (${source.accessLevel.toUpperCase()})`,
       );
     });
     console.log(
-      `\nAccess Level Used: ${result.highestAccessLevel.toUpperCase()}`
+      `\nAccess Level Used: ${result.highestAccessLevel.toUpperCase()}`,
     );
     console.log(`Confidence: ${result.totalConfidence.toFixed(2)}`);
     if (result.response.reasoning) {
