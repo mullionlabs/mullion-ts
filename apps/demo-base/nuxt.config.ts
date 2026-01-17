@@ -31,10 +31,8 @@ export default defineNuxtConfig({
       maxRequests: 20,
       windowMs: 24 * 60 * 60 * 1000, // 24 hours
     },
+    llmModelName: 'gpt-4o-mini',
   },
-
-  // Nuxt 4 uses app/ directory by default
-  // All application code is now in app/ directory
 
   devtools: {enabled: true},
 

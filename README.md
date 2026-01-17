@@ -32,6 +32,15 @@
 
 ---
 
+## Live Demos
+
+Try Mullion in action (requires Google sign-in, 20 requests/day):
+
+- 🎫 **[Helpdesk Demo](https://mullion-demo-helpdesk.vercel.app)** — Scope isolation preventing internal notes from leaking to customers
+- 📚 **[RAG Demo](https://mullion-demo-rag.vercel.app)** — Fork/merge patterns with role-based access control
+
+---
+
 ## What is Mullion?
 
 **Mullion is middleware for AI trust in TypeScript.**  

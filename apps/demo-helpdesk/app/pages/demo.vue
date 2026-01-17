@@ -152,7 +152,7 @@ defineOptions({
   name: 'HelpdeskDemo',
 });
 
-const {isAuthenticated, fetchUser} = useAuth();
+const {isAuthenticated} = useAuth();
 const {isLimitReached, fetchRateLimit, decrementRemaining} = useRateLimit();
 
 const ticketText = ref('');
@@ -205,7 +205,6 @@ const analyzeTicket = async () => {
 };
 
 onMounted(() => {
-  fetchUser();
   fetchRateLimit();
 });
 </script>

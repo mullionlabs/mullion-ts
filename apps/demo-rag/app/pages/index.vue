@@ -8,29 +8,40 @@
     </div>
 
     <div class="content-section">
-      <UCard variant="outline" class="scenario-card">
+      <UCard
+        variant="outline"
+        class="scenario-card"
+      >
         <template #header>
           <h2 class="section-title">
-            <UIcon name="i-lucide-database" class="title-icon" />
+            <UIcon
+              name="i-lucide-database"
+              class="title-icon"
+            />
             The Scenario
           </h2>
         </template>
 
         <div class="scenario-content">
           <p class="scenario-text">
-            A Retrieval-Augmented Generation (RAG) system provides answers based on a document
-            corpus with varying access levels. Documents are classified as Public, Internal, or
-            Confidential. The challenge: ensure users only receive answers based on documents they
-            have clearance to access.
+            A Retrieval-Augmented Generation (RAG) system provides answers based
+            on a document corpus with varying access levels. Documents are
+            classified as Public, Internal, or Confidential. The challenge:
+            ensure users only receive answers based on documents they have
+            clearance to access.
           </p>
 
           <div class="scenario-problem">
             <h3 class="problem-title">
-              <UIcon name="i-lucide-alert-triangle" class="problem-icon" />
+              <UIcon
+                name="i-lucide-alert-triangle"
+                class="problem-icon"
+              />
               The Problem
             </h3>
             <p class="problem-text">
-              Traditional RAG systems risk exposing sensitive information through:
+              Traditional RAG systems risk exposing sensitive information
+              through:
             </p>
             <ul class="problem-list">
               <li>Accidental retrieval of confidential documents</li>
@@ -41,7 +52,10 @@
 
           <div class="scenario-solution">
             <h3 class="solution-title">
-              <UIcon name="i-lucide-check-circle-2" class="solution-icon" />
+              <UIcon
+                name="i-lucide-check-circle-2"
+                class="solution-icon"
+              />
               Mullion's Solution
             </h3>
             <p class="solution-text">
@@ -49,24 +63,32 @@
             </p>
             <ul class="solution-list">
               <li>
-                <strong>Scope-based filtering:</strong> Documents tagged with access level scopes
+                <strong>Scope-based filtering:</strong> Documents tagged with
+                access level scopes
               </li>
               <li>
-                <strong>Fork/merge patterns:</strong> Parallel processing with cache optimization
+                <strong>Fork/merge patterns:</strong> Parallel processing with
+                cache optimization
               </li>
               <li>
-                <strong>Provenance tracking:</strong> Know exactly which documents influenced the
-                answer
+                <strong>Provenance tracking:</strong> Know exactly which
+                documents influenced the answer
               </li>
             </ul>
           </div>
         </div>
       </UCard>
 
-      <UCard variant="outline" class="architecture-card">
+      <UCard
+        variant="outline"
+        class="architecture-card"
+      >
         <template #header>
           <h2 class="section-title">
-            <UIcon name="i-lucide-workflow" class="title-icon" />
+            <UIcon
+              name="i-lucide-workflow"
+              class="title-icon"
+            />
             How It Works
           </h2>
         </template>
@@ -77,7 +99,9 @@
               <div class="step-number">1</div>
               <div class="step-content">
                 <h3 class="step-title">Query Classification</h3>
-                <p class="step-description">Analyze user query to understand intent and scope</p>
+                <p class="step-description">
+                  Analyze user query to understand intent and scope
+                </p>
               </div>
             </div>
 
@@ -88,7 +112,8 @@
               <div class="step-content">
                 <h3 class="step-title">Access-Controlled Retrieval</h3>
                 <p class="step-description">
-                  Filter documents based on user's role (Public/Internal/Confidential)
+                  Filter documents based on user's role
+                  (Public/Internal/Confidential)
                 </p>
               </div>
             </div>
@@ -100,7 +125,8 @@
               <div class="step-content">
                 <h3 class="step-title">Parallel Processing (Fork)</h3>
                 <p class="step-description">
-                  Process retrieved documents in parallel with cache optimization
+                  Process retrieved documents in parallel with cache
+                  optimization
                 </p>
               </div>
             </div>
@@ -112,7 +138,8 @@
               <div class="step-content">
                 <h3 class="step-title">Response Generation (Merge)</h3>
                 <p class="step-description">
-                  Combine insights while maintaining scope boundaries and provenance
+                  Combine insights while maintaining scope boundaries and
+                  provenance
                 </p>
               </div>
             </div>
@@ -120,22 +147,35 @@
 
           <div class="code-example">
             <h3 class="code-example-title">✅ RAG with Mullion</h3>
-            <CodeBlock :code="ragExample" language="typescript" title="rag-pipeline.ts" />
+            <CodeBlock
+              :code="ragExample"
+              language="typescript"
+              title="rag-pipeline.ts"
+            />
           </div>
         </div>
       </UCard>
 
-      <UCard variant="outline" class="features-card">
+      <UCard
+        variant="outline"
+        class="features-card"
+      >
         <template #header>
           <h2 class="section-title">
-            <UIcon name="i-lucide-sparkles" class="title-icon" />
+            <UIcon
+              name="i-lucide-sparkles"
+              class="title-icon"
+            />
             Key Features
           </h2>
         </template>
 
         <div class="features-grid">
           <div class="feature-item">
-            <UIcon name="i-lucide-shield" class="feature-icon" />
+            <UIcon
+              name="i-lucide-shield"
+              class="feature-icon"
+            />
             <h3 class="feature-title">Access Control</h3>
             <p class="feature-description">
               Role-based document filtering enforced at compile-time
@@ -143,7 +183,10 @@
           </div>
 
           <div class="feature-item">
-            <UIcon name="i-lucide-git-fork" class="feature-icon" />
+            <UIcon
+              name="i-lucide-git-fork"
+              class="feature-icon"
+            />
             <h3 class="feature-title">Fork/Merge</h3>
             <p class="feature-description">
               Parallel processing with automatic cache optimization
@@ -151,7 +194,10 @@
           </div>
 
           <div class="feature-item">
-            <UIcon name="i-lucide-zap" class="feature-icon" />
+            <UIcon
+              name="i-lucide-zap"
+              class="feature-icon"
+            />
             <h3 class="feature-title">Smart Caching</h3>
             <p class="feature-description">
               Provider-aware caching reduces costs and latency
@@ -159,9 +205,14 @@
           </div>
 
           <div class="feature-item">
-            <UIcon name="i-lucide-file-search" class="feature-icon" />
+            <UIcon
+              name="i-lucide-file-search"
+              class="feature-icon"
+            />
             <h3 class="feature-title">Provenance</h3>
-            <p class="feature-description">Track which documents influenced each answer</p>
+            <p class="feature-description">
+              Track which documents influenced each answer
+            </p>
           </div>
         </div>
       </UCard>
@@ -171,8 +222,8 @@
           <div class="cta-content">
             <h2 class="cta-title">Try It Yourself</h2>
             <p class="cta-description">
-              Query a document corpus with different access levels and see how Mullion enforces
-              role-based boundaries.
+              Query a document corpus with different access levels and see how
+              Mullion enforces role-based boundaries.
             </p>
             <UButton
               v-if="!isAuthenticated"
@@ -183,7 +234,13 @@
             >
               Sign In to Try Demo
             </UButton>
-            <UButton v-else size="lg" color="primary" icon="i-lucide-play" to="/demo">
+            <UButton
+              v-else
+              size="lg"
+              color="primary"
+              icon="i-lucide-play"
+              to="/demo"
+            >
               Try the Demo
             </UButton>
           </div>
@@ -198,7 +255,7 @@ defineOptions({
   name: 'RAGIndex',
 });
 
-const { isAuthenticated, signIn } = useAuth();
+const {isAuthenticated, signIn} = useAuth();
 
 const ragExample = `// ✅ SAFE: Mullion enforces access control
 const userRole = 'internal'; // Public, Internal, or Confidential
@@ -222,11 +279,6 @@ const result = await fork({
 // Response includes provenance
 console.log(result.value); // Answer
 console.log(result.provenance); // Source documents`;
-
-onMounted(() => {
-  const { fetchUser } = useAuth();
-  fetchUser();
-});
 </script>
 
 <style lang="scss">
@@ -469,11 +521,14 @@ onMounted(() => {
   background-color: var(--ui-bg-elevated);
   border: 1px solid var(--ui-border);
   border-radius: 0.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px #{color-mix(in oklch, var(--ui-success) 5%, transparent)};
+    box-shadow: 0 4px 12px
+      #{color-mix(in oklch, var(--ui-success) 5%, transparent)};
   }
 }
 

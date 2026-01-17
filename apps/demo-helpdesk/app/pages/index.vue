@@ -8,77 +8,104 @@
     </div>
 
     <div class="content-section">
-      <UCard variant="outline" class="scenario-card">
+      <UCard
+        variant="outline"
+        class="scenario-card"
+      >
         <template #header>
           <h2 class="section-title">
-            <UIcon name="i-lucide-shield-check" class="title-icon" />
+            <UIcon
+              name="i-lucide-shield-check"
+              class="title-icon"
+            />
             The Scenario
           </h2>
         </template>
 
         <div class="scenario-content">
           <p class="scenario-text">
-            A customer support system processes support tickets containing sensitive internal notes
-            alongside public responses. The challenge: ensure internal admin notes never leak into
-            customer-facing responses.
+            A customer support system processes support tickets containing
+            sensitive internal notes alongside public responses. The challenge:
+            ensure internal admin notes never leak into customer-facing
+            responses.
           </p>
 
           <div class="scenario-problem">
             <h3 class="problem-title">
-              <UIcon name="i-lucide-alert-triangle" class="problem-icon" />
+              <UIcon
+                name="i-lucide-alert-triangle"
+                class="problem-icon"
+              />
               The Problem
             </h3>
             <p class="problem-text">
-              Traditional approaches risk context leaks where sensitive admin notes accidentally
-              appear in customer responses, potentially exposing confidential information.
+              Traditional approaches risk context leaks where sensitive admin
+              notes accidentally appear in customer responses, potentially
+              exposing confidential information.
             </p>
           </div>
 
           <div class="scenario-solution">
             <h3 class="solution-title">
-              <UIcon name="i-lucide-check-circle-2" class="solution-icon" />
+              <UIcon
+                name="i-lucide-check-circle-2"
+                class="solution-icon"
+              />
               Mullion's Solution
             </h3>
             <p class="solution-text">
-              Mullion enforces compile-time scope boundaries. Admin data is tagged with an
-              <code>admin</code> scope, and customer responses with a <code>public</code> scope.
-              Cross-scope data flow requires explicit bridging, making leaks impossible.
+              Mullion enforces compile-time scope boundaries. Admin data is
+              tagged with an
+              <code>admin</code> scope, and customer responses with a
+              <code>public</code> scope. Cross-scope data flow requires explicit
+              bridging, making leaks impossible.
             </p>
           </div>
         </div>
       </UCard>
 
-      <UCard variant="outline" class="code-card">
+      <UCard
+        variant="outline"
+        class="code-card"
+      >
         <template #header>
           <h2 class="section-title">
-            <UIcon name="i-lucide-code-2" class="title-icon" />
+            <UIcon
+              name="i-lucide-code-2"
+              class="title-icon"
+            />
             How It Works
           </h2>
         </template>
 
         <div class="code-examples">
           <div class="code-example">
-            <h3 class="code-example-title">❌ Without Mullion: Risk of Context Leak</h3>
+            <h3 class="code-example-title">
+              ❌ Without Mullion: Risk of Context Leak
+            </h3>
             <CodeBlock
               :code="badExample"
               language="typescript"
               title="unsafe-flow.ts"
             />
             <p class="code-example-description">
-              Without scope tracking, admin notes can accidentally leak into customer responses.
+              Without scope tracking, admin notes can accidentally leak into
+              customer responses.
             </p>
           </div>
 
           <div class="code-example">
-            <h3 class="code-example-title">✅ With Mullion: Type-Safe Isolation</h3>
+            <h3 class="code-example-title">
+              ✅ With Mullion: Type-Safe Isolation
+            </h3>
             <CodeBlock
               :code="goodExample"
               language="typescript"
               title="safe-flow.ts"
             />
             <p class="code-example-description">
-              Mullion enforces scope boundaries at compile-time. Data flows are explicit and
-              trackable.
+              Mullion enforces scope boundaries at compile-time. Data flows are
+              explicit and trackable.
             </p>
           </div>
         </div>
@@ -89,7 +116,8 @@
           <div class="cta-content">
             <h2 class="cta-title">Try It Yourself</h2>
             <p class="cta-description">
-              Enter a support ticket and see how Mullion prevents context leaks in real-time.
+              Enter a support ticket and see how Mullion prevents context leaks
+              in real-time.
             </p>
             <UButton
               v-if="!isAuthenticated"
@@ -121,7 +149,7 @@ defineOptions({
   name: 'HelpdeskIndex',
 });
 
-const { isAuthenticated, signIn } = useAuth();
+const {isAuthenticated, signIn} = useAuth();
 
 const badExample = `// ❌ UNSAFE: No scope tracking
 const ticket = await analyzeTicket(ticketText);
@@ -141,11 +169,6 @@ const response = await publicCtx.infer(
   ResponseSchema,
   \`Create response for: \${ticket.value.summary}\`
 );`;
-
-onMounted(() => {
-  const { fetchUser } = useAuth();
-  fetchUser();
-});
 </script>
 
 <style lang="scss">

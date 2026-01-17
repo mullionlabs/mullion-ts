@@ -62,37 +62,3 @@ export default defineNuxtConfig({
   // ... your app-specific config
 });
 ```
-
-## Vue Component Pattern
-
-All components follow this structure:
-
-```vue
-<template>
-  <div class="component-semantic-name">
-    <!-- Every root element must have class as semantic name -->
-  </div>
-</template>
-
-<script lang="ts" setup>
-defineOptions({
-  name: 'ComponentName',
-});
-</script>
-
-<style lang="scss">
-/* Component styles */
-</style>
-```
-
-## Development Status
-
-**Task 13.2 Complete** ✅
-
-All components and utilities are implemented with placeholder logic for authentication and rate limiting. Full OAuth and Vercel KV integration will be completed in Task 13.5.
-
-## Next Steps
-
-- Task 13.3: Demo Helpdesk App (will extend this layer)
-- Task 13.4: Demo RAG App (will extend this layer)
-- Task 13.5: Implement real Google OAuth and Vercel KV rate limiting

@@ -269,7 +269,7 @@ defineOptions({
   name: 'RAGDemo',
 });
 
-const {isAuthenticated, fetchUser} = useAuth();
+const {isAuthenticated} = useAuth();
 const {isLimitReached, fetchRateLimit, decrementRemaining} = useRateLimit();
 
 const roles = [
@@ -399,7 +399,6 @@ watch(selectedRole, () => {
 });
 
 onMounted(() => {
-  fetchUser();
   fetchRateLimit();
   fetchDocuments();
 });
