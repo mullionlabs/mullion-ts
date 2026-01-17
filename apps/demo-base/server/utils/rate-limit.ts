@@ -1,5 +1,6 @@
 import type {H3Event} from 'h3';
 import type {UserSession} from './auth';
+import {kv} from '@vercel/kv';
 
 /**
  * Rate limit status for a user
@@ -11,18 +12,12 @@ export interface RateLimitStatus {
 }
 
 /**
- * In-memory rate limit store (placeholder)
- *
- * TODO: Replace with Vercel KV in Task 13.5
- * This is a simple in-memory implementation for development
+ * Rate limit data stored in KV
  */
-const rateLimitStore = new Map<
-  string,
-  {
-    count: number;
-    resetAt: Date;
-  }
->();
+interface RateLimitData {
+  count: number;
+  resetAt: string; // ISO string for serialization
+}
 
 /**
  * Get rate limit key for a user
@@ -34,8 +29,8 @@ function getRateLimitKey(userId: string): string {
 /**
  * Check if rate limit has expired and should be reset
  */
-function shouldReset(resetAt: Date): boolean {
-  return new Date() >= resetAt;
+function shouldReset(resetAt: string): boolean {
+  return new Date() >= new Date(resetAt);
 }
 
 /**
@@ -54,17 +49,21 @@ export async function getRateLimitStatus(
   userId: string,
 ): Promise<RateLimitStatus> {
   const key = getRateLimitKey(userId);
-  const entry = rateLimitStore.get(key);
+  const entry = await kv.get<RateLimitData>(key);
 
   const {rateLimit} = useRuntimeConfig();
 
   // If no entry or expired, reset
   if (!entry || shouldReset(entry.resetAt)) {
     const resetAt = getNextResetTime();
-    rateLimitStore.set(key, {
+    const newEntry: RateLimitData = {
       count: 0,
-      resetAt,
-    });
+      resetAt: resetAt.toISOString(),
+    };
+
+    // Store in KV with TTL until reset time
+    const ttlSeconds = Math.floor((resetAt.getTime() - Date.now()) / 1000);
+    await kv.set(key, newEntry, {ex: ttlSeconds});
 
     return {
       remaining: rateLimit.maxRequests,
@@ -76,7 +75,7 @@ export async function getRateLimitStatus(
   return {
     remaining: Math.max(0, rateLimit.maxRequests - entry.count),
     limit: rateLimit.maxRequests,
-    resetAt: entry.resetAt.toISOString(),
+    resetAt: entry.resetAt,
   };
 }
 
@@ -93,19 +92,28 @@ export async function isRateLimited(userId: string): Promise<boolean> {
  */
 export async function incrementRateLimit(userId: string): Promise<void> {
   const key = getRateLimitKey(userId);
-  const entry = rateLimitStore.get(key);
+  const entry = await kv.get<RateLimitData>(key);
 
   if (!entry || shouldReset(entry.resetAt)) {
     // Initialize with first request
     const resetAt = getNextResetTime();
-    rateLimitStore.set(key, {
+    const newEntry: RateLimitData = {
       count: 1,
-      resetAt,
-    });
+      resetAt: resetAt.toISOString(),
+    };
+
+    const ttlSeconds = Math.floor((resetAt.getTime() - Date.now()) / 1000);
+    await kv.set(key, newEntry, {ex: ttlSeconds});
   } else {
     // Increment existing counter
-    entry.count += 1;
-    rateLimitStore.set(key, entry);
+    const updatedEntry: RateLimitData = {
+      count: entry.count + 1,
+      resetAt: entry.resetAt,
+    };
+
+    const resetDate = new Date(entry.resetAt);
+    const ttlSeconds = Math.floor((resetDate.getTime() - Date.now()) / 1000);
+    await kv.set(key, updatedEntry, {ex: ttlSeconds});
   }
 }
 
