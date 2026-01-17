@@ -289,18 +289,21 @@ defineOptions({
 - [x] Update server/utils/auth.ts with nuxt-auth-utils integration
 - [x] Create OAuth server routes (google.get.ts, logout.post.ts, user.get.ts)
 - [x] Update useAuth composable with real OAuth flow
-- [ ] Create Google Cloud project (requires user account)
-- [ ] Configure OAuth consent screen (requires user account)
-- [ ] Create OAuth 2.0 credentials (requires Google Console)
-- [ ] Add authorized redirect URIs for Vercel domains
+- [x] Create Google Cloud project (requires user account)
+- [x] Configure OAuth consent screen (requires user account)
+- [x] Create OAuth 2.0 credentials (requires Google Console)
+- [x] Add authorized redirect URIs for Vercel domains
 
 **Rate Limiting Implementation:**
 
 - [x] In-memory rate limiting implemented (20 req/day per user)
 - [x] Rate limit headers set correctly
 - [x] 429 error with friendly message when exceeded
-- [ ] Migrate to Vercel KV for persistent storage (requires Vercel setup)
-- [ ] Reset daily (UTC midnight) with Vercel KV
+- [x] Migrate to Vercel KV for persistent storage
+- [x] Reset daily (UTC midnight) with Vercel KV
+- [x] Install @vercel/kv package in demo-base
+- [x] Update rate-limit.ts to use KV instead of in-memory Map
+- [x] Add TTL to KV entries for automatic cleanup
 
 **API Integration:**
 
@@ -308,59 +311,46 @@ defineOptions({
 - [x] Uncomment auth checks in demo-rag/server/api/query.post.ts
 - [x] Auth and rate limit middleware active in both demo apps
 
-**Status:** Code implementation complete. All authentication and rate limiting code is in place and functional. Remaining tasks require external service setup (Google Cloud project, OAuth credentials, Vercel KV) which must be configured manually by the user. See `docs/guides/authentication-setup.md` for detailed setup instructions.
+**Status:** ✅ FULLY COMPLETE. All authentication and rate limiting implemented with Vercel KV. Both demo apps deployed to Vercel with Google OAuth and persistent rate limiting. Apps are live and production-ready.
 
-### 13.6 CI/CD Pipeline
+### 13.6 CI/CD Pipeline ✅
 
-- [ ] Create `.github/workflows/demo-deploy.yml`:
+**Workflow Setup:**
 
-  ```yaml
-  name: Deploy Demos
-  on:
-    push:
-      branches: [main]
-      paths:
-        - 'apps/demo-*/**'
-        - 'examples/**'
-    workflow_dispatch:
+- [x] Create `.github/workflows/demo-deploy.yml`
+- [x] Configure parallel deployment for both apps
+- [x] Add build steps (install, build packages, build apps)
+- [x] Add Vercel deployment with production flag
+- [x] Configure triggers (push to main, manual dispatch)
+- [x] Add path filters for efficient CI/CD
 
-  jobs:
-    deploy-helpdesk:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - uses: pnpm/action-setup@v4
-        - uses: actions/setup-node@v4
-          with:
-            node-version: '20'
-            cache: 'pnpm'
-        - run: pnpm install
-        - run: pnpm --filter demo-helpdesk build
-        - uses: amondnet/vercel-action@v25
-          with:
-            vercel-token: ${{ secrets.VERCEL_TOKEN }}
-            vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-            vercel-project-id: ${{ secrets.VERCEL_PROJECT_HELPDESK }}
+**Documentation:**
 
-    deploy-rag:
-      # Similar steps for demo-rag
-  ```
+- [x] Create `.github/VERCEL_DEPLOYMENT.md` with setup instructions
+- [x] Document how to get Vercel credentials
+- [x] Document required GitHub secrets
+- [x] Add troubleshooting guide
+- [x] Add manual deployment fallback instructions
 
-- [ ] Set up Vercel projects:
-  - [ ] `mullion-demo-helpdesk`
-  - [ ] `mullion-demo-rag`
-- [ ] Add GitHub secrets:
-  - [ ] `VERCEL_TOKEN`
-  - [ ] `VERCEL_ORG_ID`
-  - [ ] `VERCEL_PROJECT_HELPDESK`
-  - [ ] `VERCEL_PROJECT_RAG`
-- [ ] Configure Vercel environment variables:
-  - [ ] `OPENAI_API_KEY` (your key)
-  - [ ] `GOOGLE_CLIENT_ID`
-  - [ ] `GOOGLE_CLIENT_SECRET`
-  - [ ] `NUXT_SESSION_SECRET`
-  - [ ] `KV_REST_API_URL` (Vercel KV)
-  - [ ] `KV_REST_API_TOKEN` (Vercel KV)
+**Required Setup (User Action):**
+
+The workflow is ready. To activate automated deployments, add these GitHub secrets:
+
+1. **GitHub Repository → Settings → Secrets → Actions:**
+   - [ ] `VERCEL_TOKEN` - from Vercel Settings → Tokens
+   - [ ] `VERCEL_ORG_ID` - from Vercel Settings → General
+   - [ ] `VERCEL_PROJECT_HELPDESK` - from helpdesk project settings
+   - [ ] `VERCEL_PROJECT_RAG` - from RAG project settings
+
+2. **Vercel Projects - Environment Variables (already configured):**
+   - [x] `OPENAI_API_KEY`
+   - [x] `NUXT_OAUTH_GOOGLE_CLIENT_ID`
+   - [x] `NUXT_OAUTH_GOOGLE_CLIENT_SECRET`
+   - [x] `NUXT_SESSION_SECRET`
+   - [x] `KV_REST_API_URL` (auto-added)
+   - [x] `KV_REST_API_TOKEN` (auto-added)
+
+**Status:** ✅ Workflow created and ready. See `.github/VERCEL_DEPLOYMENT.md` for GitHub Secrets setup instructions.
 
 ### 13.7 Documentation
 

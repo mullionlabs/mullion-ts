@@ -1,0 +1,84 @@
+name: Deploy Demo Apps
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/demo-*/**'
+      - 'examples/**'
+      - 'packages/**'
+      - '.github/workflows/demo-deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy-helpdesk:
+    name: Deploy Helpdesk Demo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Build demo-helpdesk
+        run: pnpm --filter demo-helpdesk build
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_HELPDESK }}
+          vercel-args: '--prod'
+          working-directory: ./apps/demo-helpdesk
+
+  deploy-rag:
+    name: Deploy RAG Demo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Build demo-rag
+        run: pnpm --filter demo-rag build
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_RAG }}
+          vercel-args: '--prod'
+          working-directory: ./apps/demo-rag

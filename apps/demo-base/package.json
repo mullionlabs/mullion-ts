@@ -12,8 +12,9 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@nuxt/ui": "catalog:",
     "@iconify-json/lucide": "^1.2.16",
+    "@nuxt/ui": "catalog:",
+    "@vercel/kv": "^3.0.0",
     "marked": "^14.1.3",
     "nuxt": "catalog:",
     "nuxt-auth-utils": "^0.5.7",
@@ -22,8 +23,8 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "sass": "catalog:",
+    "typescript": "catalog:",
     "vue-tsc": "catalog:"
   }
 }
