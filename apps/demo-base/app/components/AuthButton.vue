@@ -26,12 +26,7 @@ defineOptions({
   name: 'AuthButton',
 });
 
-const { isAuthenticated, signIn, signOut, fetchUser } = useAuth();
-
-// Fetch user on mount (client-side only)
-onMounted(() => {
-  fetchUser();
-});
+const {isAuthenticated, signIn, signOut} = useAuth();
 </script>
 
 <style lang="scss">

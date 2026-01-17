@@ -11,7 +11,7 @@
     <div v-if="cost !== undefined" class="cost-display-item">
       <span class="cost-display-label">
         <UIcon name="i-lucide-dollar-sign" class="cost-display-icon" />
-        Cost:
+        Est. Cost:
       </span>
       <span class="cost-display-value">{{ formattedCost }}</span>
     </div>

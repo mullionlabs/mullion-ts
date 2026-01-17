@@ -61,6 +61,26 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     asOfDate: '2025-01-01',
   },
 
+  // OpenAI GPT-4o models
+  'gpt-4o': {
+    model: 'gpt-4o',
+    provider: 'openai',
+    inputPer1M: 2.5,
+    outputPer1M: 10.0,
+    cachedInputPer1M: 0.0,
+    cacheWritePer1M: 0.0,
+    asOfDate: '2025-01-01',
+  },
+  'gpt-4o-mini': {
+    model: 'gpt-4o-mini',
+    provider: 'openai',
+    inputPer1M: 0.15,
+    outputPer1M: 0.6,
+    cachedInputPer1M: 0.0,
+    cacheWritePer1M: 0.0,
+    asOfDate: '2025-01-01',
+  },
+
   // OpenAI GPT-3.5 models
   'gpt-3.5-turbo': {
     model: 'gpt-3.5-turbo',

@@ -10,4 +10,7 @@
 defineOptions({
   name: 'App',
 });
+
+const {fetchUser} = useAuth();
+await useAsyncData('UserData', fetchUser);
 </script>

@@ -3,6 +3,7 @@
  *
  * Provides authentication state and methods for sign in/out
  */
+import type {UserSession} from '../../server/utils/auth';
 
 interface User {
   id: string;
@@ -32,12 +33,11 @@ export const useAuth = () => {
   };
 
   // Fetch current user on mount (client-side only)
-  const fetchUser = async (): Promise<void> => {
-    if (import.meta.server) return;
-
+  const fetchUser = async (): Promise<UserSession | undefined> => {
     try {
       const response = await $fetch<User>('/api/auth/user');
       user.value = response;
+      return response;
     } catch {
       // Not authenticated or error
       user.value = null;

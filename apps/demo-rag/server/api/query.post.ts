@@ -2,6 +2,7 @@ import {
   executeRAGPipeline,
   type RAGPipelineResult,
 } from '@mullion/template-rag-sensitive-data';
+import {estimateTokens, calculateCost} from '@mullion/ai-sdk';
 
 /**
  * RAG query endpoint
@@ -10,6 +11,8 @@ import {
  * by querying documents with role-based filtering.
  */
 export default defineEventHandler(async (event) => {
+  const {llmModelName} = useRuntimeConfig(event);
+
   try {
     // Authentication and rate limiting
     const user = await requireAuth(event);
@@ -49,6 +52,22 @@ export default defineEventHandler(async (event) => {
       },
     );
 
+    // Estimate token counts and calculate cost using Mullion's cost calculator
+    const inputTokens = estimateTokens(query, llmModelName).count;
+    const outputTokens = estimateTokens(
+      result.response.answer,
+      llmModelName,
+    ).count;
+
+    const costBreakdown = calculateCost(
+      {
+        inputTokens,
+        outputTokens,
+      },
+      null, // No cache stats
+      llmModelName,
+    );
+
     // Return the result with answer, sources, and metrics
     return {
       answer: result.response.answer,
@@ -58,9 +77,9 @@ export default defineEventHandler(async (event) => {
         excerpt: `${source.accessLevel.toUpperCase()} document`,
       })),
       cost: {
-        inputTokens: 0,
-        outputTokens: 0,
-        totalCost: 0,
+        inputTokens,
+        outputTokens,
+        totalCost: costBreakdown.totalCost,
         cacheHit: false,
       },
       metrics: {
