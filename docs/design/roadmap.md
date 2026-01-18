@@ -1,6 +1,6 @@
 # Roadmap
 
-This page is a high-level view. The canonical plan and progress tracking lives in [TODO](../../TODO.md).
+This page is a high-level view. The canonical plan and progress tracking lives in [TODO/README](../../TODO/README.md).
 
 ## Near-term focus
 
@@ -14,4 +14,4 @@ This page is a high-level view. The canonical plan and progress tracking lives i
 
 ## Canonical source
 
-- [TODO](../../TODO.md)
+- [TODO/README](../../TODO/README.md)

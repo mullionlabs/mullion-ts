@@ -280,6 +280,46 @@ await customerCtx.respond(safe.value);
 
 ## Working with Claude Code
 
+### Task Management (NEW: 2026-01-17)
+
+**Modular TODO Structure:**
+
+The project uses a hierarchical TODO system to minimize context load:
+
+```
+TODO/
+├── README.md              # 🎯 Main navigator (start here)
+├── ACTIVE.md              # 📍 Current task (what I'm working on now)
+├── COMPLETED.md           # ✅ Summary of finished work
+└── tasks/
+    ├── 01-11-foundation.md    # Completed tasks (summary only)
+    ├── 12-examples.md         # Completed tasks (summary only)
+    ├── 13-demo-apps.md        # Completed tasks (summary only)
+    ├── 14-integration-tests.md # 🔥 Active task (full detailed plan)
+    ├── 15-create-mullion.md    # 📋 Upcoming task (full plan ready)
+    └── 16-nextjs-support.md    # 📋 Future task (full plan ready)
+```
+
+**Workflow for new sessions:**
+
+1. **Read `TODO/README.md`** - Get overview and task status
+2. **Read `TODO/ACTIVE.md`** - See current focus
+3. **Read specific task file** from `TODO/tasks/` for details
+4. **Update progress** - Mark items complete in task file
+5. **Update ACTIVE.md** - Move to next task when done
+
+**Benefits:**
+
+- ✅ Minimal context (3 files instead of 1 giant file)
+- ✅ Fast navigation (clear hierarchy)
+- ✅ Scalable (add tasks/17, 18, 19...)
+- ✅ History preserved (archive/ for old TODOs)
+
+**Old TODO files archived:**
+
+- `TODO/archive/TODO-legacy.md`
+- `TODO/archive/TODO-history-legacy.md`
+
 ### Task Size
 
 Break work into small tasks:
@@ -291,7 +331,7 @@ Break work into small tasks:
 ### Before Implementation
 
 1. Read relevant section of this CLAUDE.md
-2. Check TODO.md for current task (if exists)
+2. **Read TODO/README.md → TODO/ACTIVE.md → specific task file**
 3. Look at existing code for patterns
 4. Review related documentation in `docs/` folder
 5. Write tests first when possible
