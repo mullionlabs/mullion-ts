@@ -412,7 +412,7 @@ mullion/
 - `turbo.json` - Build caching configuration
 - `tsconfig.base.json` - Shared TypeScript config
 - `CLAUDE.md` - Development guide for AI assistants
-- `TODO.md` - Current roadmap and progress
+- `TODO/` - Project roadmap with modular task structure
 
 ## Common Tasks
 

@@ -22,7 +22,7 @@
     <a href="./docs/"><strong>Docs</strong></a> ·
     <a href="./examples/basic/"><strong>Examples</strong></a> ·
     <a href="./packages/"><strong>Packages</strong></a> ·
-    <a href="TODO.history.md"><strong>Roadmap</strong></a>
+    <a href="./TODO/"><strong>Roadmap</strong></a>
   </p>
   <p>
     <a href="https://github.com/mullionlabs/mullion-ts/issues/new?title=%5Bpilot%5D%20%3Cyour%20use%20case%3E"><strong>Start a pilot</strong></a> ·
@@ -290,7 +290,8 @@ pnpm --filter mullion-example-rag-sensitive-data pipeline
 
 Roadmap:
 
-- [`TODO.md`](TODO.history.md)
+- [**Current Tasks**](./TODO/) - Active tasks and project roadmap
+- [**Completed Work**](./TODO/COMPLETED.md) - Summary of finished features
 
 Security:
 
@@ -307,7 +308,7 @@ Mullion is under active development. Expect API refinements while we harden:
 - provider-facing integration surfaces
 - cost/observability features
 
-For the definitive plan and progress, see [`TODO`](TODO.history.md).
+For the definitive plan and progress, see [**Project Roadmap**](./TODO/).
 
 ---
 

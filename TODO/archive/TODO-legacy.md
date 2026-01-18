@@ -13,7 +13,7 @@
 > Summary: Core types, scope/bridge, ESLint rules, AI SDK integration,
 > cache foundation, fork/merge, cost estimation, OpenTelemetry tracing.
 
-If you need details, look here [TODO.history.md](./TODO.history.md)
+If you need details, look here [TODO-history-legacy.md](./TODO-history-legacy.md)
 
 ---
 

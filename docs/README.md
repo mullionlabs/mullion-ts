@@ -33,7 +33,7 @@ This `docs/` folder is the technical source of truth.
 
 ## Project references
 
-- **[Roadmap / progress (canonical)](../TODO.history.md)** - Historical TODO and progress tracking
+- **[Project Roadmap](../TODO/)** - Current tasks, completed work, and development plan
 - **[Examples overview](../EXAMPLES.md)** - Overview of example projects
 - **[Runnable example](../examples/basic)** - Basic usage example
 

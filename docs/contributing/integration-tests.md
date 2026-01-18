@@ -1,7 +1,8 @@
 # AI SDK integration tests (manual, real providers)
 
-This guide describes how to manually test `@mullion/ai-sdk` against **real** model providers
-to complete **Task 5.3** from `TODO.md`.
+This guide describes how to manually test `@mullion/ai-sdk` against **real** model providers.
+
+> **Note:** This was originally created for Task 5.3 (now completed). See [Project Roadmap](../../TODO/) for current tasks.
 
 > This is a **contributor doc**. It’s intentionally not part of the user-facing docs navigation.
 
@@ -464,11 +465,8 @@ pnpm list ai zod @ai-sdk/openai
 
 ## Completion checklist
 
-When all tests pass, update `TODO.md`:
+When all tests pass, update the relevant task file in `TODO/tasks/`:
 
-```markdown
-### 5.3 Tests
-
-- [x] Mock provider tests
-- [x] Integration test with real API (manual) ✅ COMPLETED
-```
+- [ ] All tests passing with real providers
+- [ ] Document any issues or limitations discovered
+- [ ] Update task status in TODO/ACTIVE.md if working on active task
