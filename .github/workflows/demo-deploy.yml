@@ -42,7 +42,6 @@ jobs:
 
       - name: Deploy to Vercel
         run: pnpm dlx vercel@latest --prod --yes --token="$VERCEL_TOKEN"
-        working-directory: ./apps/demo-helpdesk
 
   deploy-rag:
     name: Deploy RAG Demo
@@ -75,4 +74,3 @@ jobs:
 
       - name: Deploy to Vercel
         run: pnpm dlx vercel@latest --prod --yes --token="$VERCEL_TOKEN"
-        working-directory: ./apps/demo-rag
