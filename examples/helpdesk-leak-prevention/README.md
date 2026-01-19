@@ -96,7 +96,7 @@ npm run safe
 #### 4. Run ESLint to Catch Leaks
 
 ```bash
-npm run lint        # Runs lint (won't fail build - for CI)
+npm run lint        # Runs lint (summary only; won't fail build - for CI)
 npm run lint:strict # Shows all ESLint errors (for demonstration)
 ```
 
@@ -105,7 +105,7 @@ npm run lint:strict # Shows all ESLint errors (for demonstration)
 - `@mullion/no-context-leak`: Detects data crossing scope boundaries without bridge (5 errors)
 - `@mullion/require-confidence-check`: Warns about using data without confidence validation (19 warnings)
 
-> **Note:** `npm run lint` exits with 0 (success) even when finding issues, since these are intentional for demonstration. Use `npm run lint:strict` to see ESLint actually fail on violations.
+> **Note:** `npm run lint` exits with 0 (success) and only prints a summary when issues are found, since these are intentional for demonstration. Use `npm run lint:strict` to see the full ESLint output.
 
 ### Option B: Import as a Package
 
@@ -226,7 +226,8 @@ const response = await client.scope('public', async (publicCtx) => {
 ### Compile-Time Protection (ESLint)
 
 ```bash
-npm run lint
+npm run lint        # Summary only
+npm run lint:strict # Full ESLint output
 ```
 
 **Catches:**
@@ -296,7 +297,7 @@ return result.value; // Safe to use
 Run all checks:
 
 ```bash
-npm run lint       # ESLint leak detection
+npm run lint       # ESLint leak detection (summary)
 npm run safe       # Run safe implementation
 ```
 
@@ -338,5 +339,5 @@ Report issues at: https://github.com/mullionlabs/mullion-ts/issues
 
 1. ✅ Run `npm run safe` - See correct implementation
 2. 🔍 Read `src/safe-flow.ts` - Study the code
-3. ⚠️ Run `npm run lint` - See ESLint catch violations
+3. ⚠️ Run `npm run lint:strict` - See ESLint catch violations
 4. 📚 Explore [RAG Example](../rag-sensitive-data/) for fork/merge patterns

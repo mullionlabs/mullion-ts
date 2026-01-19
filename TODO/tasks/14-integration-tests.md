@@ -22,10 +22,10 @@ Test @mullion packages against real LLM providers (OpenAI, Anthropic) to verify 
 
 ## Checklist
 
-### 14.1 Workspace Setup
+### 14.1 Workspace Setup ✅
 
-- [ ] Create `apps/integration-tests/` directory
-- [ ] Create `package.json`:
+- [x] Create `tests/integration/` directory
+- [x] Create `package.json`:
   ```json
   {
     "name": "integration-tests",
@@ -52,91 +52,89 @@ Test @mullion packages against real LLM providers (OpenAI, Anthropic) to verify 
     }
   }
   ```
-- [ ] Create `tsconfig.json`
-- [ ] Create `vitest.config.ts`
-- [ ] Verify workspace packages resolve correctly
+- [x] Create `tsconfig.json`
+- [x] Create `vitest.config.ts`
+- [x] Verify workspace packages resolve correctly
 
-### 14.2 Environment Setup
+### 14.2 Environment Setup ✅
 
-- [ ] Create `.env.example`:
+- [x] Create `.env.example`:
   ```bash
   OPENAI_API_KEY=sk-proj-...
   ANTHROPIC_API_KEY=sk-ant-...
   ```
-- [ ] Create `.gitignore` (exclude .env)
-- [ ] Add timeout config for slow API calls (30s default)
+- [x] Create `.gitignore` (exclude .env)
+- [x] Add timeout config for slow API calls (30s default)
 
 ### 14.3 Test: Basic Inference (OpenAI)
 
-- [ ] Create `src/openai.test.ts`
-- [ ] Test: `createMullionClient()` with OpenAI provider
-- [ ] Test: `ctx.infer()` returns valid `Owned<T, S>`
-- [ ] Test: Confidence score in valid range
-- [ ] Test: Scope tagged correctly
-- [ ] Test: Complex schemas (nested objects, arrays, enums)
+- [x] Create `src/openai.test.ts`
+- [x] Test: `createMullionClient()` with OpenAI provider
+- [x] Test: `ctx.infer()` returns valid `Owned<T, S>`
+- [x] Test: Confidence score in valid range
+- [x] Test: Scope tagged correctly
+- [x] Test: Complex schemas (nested objects, arrays, enums)
 
 ### 14.4 Test: Basic Inference (Anthropic)
 
-- [ ] Create `src/anthropic.test.ts`
-- [ ] Test: `createMullionClient()` with Anthropic provider
-- [ ] Test: `ctx.infer()` returns valid `Owned<T, S>`
-- [ ] Test: Confidence extraction works
-- [ ] Test: Different models (sonnet, haiku)
+- [x] Create `src/anthropic.test.ts`
+- [x] Test: `createMullionClient()` with Anthropic provider
+- [x] Test: `ctx.infer()` returns valid `Owned<T, S>`
+- [x] Test: Confidence extraction works
+- [x] Test: Different models (sonnet, haiku)
 
 ### 14.5 Test: Scope Bridging
 
-- [ ] Create `src/bridging.test.ts`
-- [ ] Test: Data flows between scopes with `bridge()`
-- [ ] Test: Bridged data has combined scope type
-- [ ] Test: `use()` enforces scope boundaries at runtime
+- [x] Create `src/bridging.test.ts`
+- [x] Test: Data flows between scopes with `bridge()`
+- [x] Test: Bridged data has combined scope type
+- [x] Test: `use()` enforces scope boundaries at runtime
 
 ### 14.6 Test: Caching (Anthropic)
 
-- [ ] Create `src/caching.test.ts`
-- [ ] Test: Cache segments created correctly
-- [ ] Test: `cacheCreationInputTokens` on first call
-- [ ] Test: `cacheReadInputTokens` on cache hit
-- [ ] Test: Cache metrics in `ctx.getCacheStats()`
+- [x] Create `src/caching.test.ts`
+- [x] Test: Cache segments created correctly
+- [x] Test: `cacheCreationInputTokens` on first call
+- [x] Test: `cacheReadInputTokens` on cache hit
+- [x] Test: Cache metrics in `ctx.getCacheStats()`
 
 ### 14.7 Test: Fork & Merge
 
-- [ ] Create `src/fork-merge.test.ts`
-- [ ] Test: `fast-parallel` executes all branches
-- [ ] Test: `cache-optimized` with warmup
-- [ ] Test: Merge strategies work correctly
-- [ ] Test: Provenance tracking
+- [x] Create `src/fork-merge.test.ts`
+- [x] Test: `fast-parallel` executes all branches
+- [x] Test: `cache-optimized` with warmup
+- [x] Test: Merge strategies work correctly
+- [x] Test: Provenance tracking
 
 ### 14.8 Test: Cost Estimation
 
-- [ ] Create `src/cost.test.ts`
-- [ ] Test: `estimateNextCallCost()` before inference
-- [ ] Test: `getLastCallCost()` after inference
-- [ ] Test: Cache savings calculation
+- [x] Create `src/cost.test.ts`
+- [x] Test: `estimateNextCallCost()` before inference
+- [x] Test: `getLastCallCost()` after inference
+- [x] Test: Cache savings calculation
 
 ### 14.9 Test: Edge Cases
 
-- [ ] Create `src/edge-cases.test.ts`
-- [ ] Test: Ambiguous input → low confidence
-- [ ] Test: Scope mismatch throws
-- [ ] Test: API errors handled gracefully
+- [x] Create `src/edge-cases.test.ts`
+- [x] Test: Ambiguous input → low confidence
+- [x] Test: Scope mismatch throws
+- [x] Test: API errors handled gracefully
 
 ### 14.10 CI Integration
 
-- [ ] Create `.github/workflows/integration-tests.yml`:
+- [x] Create `.github/workflows/integration-tests.yml` (manual + pre-release only):
 
   ```yaml
   name: Integration Tests
   on:
-    push:
-      branches: [main]
-    pull_request:
-      branches: [main]
     workflow_dispatch:
+    push:
+      tags:
+        - 'v*'
 
   jobs:
     integration:
       runs-on: ubuntu-latest
-      if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
       steps:
         - uses: actions/checkout@v4
         - uses: pnpm/action-setup@v4
@@ -152,18 +150,18 @@ Test @mullion packages against real LLM providers (OpenAI, Anthropic) to verify 
             ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
   ```
 
-- [ ] Add secrets to GitHub repository
+- [x] Add secrets to GitHub repository
 
 ### 14.11 Documentation
 
-- [ ] Create `apps/integration-tests/README.md`
-- [ ] Document how to run locally
-- [ ] Document how to add new tests
+- [x] Create `tests/integration/README.md`
+- [x] Document how to run locally
+- [x] Document how to add new tests
 
 ## Success Criteria
 
 - [ ] All test files passing with real providers
-- [ ] CI runs on every push to main
+- [ ] CI runs only on manual trigger or pre-release/tagged publish
 - [ ] OpenAI + Anthropic tested
 - [ ] Caching, fork/merge verified with real APIs
 
@@ -212,7 +210,7 @@ Test @mullion packages against real LLM providers (OpenAI, Anthropic) to verify 
 1. Use cheapest models (mini, haiku)
 2. Small test inputs (100-200 tokens max)
 3. Cache aggressively where possible
-4. Skip expensive tests on PR (only run on main)
+4. Run only before release/tagged publish
 5. Manual trigger for full suite (`workflow_dispatch`)
 
 ## Notes

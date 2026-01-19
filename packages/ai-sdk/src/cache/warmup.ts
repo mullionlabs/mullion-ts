@@ -9,7 +9,7 @@
  * @module cache/warmup
  */
 
-import type {LanguageModel} from 'ai';
+import type {LanguageModel, ModelMessage} from 'ai';
 import {generateText} from 'ai';
 import type {Context, WarmupExecutor, WarmupResult} from '@mullion/core';
 import {registerWarmupExecutor} from '@mullion/core';
@@ -17,6 +17,16 @@ import {registerWarmupExecutor} from '@mullion/core';
 import type {CacheSegmentManager} from './segments.js';
 import type {Provider} from './capabilities.js';
 import {getCacheCapabilities} from './capabilities.js';
+
+type JsonValue =
+  | null
+  | string
+  | number
+  | boolean
+  | JsonValue[]
+  | {[key: string]: JsonValue};
+
+type ProviderPromptOptions = Record<string, Record<string, JsonValue>>;
 
 /**
  * Configuration for warmup operations.
@@ -104,31 +114,70 @@ export async function explicitWarmup(
   const warmupPrompt = config.warmupPrompt ?? DEFAULT_WARMUP_PROMPT;
   const maxTokens = config.maxTokens ?? DEFAULT_WARMUP_MAX_TOKENS;
 
-  // Prepare provider-specific cache options if we have segments
-  let providerOptions: Record<string, unknown> = {};
+  const buildCacheProviderOptions = (
+    ttl?: '5m' | '1h',
+  ): ProviderPromptOptions | undefined =>
+    config.provider === 'anthropic'
+      ? {
+          anthropic: {
+            cacheControl: {
+              type: 'ephemeral' as const,
+              ...(ttl ? {ttl} : {}),
+            },
+          },
+        }
+      : undefined;
+
+  let result;
   if (cacheManager && config.provider === 'anthropic') {
     const segments = cacheManager.getSegments();
     if (segments.length > 0) {
-      // Build Anthropic cache control for segments
-      providerOptions = {
-        providerOptions: {
-          anthropic: {
-            cacheControl: segments.map(() => ({
-              type: 'ephemeral' as const,
-            })),
-          },
-        },
-      };
+      const systemMessages: ModelMessage[] = [];
+      if (config.systemPrompt) {
+        systemMessages.push({
+          role: 'system',
+          content: config.systemPrompt,
+        });
+      }
+
+      const userParts: {
+        type: 'text';
+        text: string;
+        providerOptions?: ProviderPromptOptions;
+      }[] = [];
+
+      for (const segment of segments) {
+        const providerOptions = buildCacheProviderOptions(segment.ttl);
+        if (segment.scope === 'system-only') {
+          systemMessages.push({
+            role: 'system',
+            content: segment.content,
+            ...(providerOptions ? {providerOptions} : {}),
+          });
+        } else {
+          userParts.push({
+            type: 'text',
+            text: segment.content,
+            ...(providerOptions ? {providerOptions} : {}),
+          });
+        }
+      }
+
+      userParts.push({type: 'text', text: warmupPrompt});
+
+      result = await generateText({
+        model: config.languageModel,
+        messages: [...systemMessages, {role: 'user', content: userParts}],
+        maxOutputTokens: maxTokens,
+      });
     }
   }
 
-  // Make the warmup call
-  const result = await generateText({
+  result ??= await generateText({
     model: config.languageModel,
     prompt: warmupPrompt,
     system: config.systemPrompt,
     maxOutputTokens: maxTokens,
-    ...providerOptions,
   });
 
   // Extract usage metrics

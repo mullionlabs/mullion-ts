@@ -1,21 +1,27 @@
-import type {LanguageModel, FinishReason} from 'ai';
+import type {LanguageModel, FinishReason, ModelMessage, Prompt} from 'ai';
 import {generateObject} from 'ai';
 import type {z} from 'zod';
 import {createOwned} from '@mullion/core';
 import type {Context, InferOptions, Owned} from '@mullion/core';
 import type {CacheSegmentManager} from './cache/segments.js';
 import {createCacheSegmentManager} from './cache/segments.js';
-import {
-  createDefaultCacheConfig,
-  createAnthropicAdapter,
-  createOpenAIAdapter,
-} from './cache/types.js';
+import {createDefaultCacheConfig} from './cache/types.js';
 import type {Provider} from './cache/capabilities.js';
 import type {CacheStats} from './cache/metrics.js';
 import {CacheMetricsCollector} from './cache/metrics.js';
 import type {CostBreakdown, TokenUsage} from './cost/calculator.js';
 import {calculateCost, estimateCost} from './cost/calculator.js';
 import {estimateTokens} from './cost/tokens.js';
+
+type JsonValue =
+  | null
+  | string
+  | number
+  | boolean
+  | JsonValue[]
+  | {[key: string]: JsonValue};
+
+type ProviderPromptOptions = Record<string, Record<string, JsonValue>>;
 
 /**
  * Confidence scores mapped to LLM finish reasons.
@@ -350,68 +356,83 @@ export function createMullionClient(
           // Determine cache strategy (use client-level provider/model info)
           const cacheStrategy = options?.cache ?? 'use-segments';
           const useCache = cacheStrategy !== 'none' && cacheManager;
+          const segments = cacheManager.getSegments();
 
-          // Prepare provider options with cache if enabled
-          let providerOptions = {};
-          if (useCache) {
-            const segments = cacheManager.getSegments();
+          const applyCacheControl =
+            useCache &&
+            clientOptions.provider === 'anthropic' &&
+            !!clientOptions.model;
 
-            if (
-              segments.length > 0 &&
-              clientOptions.provider === 'anthropic' &&
-              clientOptions.model
-            ) {
-              // Convert segments to Anthropic provider options
-              const adapter = createAnthropicAdapter(clientOptions.model);
-              const cacheConfig = createDefaultCacheConfig({
-                enabled: true,
-                breakpoints: segments.length,
+          const buildCacheProviderOptions = (
+            ttl?: '5m' | '1h',
+          ): ProviderPromptOptions | undefined =>
+            applyCacheControl
+              ? {
+                  anthropic: {
+                    cacheControl: {
+                      type: 'ephemeral' as const,
+                      ...(ttl ? {ttl} : {}),
+                    },
+                  },
+                }
+              : undefined;
+
+          const buildPromptOptions = (): Prompt => {
+            if (segments.length === 0) {
+              return {
+                prompt: input,
+                system: options?.systemPrompt,
+              };
+            }
+
+            const systemMessages: ModelMessage[] = [];
+            if (options?.systemPrompt) {
+              systemMessages.push({
+                role: 'system',
+                content: options.systemPrompt,
               });
-              const anthropicOptions = adapter.toProviderOptions(cacheConfig);
+            }
 
-              if (anthropicOptions.cache) {
-                providerOptions = {
-                  // Map to Anthropic's cache control format
-                  experimental_providerMetadata: {
-                    anthropic: {
-                      cacheControl: segments.map((segment) => ({
-                        type: 'ephemeral' as const,
-                        ...(segment.ttl ? {ttl: segment.ttl} : {}),
-                      })),
-                    },
-                  },
-                };
-              }
-            } else if (
-              clientOptions.provider === 'openai' &&
-              clientOptions.model
-            ) {
-              // OpenAI uses automatic caching - no special provider options needed
-              const adapter = createOpenAIAdapter(clientOptions.model);
-              const cacheConfig = createDefaultCacheConfig({enabled: true});
-              const openaiOptions = adapter.toProviderOptions(cacheConfig);
+            const userParts: {
+              type: 'text';
+              text: string;
+              providerOptions?: ProviderPromptOptions;
+            }[] = [];
 
-              if (openaiOptions.autoCaching) {
-                providerOptions = {
-                  experimental_providerMetadata: {
-                    openai: {
-                      caching: true,
-                    },
-                  },
-                };
+            for (const segment of segments) {
+              const providerOptions = buildCacheProviderOptions(segment.ttl);
+              if (segment.scope === 'system-only') {
+                systemMessages.push({
+                  role: 'system',
+                  content: segment.content,
+                  ...(providerOptions ? {providerOptions} : {}),
+                });
+              } else {
+                userParts.push({
+                  type: 'text',
+                  text: segment.content,
+                  ...(providerOptions ? {providerOptions} : {}),
+                });
               }
             }
-          }
+
+            userParts.push({type: 'text', text: input});
+
+            const messages: ModelMessage[] = [
+              ...systemMessages,
+              {role: 'user', content: userParts},
+            ];
+
+            return {messages};
+          };
 
           // Use Vercel AI SDK to generate structured output
           const result = await generateObject({
             model,
             schema,
-            prompt: input,
+            ...buildPromptOptions(),
             temperature: options?.temperature,
             maxTokens: options?.maxTokens,
-            system: options?.systemPrompt,
-            ...providerOptions,
           });
 
           // Extract confidence from finish reason
@@ -421,9 +442,32 @@ export function createMullionClient(
 
           // Collect cache metrics from the result
           if (metricsCollector && result.usage) {
-            metricsCollector.addMetrics(
-              result.usage as Record<string, unknown>,
-            );
+            const usageWithRaw = result.usage as {
+              raw?: Record<string, unknown>;
+            };
+            const providerMetadata = result.providerMetadata as
+              | Record<string, unknown>
+              | undefined;
+            let providerUsage: Record<string, unknown> | undefined;
+            if (providerMetadata && typeof providerMetadata === 'object') {
+              for (const entry of Object.values(providerMetadata)) {
+                if (entry && typeof entry === 'object' && 'usage' in entry) {
+                  const usage = (entry as Record<string, unknown>).usage;
+                  if (usage && typeof usage === 'object') {
+                    providerUsage = usage as Record<string, unknown>;
+                    break;
+                  }
+                }
+              }
+            }
+            const metricsSource =
+              usageWithRaw.raw && typeof usageWithRaw.raw === 'object'
+                ? usageWithRaw.raw
+                : providerUsage && typeof providerUsage === 'object'
+                  ? providerUsage
+                  : (result.usage as Record<string, unknown>);
+
+            metricsCollector.addMetrics(metricsSource);
           }
 
           // Calculate cost for this call

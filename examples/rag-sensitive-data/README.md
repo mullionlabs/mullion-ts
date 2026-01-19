@@ -171,7 +171,8 @@ npm run pipeline
 ```bash
 npm run classify      # Document classification demo
 npm start             # Show help menu
-npm run lint          # Check for context leaks
+npm run lint          # Check for context leaks (summary)
+npm run lint:strict   # Show full ESLint output
 ```
 
 ### Option B: Import as a Package
@@ -389,7 +390,8 @@ Run the examples:
 ```bash
 npm run pipeline  # Complete RAG pipeline
 npm run classify  # Document classification demo
-npm run lint      # ESLint validation
+npm run lint      # ESLint validation (summary)
+npm run lint:strict # Full ESLint output
 ```
 
 > **Note:** TypeScript typecheck is intentionally skipped for this example due to AI SDK version mismatches in the monorepo. The code works correctly at runtime. In a real project with published packages, these type errors would not occur.

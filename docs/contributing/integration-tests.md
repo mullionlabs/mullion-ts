@@ -57,7 +57,7 @@ pnpm add @ai-sdk/google
 ```
 
 > Tip: for a clean setup, consider placing these under a dedicated workspace app
-> (e.g. `apps/integration-tests/`) so provider deps don’t leak into package deps.
+> (e.g. `tests/integration/`) so provider deps don’t leak into package deps.
 
 ---
 
