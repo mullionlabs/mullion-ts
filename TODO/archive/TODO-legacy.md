@@ -406,7 +406,7 @@ Both demo applications are fully deployed, documented, and production-ready with
 
 ### 14.1 Workspace Setup
 
-- [ ] Create `apps/integration-tests/` directory
+- [ ] Create `tests/integration/` directory
 - [ ] Create `package.json`:
   ```json
   {
@@ -538,7 +538,7 @@ Both demo applications are fully deployed, documented, and production-ready with
 
 ### 14.11 Documentation
 
-- [ ] Create `apps/integration-tests/README.md`
+- [ ] Create `tests/integration/README.md`
 - [ ] Document how to run locally
 - [ ] Document how to add new tests
 

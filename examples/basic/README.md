@@ -28,8 +28,10 @@ pnpm install
 cd examples/basic
 npm run demo
 
-# See ESLint catch context leaks
+# See ESLint catch context leaks (summary)
 npm run lint
+# Show full ESLint output
+npm run lint:strict
 ```
 
 ## Files
@@ -71,7 +73,8 @@ await client.scope('public', async (ctx) => {
 });
 ```
 
-Run `npm run lint` to see these violations caught automatically.
+Run `npm run lint:strict` to see these violations caught automatically (use
+`npm run lint` for a summary).
 
 ## Configuration
 

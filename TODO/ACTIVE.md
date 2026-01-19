@@ -10,15 +10,11 @@ Working on setting up integration tests for @mullion packages with real LLM prov
 
 ### Next Steps
 
-1. Create `apps/integration-tests/` workspace
-2. Setup Vitest configuration
-3. Configure environment for API keys
-4. Write tests for OpenAI provider
-5. Write tests for Anthropic provider
+1. Move to Task 15: create-mullion CLI
 
 ## Context
 
-**Location:** `apps/integration-tests/`
+**Location:** `tests/integration/`
 
 **Why in monorepo:**
 
@@ -87,7 +83,7 @@ Mark as complete when:
 - [x] All test files written and passing
 - [x] CI workflow configured
 - [x] Secrets added to GitHub
-- [x] Documentation written (README in apps/integration-tests/)
+- [x] Documentation written (README in tests/integration/)
 
 Then move to: **Task 15 - create-mullion CLI**
 

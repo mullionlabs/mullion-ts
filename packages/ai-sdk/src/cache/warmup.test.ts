@@ -172,11 +172,23 @@ describe('warmup', () => {
 
       expect(mockGenerateText).toHaveBeenCalledWith(
         expect.objectContaining({
-          providerOptions: {
-            anthropic: {
-              cacheControl: [{type: 'ephemeral'}],
-            },
-          },
+          messages: expect.arrayContaining([
+            expect.objectContaining({
+              role: 'user',
+              content: expect.arrayContaining([
+                expect.objectContaining({
+                  type: 'text',
+                  providerOptions: {
+                    anthropic: {
+                      cacheControl: expect.objectContaining({
+                        type: 'ephemeral',
+                      }),
+                    },
+                  },
+                }),
+              ]),
+            }),
+          ]),
         }),
       );
     });

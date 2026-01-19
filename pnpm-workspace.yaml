@@ -2,6 +2,7 @@ packages:
   - 'packages/*'
   - 'examples/*'
   - 'apps/*'
+  - 'tests/*'
 
 catalog:
   # TypeScript ecosystem
@@ -43,6 +44,7 @@ catalog:
   # Vercel AI SDK
   ai: ^6.0.12
   '@ai-sdk/openai': ^2.0.0
+  '@ai-sdk/anthropic': ^2.0.4
 
   # Nuxt & Vue ecosystem
   nuxt: ^4.2.2

@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@ai-sdk/anthropic':
+      specifier: ^2.0.4
+      version: 2.0.57
     '@ai-sdk/openai':
       specifier: ^2.0.0
       version: 2.0.89
@@ -425,6 +428,37 @@ importers:
         specifier: 'catalog:'
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@20.19.27)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.2)(terser@5.45.0)(tsx@4.21.0)(yaml@2.8.2)
 
+  tests/integration:
+    dependencies:
+      '@ai-sdk/anthropic':
+        specifier: 'catalog:'
+        version: 2.0.57(zod@4.3.5)
+      '@ai-sdk/openai':
+        specifier: 'catalog:'
+        version: 2.0.89(zod@4.3.5)
+      '@mullion/ai-sdk':
+        specifier: workspace:*
+        version: link:../../packages/ai-sdk
+      '@mullion/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      ai:
+        specifier: 'catalog:'
+        version: 6.0.12(zod@4.3.5)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.5
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.27
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@20.19.27)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.2)(terser@5.45.0)(tsx@4.21.0)(yaml@2.8.2)
+
 packages:
   '@adonisjs/hash@9.1.1':
     resolution:
@@ -440,6 +474,15 @@ packages:
         optional: true
       bcrypt:
         optional: true
+
+  '@ai-sdk/anthropic@2.0.57':
+    resolution:
+      {
+        integrity: sha512-DREpYqW2pylgaj69gZ+K8u92bo9DaMgFdictYnY+IwYeY3bawQ4zI7l/o1VkDsBDljAx8iYz5lPURwVZNu+Xpg==,
+      }
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
 
   '@ai-sdk/anthropic@3.0.12':
     resolution:
@@ -9624,6 +9667,12 @@ snapshots:
     dependencies:
       '@phc/format': 1.0.0
       '@poppinss/utils': 6.10.1
+
+  '@ai-sdk/anthropic@2.0.57(zod@4.3.5)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.1
+      '@ai-sdk/provider-utils': 3.0.20(zod@4.3.5)
+      zod: 4.3.5
 
   '@ai-sdk/anthropic@3.0.12(zod@4.3.5)':
     dependencies:

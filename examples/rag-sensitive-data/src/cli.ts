@@ -59,7 +59,10 @@ console.log('📂 Available Commands:\n');
 console.log('   npm start              - Show this help');
 console.log('   npm run pipeline       - Run complete RAG pipeline');
 console.log('   npm run classify       - Run document classifier demo');
-console.log('   npm run lint           - Check for context leaks with ESLint');
+console.log(
+  '   npm run lint           - Check for context leaks with ESLint (summary)',
+);
+console.log('   npm run lint:strict    - Show full ESLint output');
 console.log('   npm run typecheck      - Run TypeScript type checking\n');
 
 console.log('🚀 Quick Start:\n');

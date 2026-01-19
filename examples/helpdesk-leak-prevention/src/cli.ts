@@ -42,7 +42,10 @@ console.log('📂 Available Commands:\n');
 console.log('   npm start              - Show this help');
 console.log('   npm run safe           - Run SAFE flow (proper isolation)');
 console.log('   npm run unsafe         - Run UNSAFE flow (intentional leaks)');
-console.log('   npm run lint           - Check for leaks with ESLint');
+console.log(
+  '   npm run lint           - Check for leaks with ESLint (summary)',
+);
+console.log('   npm run lint:strict    - Show full ESLint output');
 console.log('   npm run typecheck      - Run TypeScript type checking\n');
 
 console.log('🚀 Quick Start:\n');
@@ -50,7 +53,7 @@ console.log('   1. Copy .env.example to .env');
 console.log('   2. Add your OPENAI_API_KEY');
 console.log('   3. Run: npm run safe (see correct implementation)');
 console.log(
-  '   4. Run: npm run lint (see ESLint catch unsafe-flow.ts violations)\n',
+  '   4. Run: npm run lint:strict (see ESLint catch unsafe-flow.ts violations)\n',
 );
 
 console.log('💡 Key Takeaways:\n');
@@ -70,4 +73,6 @@ console.log('---\n');
 console.log(
   '💡 TIP: Start with "npm run safe" to see the correct implementation,',
 );
-console.log('    then run "npm run lint" to see how ESLint prevents leaks!\n');
+console.log(
+  '    then run "npm run lint:strict" to see how ESLint prevents leaks!\n',
+);

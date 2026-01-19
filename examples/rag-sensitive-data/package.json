@@ -11,7 +11,7 @@
     "start": "tsx --env-file=.env src/cli.ts",
     "pipeline": "tsx --env-file=.env src/pipeline.ts",
     "classify": "tsx --env-file=.env src/classifier.ts",
-    "lint": "eslint src/**/*.ts || echo 'ESLint found issues (examples may have intentional warnings for demonstration)'",
+    "lint": "eslint src/**/*.ts --max-warnings=0 > /dev/null 2>&1 || echo 'ESLint found issues (examples may have intentional warnings for demonstration)'",
     "lint:strict": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "typecheck": "echo 'Skipping typecheck for example (known AI SDK version mismatch, works at runtime)'"
