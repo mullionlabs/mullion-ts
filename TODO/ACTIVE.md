@@ -1,92 +1,38 @@
-# Active Task: Integration Tests (Task 14)
+# Active Task: create-mullion CLI (Task 15)
 
-**Status:** 🔥 In Progress
-**Started:** 2026-01-17
-**Full Plan:** [tasks/14-integration-tests.md](./tasks/14-integration-tests.md)
+**Status:** 📋 Planned
+**Started:** 2026-01-19
+**Full Plan:** [tasks/15-create-mullion.md](./tasks/15-create-mullion.md)
 
 ## Current Focus
 
-Working on setting up integration tests for @mullion packages with real LLM providers.
+Prepare package setup for `create-mullion` and align template sources.
 
 ### Next Steps
 
-1. Move to Task 15: create-mullion CLI
+1. Start Task 15.1 package setup in `packages/create-mullion/`
+2. Define Nuxt base template layout and scenario copy points
+3. Confirm CLI flags/defaults before implementation
 
 ## Context
 
-**Location:** `tests/integration/`
-
-**Why in monorepo:**
-
-- Packages not published to npm yet → need workspace resolution
-- Faster iteration during development
-- Single CI pipeline
+Task 14 is complete; integration tests live in `tests/integration/`.
 
 **Dependencies:**
 
-- ✅ @mullion/core - Complete
-- ✅ @mullion/ai-sdk - Complete
-- ✅ Real provider setup (OpenAI, Anthropic)
-
-**Related Tasks:**
-
-- Task 12: Templates provide test scenarios
-- Task 11: Tracing integration ready to test
-- Task 10: Cost tracking ready to test
-
-## Key Decisions
-
-1. **Vitest for testing** - Consistent with other packages
-2. **Real API calls** - Not mocks, test actual provider integration
-3. **Workspace dependencies** - Use `workspace:*` not npm versions
-4. **CI secrets** - Only run on main branch (protect API keys)
-5. **30s timeout** - Real API calls can be slow
-
-## What Gets Tested
-
-### Core Functionality
-
-- [x] Basic inference with OpenAI
-- [x] Basic inference with Anthropic
-- [x] Owned<T, S> return types
-- [x] Confidence scoring
-- [x] Scope tagging
-
-### Advanced Features
-
-- [x] Scope bridging
-- [x] Anthropic caching (cache metrics)
-- [x] Fork/merge strategies
-- [x] Cost estimation vs actual
-- [x] Complex schemas
-
-### Edge Cases
-
-- [x] Low confidence on ambiguous input
-- [x] Scope mismatch errors
-- [x] API error handling
-
-## Current Blockers
-
-None - ready to start implementation.
+- ✅ Task 12 templates
+- ✅ Task 13 demo apps
+- ✅ Task 14 integration tests
 
 ## Notes
 
-- API costs: Keep tests minimal, use cheap models
-- CI: Add `if: github.event_name != 'pull_request'` to protect secrets
-- Future: After npm publish, consider separate canary repo for "real install" tests
+- CLI should generate apps that run without API keys (mock mode).
+- Keep scenarios aligned with `@mullion/template-*` sources.
 
 ## When This Task is Complete
 
-Mark as complete when:
-
-- [x] All test files written and passing
-- [x] CI workflow configured
-- [x] Secrets added to GitHub
-- [x] Documentation written (README in tests/integration/)
-
-Then move to: **Task 15 - create-mullion CLI**
+Mark complete when the CLI generates working Nuxt apps and the package is wired into CI.
 
 ---
 
-**Last Updated:** 2026-01-17
+**Last Updated:** 2026-01-19

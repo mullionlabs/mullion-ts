@@ -65,6 +65,10 @@ export const ANTHROPIC_CACHE_DOC_SECTIONS = readEnvInt(
   'ANTHROPIC_CACHE_DOC_SECTIONS',
   90,
 );
+export const ANTHROPIC_CACHE_STRICT = readEnvBoolean(
+  'ANTHROPIC_CACHE_STRICT',
+  false,
+);
 
 export function buildLongDocument(
   purpose: string,

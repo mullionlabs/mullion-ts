@@ -6,6 +6,7 @@ Quick reference of finished work. See individual task files for full details.
 
 | Task   | Completed  | Summary                                   | Details                                                                                                                                                             |
 | ------ | ---------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **14** | 2026-01-19 | **Integration Tests (Real Providers)**    | Real provider integration tests with OpenAI/Anthropic, caching/fork/merge/cost coverage, CI workflow, and docs.                                                     | [→](./tasks/14-integration-tests.md)     |
 | **13** | 2026-01-16 | **Demo Applications Deployed**            | Live Nuxt apps with Google OAuth, rate limiting (Vercel KV), CI/CD. Both apps use template packages.                                                                | [→](./tasks/13-demo-apps.md)             |
 | **12** | 2026-01-15 | **Example Templates Refactored**          | RAG & Helpdesk scenarios as reusable packages: `@mullion/template-rag-sensitive-data`, `@mullion/template-helpdesk`. Ready for import in demo apps & CLI.           | [→](./tasks/12-examples.md)              |
 | **11** | 2026-01-14 | **OpenTelemetry Tracing**                 | Zero-dependency OTLP exporter, presets for Jaeger/Honeycomb/Datadog, trace types, collector, setup helpers. Manual instrumentation (auto-instrumentation deferred). | [→](./tasks/01-11-foundation.md#task-11) |
@@ -73,10 +74,9 @@ Quick reference of finished work. See individual task files for full details.
 
 ## Next Up
 
-🔥 **Task 14** - Integration tests with real providers
-📋 **Task 15** - `npm create mullion` CLI (Nuxt MVP)
+🔥 **Task 15** - `npm create mullion` CLI (Nuxt MVP)
 📋 **Task 16** - Next.js framework support
 
 ---
 
-**Last Updated:** 2026-01-17
+**Last Updated:** 2026-01-19
