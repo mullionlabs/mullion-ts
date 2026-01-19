@@ -14,6 +14,10 @@ jobs:
   deploy-helpdesk:
     name: Deploy Helpdesk Demo
     runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_HELPDESK }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,17 +41,16 @@ jobs:
         run: pnpm --filter demo-helpdesk build
 
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_HELPDESK }}
-          vercel-args: '--prod'
-          working-directory: ./apps/demo-helpdesk
+        run: pnpm dlx vercel@latest --prod --yes --token="$VERCEL_TOKEN"
+        working-directory: ./apps/demo-helpdesk
 
   deploy-rag:
     name: Deploy RAG Demo
     runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_RAG }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -71,10 +74,5 @@ jobs:
         run: pnpm --filter demo-rag build
 
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_RAG }}
-          vercel-args: '--prod'
-          working-directory: ./apps/demo-rag
+        run: pnpm dlx vercel@latest --prod --yes --token="$VERCEL_TOKEN"
+        working-directory: ./apps/demo-rag
