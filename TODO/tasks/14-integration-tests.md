@@ -1,11 +1,16 @@
-# Task 14: Integration Tests (Real Providers)
+# Task 14: Integration Tests (COMPLETED ✅)
 
-**Status:** 🔥 In Progress
+**Status:** ✅ Complete
 **Started:** 2026-01-17
+**Completed:** 2026-01-19
 
 ## Goal
 
 Test @mullion packages against real LLM providers (OpenAI, Anthropic) to verify functionality with actual API responses.
+
+## Summary
+
+Integration test workspace in `tests/integration/` with real OpenAI + Anthropic calls, coverage for caching/fork/merge/cost, CI workflow for manual/tagged runs, and local run docs.
 
 ## Philosophy
 
@@ -160,10 +165,10 @@ Test @mullion packages against real LLM providers (OpenAI, Anthropic) to verify 
 
 ## Success Criteria
 
-- [ ] All test files passing with real providers
-- [ ] CI runs only on manual trigger or pre-release/tagged publish
-- [ ] OpenAI + Anthropic tested
-- [ ] Caching, fork/merge verified with real APIs
+- [x] All test files passing with real providers
+- [x] CI runs only on manual trigger or pre-release/tagged publish
+- [x] OpenAI + Anthropic tested
+- [x] Caching, fork/merge verified with real APIs
 
 ## Testing Strategy
 

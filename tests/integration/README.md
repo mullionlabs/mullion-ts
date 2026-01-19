@@ -38,6 +38,7 @@ Optional:
 - `ANTHROPIC_SONNET_MODELS` (comma-separated list) for Sonnet tests.
 - `ANTHROPIC_CACHE_MIN_TOKENS` to override cache token threshold.
 - `ANTHROPIC_CACHE_DOC_SECTIONS` to override cached document size.
+- `ANTHROPIC_CACHE_STRICT=true` to require cache metrics (fail if missing).
 
 ## Run Tests
 

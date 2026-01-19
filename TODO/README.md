@@ -1,8 +1,8 @@
 # Mullion Development TODO
 
-**Current Sprint:** Task 14 - Integration Tests (Real Providers)
+**Current Sprint:** Task 15 - create-mullion CLI
 **Active Task:** [TODO/ACTIVE.md](./ACTIVE.md)
-**Status:** 🔥 In Progress
+**Status:** 📋 Planned
 
 ## Quick Navigation
 
@@ -14,7 +14,7 @@
 
 ```
 ✅ Foundation (Tasks 0-13) ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
-🔥 Testing (Task 14)        ━━━━━━━━░░░░░░░░░░░░░░  30%
+✅ Testing (Task 14)        ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
 📋 CLI Tools (Tasks 15-16)  ░░░░░░░░░░░░░░░░░░░░░░   0%
 ```
 
@@ -25,7 +25,7 @@
 | 0-11 | ✅     | [01-11-foundation.md](./tasks/01-11-foundation.md)         | Core types, scope/bridge, ESLint, AI SDK, cache, fork/merge, cost, tracing |
 | 12   | ✅     | [12-examples.md](./tasks/12-examples.md)                   | RAG & Helpdesk template packages                                           |
 | 13   | ✅     | [13-demo-apps.md](./tasks/13-demo-apps.md)                 | Deployed demo apps with OAuth & rate limiting                              |
-| 14   | 🔥     | [14-integration-tests.md](./tasks/14-integration-tests.md) | Real provider testing - **IN PROGRESS**                                    |
+| 14   | ✅     | [14-integration-tests.md](./tasks/14-integration-tests.md) | Real provider integration tests with OpenAI/Anthropic                      |
 | 15   | 📋     | [15-create-mullion.md](./tasks/15-create-mullion.md)       | `npm create mullion` CLI (Nuxt MVP)                                        |
 | 16   | 📋     | [16-nextjs-support.md](./tasks/16-nextjs-support.md)       | Next.js framework support                                                  |
 
@@ -33,7 +33,7 @@
 
 - **v0.1.0** ✅ - Core functionality, ESLint rules, basic examples
 - **v0.2.0** ✅ - Caching, fork/merge, cost tracking, tracing, demo apps
-- **v0.3.0** 🔥 - Integration tests, create-mullion CLI (current)
+- **v0.3.0** 🔥 - Integration tests complete, create-mullion CLI (current)
 - **v1.0.0** 📋 - Production-ready, full documentation, stable API
 
 ## How This Works
@@ -73,5 +73,5 @@ Old TODO files are in `TODO/archive/` for reference:
 
 ---
 
-**Last Updated:** 2026-01-17
+**Last Updated:** 2026-01-19
 **Maintained By:** Claude Code + Human Review
