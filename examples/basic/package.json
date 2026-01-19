@@ -1,6 +1,6 @@
 {
   "name": "mullion-basic-example",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Basic Mullion example demonstrating core concepts",
   "private": true,
   "type": "module",
