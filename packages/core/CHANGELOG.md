@@ -1,5 +1,11 @@
 # @mullion/core
 
+## 0.2.3
+
+### Patch Changes
+
+- 022fd53: Small types fix
+
 ## 0.2.2
 
 ### Patch Changes

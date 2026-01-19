@@ -1,6 +1,6 @@
 {
   "name": "@mullion/ai-sdk",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Mullion integration with Vercel AI SDK",
   "homepage": "https://github.com/mullionlabs/mullion-ts/tree/main/packages/ai-sdk#readme",
   "bugs": {
