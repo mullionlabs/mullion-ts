@@ -75,7 +75,7 @@ Quick reference of finished work. See individual task files for full details.
 ## Next Up
 
 🔥 **Task 15** - `npm create mullion` CLI (Nuxt MVP)
-📋 **Task 16** - Next.js framework support
+📋 **Task 16** - Next.js framework support.
 
 ---
 

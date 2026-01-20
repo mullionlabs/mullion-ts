@@ -37,13 +37,9 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Link Vercel project
+      - name: Pull Vercel project settings
         working-directory: apps/demo-helpdesk
-        run: |
-          mkdir -p .vercel
-          cat > .vercel/project.json <<EOF
-          {"orgId":"$VERCEL_ORG_ID","projectId":"$VERCEL_PROJECT_ID"}
-          EOF
+        run: pnpm dlx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build Vercel output
         working-directory: apps/demo-helpdesk
@@ -79,13 +75,9 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Link Vercel project
+      - name: Pull Vercel project settings
         working-directory: apps/demo-rag
-        run: |
-          mkdir -p .vercel
-          cat > .vercel/project.json <<EOF
-          {"orgId":"$VERCEL_ORG_ID","projectId":"$VERCEL_PROJECT_ID"}
-          EOF
+        run: pnpm dlx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build Vercel output
         working-directory: apps/demo-rag
