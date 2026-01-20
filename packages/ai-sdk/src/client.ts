@@ -22,6 +22,7 @@ type JsonValue =
   | {[key: string]: JsonValue};
 
 type ProviderPromptOptions = Record<string, Record<string, JsonValue>>;
+type ProviderCallOptions = Record<string, Record<string, JsonValue>>;
 
 /**
  * Confidence scores mapped to LLM finish reasons.
@@ -196,6 +197,9 @@ export interface MullionClientOptions {
 
   /** Enable cache segments API (default: false) */
   readonly enableCache?: boolean;
+
+  /** Default provider-specific options for all infer() calls */
+  readonly providerOptions?: ProviderCallOptions;
 }
 
 /**
@@ -209,7 +213,10 @@ export interface CacheOptions {
 /**
  * Extended InferOptions that includes cache configuration.
  */
-export interface MullionInferOptions extends InferOptions, CacheOptions {}
+export interface MullionInferOptions extends InferOptions, CacheOptions {
+  /** Provider-specific options for this inference call */
+  readonly providerOptions?: ProviderCallOptions;
+}
 
 /**
  * Extended Context interface that includes cache segments API and cost tracking.
@@ -433,6 +440,8 @@ export function createMullionClient(
             ...buildPromptOptions(),
             temperature: options?.temperature,
             maxTokens: options?.maxTokens,
+            providerOptions:
+              options?.providerOptions ?? clientOptions.providerOptions,
           });
 
           // Extract confidence from finish reason
