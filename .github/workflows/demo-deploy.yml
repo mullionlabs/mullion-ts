@@ -37,11 +37,13 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Build demo-helpdesk
-        run: pnpm --filter demo-helpdesk build
+      - name: Build Vercel output
+        working-directory: apps/demo-helpdesk
+        run: pnpm dlx vercel@latest build --prod --token="$VERCEL_TOKEN"
 
-      - name: Deploy to Vercel
-        run: pnpm dlx vercel@latest --prod --yes --token="$VERCEL_TOKEN"
+      - name: Deploy prebuilt output
+        working-directory: apps/demo-helpdesk
+        run: pnpm dlx vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
 
   deploy-rag:
     name: Deploy RAG Demo
@@ -69,8 +71,10 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Build demo-rag
-        run: pnpm --filter demo-rag build
+      - name: Build Vercel output
+        working-directory: apps/demo-rag
+        run: pnpm dlx vercel@latest build --prod --token="$VERCEL_TOKEN"
 
-      - name: Deploy to Vercel
-        run: pnpm dlx vercel@latest --prod --yes --token="$VERCEL_TOKEN"
+      - name: Deploy prebuilt output
+        working-directory: apps/demo-rag
+        run: pnpm dlx vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
