@@ -51,7 +51,7 @@ jobs:
         run: pnpm build
 
       - name: Deploy prebuilt output
-        run: pnpm dlx vercel@latest --cwd "$GITHUB_WORKSPACE" deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+        run: pnpm dlx vercel@latest deploy --prebuilt "$GITHUB_WORKSPACE" --prod --token="$VERCEL_TOKEN"
 
   deploy-rag:
     name: Deploy RAG Demo
@@ -93,4 +93,4 @@ jobs:
         run: pnpm build
 
       - name: Deploy prebuilt output
-        run: pnpm dlx vercel@latest --cwd "$GITHUB_WORKSPACE" deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+        run: pnpm dlx vercel@latest deploy --prebuilt "$GITHUB_WORKSPACE" --prod --token="$VERCEL_TOKEN"
