@@ -37,6 +37,10 @@ jobs:
       - name: Build packages
         run: pnpm build
 
+      - name: Pull Vercel project settings
+        working-directory: apps/demo-helpdesk
+        run: pnpm dlx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
+
       - name: Build Vercel output
         working-directory: apps/demo-helpdesk
         run: pnpm dlx vercel@latest build --prod --token="$VERCEL_TOKEN"
@@ -70,6 +74,10 @@ jobs:
 
       - name: Build packages
         run: pnpm build
+
+      - name: Pull Vercel project settings
+        working-directory: apps/demo-rag
+        run: pnpm dlx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Build Vercel output
         working-directory: apps/demo-rag
