@@ -52,6 +52,4 @@ jobs:
           title: 'chore(release): Version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Temporary: use NPM_TOKEN for the first create-mullion publish.
-          # Remove the secret after the first successful publish to use OIDC only.
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # OIDC publishing (no NPM token required)
