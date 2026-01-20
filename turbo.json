@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**", "package.json", "tsconfig.json", "tsup.config.ts"],
-      "outputs": ["dist/**", ".output/**"],
+      "outputs": ["dist/**", ".output/**", ".vercel/output/**"],
       "cache": true
     },
     "typecheck": {
