@@ -57,7 +57,7 @@ async function promptValue(
     return defaultValue;
   }
 
-  return (result).trim() || defaultValue;
+  return result.trim() || defaultValue;
 }
 
 async function promptSelect<T extends string>(
@@ -71,7 +71,7 @@ async function promptSelect<T extends string>(
       label: opt,
       value: opt,
     })),
-    initial: initial ? options.indexOf(initial) : 0,
+    initial: initial ?? options[0],
   });
 
   if (typeof result === 'symbol') {
