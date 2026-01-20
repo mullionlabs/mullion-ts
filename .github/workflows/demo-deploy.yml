@@ -49,6 +49,13 @@ jobs:
           NITRO_PRESET: vercel
         run: pnpm build
 
+      - name: Verify build output
+        working-directory: apps/demo-helpdesk
+        run: |
+          echo "=== Checking .vercel/output structure ==="
+          ls -la .vercel/
+          ls -la .vercel/output/ || echo "No .vercel/output directory!"
+
       - name: Deploy prebuilt output
         working-directory: apps/demo-helpdesk
         run: pnpm dlx vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
@@ -90,6 +97,13 @@ jobs:
         env:
           NITRO_PRESET: vercel
         run: pnpm build
+
+      - name: Verify build output
+        working-directory: apps/demo-rag
+        run: |
+          echo "=== Checking .vercel/output structure ==="
+          ls -la .vercel/
+          ls -la .vercel/output/ || echo "No .vercel/output directory!"
 
       - name: Deploy prebuilt output
         working-directory: apps/demo-rag
