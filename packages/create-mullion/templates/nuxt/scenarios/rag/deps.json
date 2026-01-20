@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@ai-sdk/openai": "{{CATALOG:@ai-sdk/openai}}",
+    "@ai-sdk/anthropic": "{{CATALOG:@ai-sdk/anthropic}}"
+  },
+  "devDependencies": {}
+}

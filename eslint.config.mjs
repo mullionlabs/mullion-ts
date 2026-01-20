@@ -9,6 +9,7 @@ export default tseslint.config(
       '**/examples/**',
       '**/dist/**',
       '**/node_modules/**',
+      '**/packages/create-mullion/templates/**',
       '**/.turbo/**',
       '**/coverage/**',
       '**/.changeset/**',

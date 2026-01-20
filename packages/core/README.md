@@ -33,6 +33,18 @@ Try Mullion in action (requires Google sign-in, 20 requests/day):
 npm install @mullion/core
 ```
 
+## Project Generator
+
+Scaffold a full Nuxt app with Mullion pre-wired:
+
+```bash
+npm create mullion@latest
+```
+
+Note: create-mullion currently scaffolds Nuxt templates only. Next.js support is planned.
+
+See: https://github.com/mullionlabs/mullion-ts/tree/main/packages/create-mullion
+
 ## Overview
 
 The core package provides fundamental types and utilities for Mullion's type-safe context management system. Use this package if you want to build custom integrations or don't need the Vercel AI SDK wrapper.

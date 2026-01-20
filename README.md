@@ -158,7 +158,23 @@ flowchart LR
 
 ## Quick start
 
-### Install
+### Option 1: Generate a project (fastest)
+
+```bash
+npm create mullion@latest
+```
+
+Get a working Nuxt app with Mullion built-in:
+
+- 🚀 **Works without API keys** (mock mode)
+- 🎯 **Production scenarios** (RAG, helpdesk)
+- 🎨 **UI included** (minimal CSS or Nuxt UI)
+- 📦 **Full TypeScript** setup
+  Note: create-mullion currently scaffolds Nuxt templates only. Next.js support is planned.
+
+[→ See create-mullion docs](./packages/create-mullion/README.md)
+
+### Option 2: Add to existing project
 
 ```bash
 npm install @mullion/core @mullion/ai-sdk
@@ -246,7 +262,15 @@ See: [`docs/guides/use-cases.md`](./docs/guides/use-cases.md)
 
 > 📚 **[Full examples guide →](./EXAMPLES.md)**
 
-### 🎯 Start Here
+### 🚀 Fastest Start
+
+**[Generate a project](./packages/create-mullion/)** — Production-ready app in 60 seconds
+
+```bash
+npm create mullion@latest
+```
+
+### 🎯 Learning Examples
 
 **[Basic Example](./examples/basic/)** — Smallest runnable example
 Learn: scopes, `Owned<T>`, boundary crossing

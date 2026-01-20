@@ -1,0 +1,65 @@
+{
+  "name": "create-mullion",
+  "version": "0.0.1",
+  "description": "Create Mullion-powered LLM apps",
+  "homepage": "https://github.com/mullionlabs/mullion-ts/tree/main/packages/create-mullion#readme",
+  "bugs": {
+    "url": "https://github.com/mullionlabs/mullion-ts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mullionlabs/mullion-ts.git",
+    "directory": "packages/create-mullion"
+  },
+  "keywords": [
+    "mullion",
+    "create-mullion",
+    "generator",
+    "template",
+    "cli",
+    "llm",
+    "ai",
+    "nuxt",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Oleksandr Huzei",
+    "email": "alex.guzey@gmail.com"
+  },
+  "type": "module",
+  "bin": {
+    "create-mullion": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "scripts": {
+    "prebuild": "node scripts/sync-template-versions.mjs",
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts --format esm --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "sync:templates": "node scripts/sync-template-versions.mjs"
+  },
+  "dependencies": {
+    "citty": "^0.1.6",
+    "consola": "^3.2.3",
+    "pathe": "^1.1.2",
+    "nypm": "^0.3.11"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
