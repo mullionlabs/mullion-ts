@@ -1,6 +1,6 @@
 {
   "name": "create-mullion",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Create Mullion-powered LLM apps",
   "homepage": "https://github.com/mullionlabs/mullion-ts/tree/main/packages/create-mullion#readme",
   "bugs": {
