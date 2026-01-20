@@ -41,9 +41,11 @@ jobs:
         working-directory: apps/demo-helpdesk
         run: pnpm dlx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      - name: Build Vercel output
+      - name: Build Nuxt output
         working-directory: apps/demo-helpdesk
-        run: pnpm dlx vercel@latest build --prod --token="$VERCEL_TOKEN"
+        env:
+          NITRO_PRESET: vercel
+        run: pnpm build
 
       - name: Deploy prebuilt output
         working-directory: apps/demo-helpdesk
@@ -79,9 +81,11 @@ jobs:
         working-directory: apps/demo-rag
         run: pnpm dlx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      - name: Build Vercel output
+      - name: Build Nuxt output
         working-directory: apps/demo-rag
-        run: pnpm dlx vercel@latest build --prod --token="$VERCEL_TOKEN"
+        env:
+          NITRO_PRESET: vercel
+        run: pnpm build
 
       - name: Deploy prebuilt output
         working-directory: apps/demo-rag
