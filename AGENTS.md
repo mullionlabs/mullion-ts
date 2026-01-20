@@ -20,6 +20,8 @@ Apps and examples:
 - `docs/` for guides, reference, design docs, and contributing notes
 
 Shared configs sit at the repo root (`tsconfig.base.json`, `turbo.json`, `eslint.config.mjs`, `commitlint.config.mjs`, `pnpm-workspace.yaml`).
+Root `README.md` is intentionally marketing + orientation.  
+This `docs/` folder is the technical source of truth.
 
 ## Task Management (TODO)
 

@@ -400,6 +400,8 @@ turbo run build --force
 ## Documentation Structure
 
 The project has comprehensive documentation in the `docs/` folder:
+Root `README.md` is intentionally marketing + orientation.  
+This `docs/` folder is the technical source of truth.
 
 - **`docs/README.md`** - Documentation index and navigation
 - **`docs/guides/`** - How-to guides and tutorials

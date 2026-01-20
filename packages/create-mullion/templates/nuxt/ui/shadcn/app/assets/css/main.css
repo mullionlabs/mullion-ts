@@ -1,0 +1,10 @@
+/**
+ * Nuxt UI Styles
+ *
+ * Import Tailwind CSS and Nuxt UI styles.
+ * Nuxt UI v4 uses Tailwind CSS v4 syntax.
+ */
+
+@import "tailwindcss";
+@import "@nuxt/ui";
+@import "./shared.css";

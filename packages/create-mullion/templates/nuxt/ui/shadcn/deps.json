@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@nuxt/ui": "{{CATALOG:@nuxt/ui}}"
+  },
+  "devDependencies": {
+    "tailwindcss": "{{CATALOG:tailwindcss}}"
+  }
+}

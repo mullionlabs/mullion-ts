@@ -48,3 +48,8 @@ yarn.lock
 .codex/
 .claude/
 .docs-local/
+.playwright-mcp
+
+# Testing (temporary generated projects)
+.tmp-testing/
+.testing/

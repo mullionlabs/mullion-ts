@@ -1,0 +1,26 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@mullion/core": "^0.2.3",
+    "@mullion/ai-sdk": "^0.3.0",
+    "ai": "{{CATALOG:ai}}",
+    "nuxt": "{{CATALOG:nuxt}}",
+    "vue": "{{CATALOG:vue}}",
+    "zod": "{{CATALOG:zod}}"
+  },
+  "devDependencies": {
+    "@types/node": "{{CATALOG:@types/node}}",
+    "typescript": "{{CATALOG:typescript}}"
+  }
+}

@@ -43,8 +43,8 @@ catalog:
 
   # Vercel AI SDK
   ai: ^6.0.12
-  '@ai-sdk/openai': ^2.0.0
-  '@ai-sdk/anthropic': ^2.0.4
+  '@ai-sdk/openai': ^3.0.0
+  '@ai-sdk/anthropic': ^3.0.0
 
   # Nuxt & Vue ecosystem
   nuxt: ^4.2.2

@@ -32,7 +32,12 @@
     "changeset": "changeset",
     "version": "changeset version",
     "release": "turbo run build && changeset publish",
-    "prepare": "husky"
+    "prepare": "husky",
+    "create-mullion:build": "pnpm --filter create-mullion build",
+    "test:create": "mkdir -p .tmp-testing && cd .tmp-testing && node ../packages/create-mullion/dist/index.js",
+    "test:create:quick": "mkdir -p .tmp-testing && cd .tmp-testing && node ../packages/create-mullion/dist/index.js test-quick --scenario rag --ui minimal --yes",
+    "test:create:clean": "rm -rf .tmp-testing",
+    "test:create:all": "pnpm test:create:clean && mkdir -p .tmp-testing && cd .tmp-testing && node ../packages/create-mullion/dist/index.js test-rag-minimal --scenario rag --ui minimal --no-install --yes && node ../packages/create-mullion/dist/index.js test-rag-shadcn --scenario rag --ui shadcn --no-install --yes && node ../packages/create-mullion/dist/index.js test-helpdesk-minimal --scenario helpdesk --ui minimal --no-install --yes && node ../packages/create-mullion/dist/index.js test-helpdesk-shadcn --scenario helpdesk --ui shadcn --no-install --yes && echo '\n✅ All 4 combinations generated in .tmp-testing/'"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",

@@ -1,8 +1,5 @@
 # Mullion Documentation
 
-Root `README.md` is intentionally marketing + orientation.  
-This `docs/` folder is the technical source of truth.
-
 ## Guides (start here)
 
 - **[Getting started](./guides/getting-started.md)** - Quick start guide for Mullion
