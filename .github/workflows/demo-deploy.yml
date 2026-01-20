@@ -38,11 +38,10 @@ jobs:
         run: pnpm build
 
       - name: Link Vercel project
+        working-directory: apps/demo-helpdesk
         run: |
           mkdir -p .vercel
-          cat > .vercel/project.json <<EOF
-          {"orgId":"$VERCEL_ORG_ID","projectId":"$VERCEL_PROJECT_ID"}
-          EOF
+          echo '{"orgId":"'"$VERCEL_ORG_ID"'","projectId":"'"$VERCEL_PROJECT_ID"'"}' > .vercel/project.json
 
       - name: Build Nuxt output
         working-directory: apps/demo-helpdesk
@@ -51,7 +50,8 @@ jobs:
         run: pnpm build
 
       - name: Deploy prebuilt output
-        run: pnpm dlx vercel@latest deploy --prebuilt "$GITHUB_WORKSPACE" --prod --token="$VERCEL_TOKEN"
+        working-directory: apps/demo-helpdesk
+        run: pnpm dlx vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
 
   deploy-rag:
     name: Deploy RAG Demo
@@ -80,11 +80,10 @@ jobs:
         run: pnpm build
 
       - name: Link Vercel project
+        working-directory: apps/demo-rag
         run: |
           mkdir -p .vercel
-          cat > .vercel/project.json <<EOF
-          {"orgId":"$VERCEL_ORG_ID","projectId":"$VERCEL_PROJECT_ID"}
-          EOF
+          echo '{"orgId":"'"$VERCEL_ORG_ID"'","projectId":"'"$VERCEL_PROJECT_ID"'"}' > .vercel/project.json
 
       - name: Build Nuxt output
         working-directory: apps/demo-rag
@@ -93,4 +92,5 @@ jobs:
         run: pnpm build
 
       - name: Deploy prebuilt output
-        run: pnpm dlx vercel@latest deploy --prebuilt "$GITHUB_WORKSPACE" --prod --token="$VERCEL_TOKEN"
+        working-directory: apps/demo-rag
+        run: pnpm dlx vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
