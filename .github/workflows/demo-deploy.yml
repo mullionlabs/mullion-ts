@@ -41,6 +41,7 @@ jobs:
         run: pnpm --filter demo-helpdesk build
 
       - name: Deploy to Vercel
+        working-directory: apps/demo-helpdesk
         run: pnpm dlx vercel@latest --prod --yes --token="$VERCEL_TOKEN"
 
   deploy-rag:
@@ -73,4 +74,5 @@ jobs:
         run: pnpm --filter demo-rag build
 
       - name: Deploy to Vercel
+        working-directory: apps/demo-rag
         run: pnpm dlx vercel@latest --prod --yes --token="$VERCEL_TOKEN"
