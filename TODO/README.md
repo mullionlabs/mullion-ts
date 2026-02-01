@@ -1,6 +1,6 @@
 # Mullion Development TODO
 
-**Current Sprint:** Task 16 - Scoped sinks (logs / traces / caches)
+**Current Sprint:** Task 17 - create-mullion + Next.js
 **Active Task:** [TODO/ACTIVE.md](./ACTIVE.md)
 **Status:** 📋 Planned
 
@@ -15,6 +15,7 @@
 ```
 ✅ Foundation (Tasks 0-13) ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
 ✅ Testing (Task 14)        ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
+✅ Sinks (Task 16)          ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
 📋 CLI Tools (Tasks 15 & 17) ━━━━━━━━━━━━━━━░░░░░░░░ 50%
 ```
 
@@ -27,7 +28,7 @@
 | 13   | ✅     | [13-demo-apps.md](./tasks/13-demo-apps.md)                 | Deployed demo apps with OAuth & rate limiting                              |
 | 14   | ✅     | [14-integration-tests.md](./tasks/14-integration-tests.md) | Real provider integration tests with OpenAI/Anthropic                      |
 | 15   | ✅     | [15-create-mullion.md](./tasks/15-create-mullion.md)       | `npm create mullion` CLI (Nuxt MVP)                                        |
-| 16   | 📋     | [16-scoped-sinks.md](./tasks/16-scoped-sinks.md)           | Scoped sinks for logs, traces, caches                                      |
+| 16   | ✅     | [16-scoped-sinks.md](./tasks/16-scoped-sinks.md)           | Scoped sinks for logs, traces, caches                                      |
 | 17   | 📋     | [17-nextjs-support.md](./tasks/17-nextjs-support.md)       | Next.js framework support                                                  |
 
 ## Milestones
@@ -74,5 +75,5 @@ Old TODO files are in `TODO/archive/` for reference:
 
 ---
 
-**Last Updated:** 2026-01-19
+**Last Updated:** 2026-02-01
 **Maintained By:** Claude Code + Human Review

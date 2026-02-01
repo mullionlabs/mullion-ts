@@ -7,10 +7,12 @@
  */
 
 import noContextLeak from './rules/no-context-leak.js';
+import noSinkLeak from './rules/no-sink-leak.js';
 import requireConfidenceCheck from './rules/require-confidence-check.js';
 
 const rules = {
   'no-context-leak': noContextLeak,
+  'no-sink-leak': noSinkLeak,
   'require-confidence-check': requireConfidenceCheck,
 };
 
@@ -27,6 +29,7 @@ const recommended = {
   },
   rules: {
     '@mullion/no-context-leak': 'error',
+    '@mullion/no-sink-leak': 'error',
     '@mullion/require-confidence-check': 'warn',
   },
 };
@@ -40,6 +43,7 @@ const strict = {
   },
   rules: {
     '@mullion/no-context-leak': 'error',
+    '@mullion/no-sink-leak': 'error',
     '@mullion/require-confidence-check': 'error',
   },
 };

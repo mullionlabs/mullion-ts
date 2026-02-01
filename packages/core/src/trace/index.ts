@@ -21,6 +21,10 @@ export type {
 
 export {isMullionSpan, isSpanContext} from './types.js';
 
+// Safe sink helpers for spans
+export type {SpanLike, LogSafeAttributes} from './safe.js';
+export {safeSetAttribute, safeAddEvent} from './safe.js';
+
 // Trace collector for in-memory span management
 export type {SpanExporter, TraceCollectorOptions} from './collector.js';
 export {

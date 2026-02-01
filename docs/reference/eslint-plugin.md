@@ -7,6 +7,7 @@ Typical goals:
 - prevent context leaks caused by variable capture / shared state
 - require explicit bridging
 - enforce confidence checks before side effects
+- block unsafe logging/tracing of scoped values
 - keep LLM workflow topology readable
 
 ## Install
@@ -29,6 +30,7 @@ export default [
     rules: {
       // Example names — adjust to the exact rule list in the package README.
       // 'mullion/no-context-leak': 'error',
+      // 'mullion/no-sink-leak': 'error',
       // 'mullion/require-bridge': 'error',
       // 'mullion/require-confidence-check': 'warn',
     },

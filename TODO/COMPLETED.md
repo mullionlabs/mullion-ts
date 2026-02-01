@@ -6,6 +6,8 @@ Quick reference of finished work. See individual task files for full details.
 
 | Task   | Completed  | Summary                                   | Details                                                                                                                                                             |
 | ------ | ---------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **16** | 2026-02-01 | **Scoped Sinks (Logs / Traces / Caches)** | LogSafe/redaction helpers, safe tracing wrappers, scoped cache types, sink ESLint rule, and sinks documentation.                                                    | [→](./tasks/16-scoped-sinks.md)          |
+| **15** | 2026-01-22 | **create-mullion CLI (Nuxt MVP)**         | CLI generator with templates, mock/provider support, tests, and documentation for Nuxt-based starter apps.                                                          | [→](./tasks/15-create-mullion.md)        |
 | **14** | 2026-01-19 | **Integration Tests (Real Providers)**    | Real provider integration tests with OpenAI/Anthropic, caching/fork/merge/cost coverage, CI workflow, and docs.                                                     | [→](./tasks/14-integration-tests.md)     |
 | **13** | 2026-01-16 | **Demo Applications Deployed**            | Live Nuxt apps with Google OAuth, rate limiting (Vercel KV), CI/CD. Both apps use template packages.                                                                | [→](./tasks/13-demo-apps.md)             |
 | **12** | 2026-01-15 | **Example Templates Refactored**          | RAG & Helpdesk scenarios as reusable packages: `@mullion/template-rag-sensitive-data`, `@mullion/template-helpdesk`. Ready for import in demo apps & CLI.           | [→](./tasks/12-examples.md)              |
@@ -74,9 +76,8 @@ Quick reference of finished work. See individual task files for full details.
 
 ## Next Up
 
-🔥 **Task 15** - `npm create mullion` CLI (Nuxt MVP)
-📋 **Task 17** - Next.js framework support.
+🔥 **Task 17** - Next.js framework support.
 
 ---
 
-**Last Updated:** 2026-01-19
+**Last Updated:** 2026-02-01

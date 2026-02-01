@@ -95,8 +95,7 @@ describe('build integration tests', () => {
       // Check build succeeded
       expect(result.exitCode).toBe(0);
       expect(result.stdout + result.stderr).toContain('build');
-    }, // Longer timeout for this test since it involves building
-    200000); // 200 seconds
+    }, 200000); // Longer timeout for this test since it involves building // 200 seconds
 
     it('should generate and build a Nuxt RAG shadcn project', async () => {
       const targetDir = await createTempDir();
