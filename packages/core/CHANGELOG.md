@@ -1,5 +1,11 @@
 # @mullion/core
 
+## 0.3.0
+
+### Minor Changes
+
+- 2c49d63: Add sink-safe helpers, scoped cache utilities, and sink leak lint rule
+
 ## 0.2.3
 
 ### Patch Changes
