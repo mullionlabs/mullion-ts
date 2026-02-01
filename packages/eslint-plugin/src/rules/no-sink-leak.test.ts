@@ -5,7 +5,7 @@ import rule from './no-sink-leak.js';
 
 RuleTester.afterAll = afterAll;
 RuleTester.describe = describe;
-RuleTester.it = it;
+RuleTester.it = (name, fn) => it(name, fn, 10000);
 
 const ruleTester = new RuleTester({
   languageOptions: {

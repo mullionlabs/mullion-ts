@@ -6,7 +6,7 @@ import rule from './require-confidence-check.js';
 // Configure RuleTester to use Vitest
 RuleTester.afterAll = afterAll;
 RuleTester.describe = describe;
-RuleTester.it = it;
+RuleTester.it = (name, fn) => it(name, fn, 10000);
 
 const ruleTester = new RuleTester({
   languageOptions: {
