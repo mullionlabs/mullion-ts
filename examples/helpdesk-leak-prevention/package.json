@@ -1,6 +1,6 @@
 {
   "name": "@mullion/template-helpdesk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Mullion template: Preventing context leaks in customer support systems",
   "private": true,
   "type": "module",

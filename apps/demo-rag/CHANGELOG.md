@@ -1,5 +1,11 @@
 # demo-rag
 
+## 0.0.4
+
+### Patch Changes
+
+- @mullion/template-rag-sensitive-data@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes

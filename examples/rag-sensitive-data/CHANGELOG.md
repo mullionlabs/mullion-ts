@@ -1,5 +1,13 @@
 # mullion-example-rag-sensitive-data
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [2c49d63]
+  - @mullion/core@0.3.0
+  - @mullion/ai-sdk@0.3.1
+
 ## 0.0.3
 
 ### Patch Changes
