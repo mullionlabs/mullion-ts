@@ -576,7 +576,7 @@ npm create mullion@latest my-app --framework nuxt --scenario rag --ui minimal
 
 | Flag                         | Values                       | Default     |
 | ---------------------------- | ---------------------------- | ----------- |
-| `--framework`                | `nuxt` (Next in Task 16)     | `nuxt`      |
+| `--framework`                | `nuxt` (Next in Task 17)     | `nuxt`      |
 | `--scenario`                 | `rag`, `helpdesk`            | `rag`       |
 | `--ui`                       | `minimal`, `shadcn`          | `minimal`   |
 | `--pm`                       | `pnpm`, `npm`, `yarn`, `bun` | auto-detect |
@@ -602,7 +602,7 @@ packages/create-mullion/
 │   │   └── ui/
 │   │       ├── minimal/
 │   │       └── shadcn/
-│   └── next/                 # Prepared for Task 16 (empty)
+│   └── next/                 # Prepared for Task 17 (empty)
 ├── package.json
 └── README.md
 ```
@@ -789,7 +789,7 @@ export function getProvider() {
 
 ---
 
-## Task 16: create-mullion + Next.js
+## Task 17: create-mullion + Next.js
 
 **Goal:** Add Next.js framework support to create-mullion
 

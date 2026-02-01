@@ -1,4 +1,4 @@
-# Task 16: create-mullion + Next.js
+# Task 17: create-mullion + Next.js
 
 **Status:** 📋 Planned
 **Priority:** Medium (After Task 15)
@@ -19,13 +19,13 @@ Extend create-mullion CLI to support Next.js in addition to Nuxt. Same RAG and H
 
 ## Checklist
 
-### 16.1 CLI Updates
+### 17.1 CLI Updates
 
 - [ ] Add `next` to `--framework` options in cli.ts
 - [ ] Update validation for Next combinations
 - [ ] Update prompts to show both framework choices
 
-### 16.2 Next.js Base Template
+### 17.2 Next.js Base Template
 
 - [ ] Create `templates/next/base/`:
   - [ ] `next.config.js` - Basic Next.js config
@@ -36,7 +36,7 @@ Extend create-mullion CLI to support Next.js in addition to Nuxt. Same RAG and H
   - [ ] `src/mullion/index.ts` - Scenario entrypoint (stub)
   - [ ] `.env.example` - Environment variables template
 
-### 16.3 Next.js Scenarios
+### 17.3 Next.js Scenarios
 
 **RAG Scenario (`templates/next/scenarios/rag/`):**
 
@@ -55,7 +55,7 @@ Extend create-mullion CLI to support Next.js in addition to Nuxt. Same RAG and H
 - [ ] `src/app/page.tsx` - Helpdesk demo UI
 - [ ] `src/app/demo/page.tsx` - Interactive demo page
 
-### 16.4 Next.js UI Layers
+### 17.4 Next.js UI Layers
 
 **Minimal (`templates/next/ui/minimal/`):**
 
@@ -74,7 +74,7 @@ Extend create-mullion CLI to support Next.js in addition to Nuxt. Same RAG and H
 - [ ] `src/components/QueryInput.tsx` - shadcn-styled input
 - [ ] `src/components/Header.tsx` - shadcn-styled header
 
-### 16.5 Testing
+### 17.5 Testing
 
 - [ ] Generate all Next.js combinations
 - [ ] Verify structure matches expected output
@@ -82,7 +82,7 @@ Extend create-mullion CLI to support Next.js in addition to Nuxt. Same RAG and H
 - [ ] Test that generated projects run: `pnpm dev`
 - [ ] Manual testing of all features
 
-### 16.6 Documentation
+### 17.6 Documentation
 
 - [ ] Update `packages/create-mullion/README.md` with Next.js examples
 - [ ] Add Next.js setup instructions
@@ -217,7 +217,7 @@ rm -rf test-next-*
 
 ## Future Enhancements
 
-After Task 16 completion:
+After Task 17 completion:
 
 - [ ] Add Remix framework support
 - [ ] Add SvelteKit framework support
@@ -233,7 +233,7 @@ Mark as done when:
 - [x] Tests passing
 - [x] Documentation updated
 
-Then: **Task 17** (TBD - possibly Gemini adapter or more scenarios)
+Then: **Next queued task** (TBD - possibly Gemini adapter or more scenarios)
 
 ---
 
