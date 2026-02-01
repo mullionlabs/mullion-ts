@@ -19,75 +19,49 @@ In production, the nastiest leaks often aren’t prompt text.
 They happen when tool outputs / metadata end up in traces or logs,
 then get reused by a lower-privileged workflow later.
 
-## Deliverables
+## Checklist
 
 ### 16.1 Core: “sink-safe” primitives
 
-- Introduce a `Redacted` / `LogSafe` value type (name TBD)
-- Provide helpers:
-  - `redact(value)` -> safe summary (no raw content)
-  - `summarize(value, opts?)` -> safe short string
-  - optional: `assertSafeFor(scope, value)` for explicit gating
-
-Acceptance:
-
-- It’s impossible (or very hard) to pass `Owned<*, Confidential>` into a sink API without calling `redact()` or an explicit bridge.
+- [ ] Introduce a `Redacted` / `LogSafe` value type (name TBD)
+- [ ] Add `redact(value)` helper (safe summary, no raw content)
+- [ ] Add `summarize(value, opts?)` helper (safe short string)
+- [ ] Add optional `assertSafeFor(scope, value)` for explicit gating
+- [ ] Block `Owned<*, Confidential>` from reaching sink APIs without `redact()` or an explicit bridge
 
 ### 16.2 ESLint: rules for sink APIs
 
-Add rules that flag scoped values passed to:
-
-- `console.*`
-- popular loggers (`pino`, `winston`, generic `logger.*`)
-- error reporting (`captureException`, `Sentry.*`) via heuristics
-- OpenTelemetry usage patterns:
-  - `span.setAttribute`
-  - `span.addEvent`
-  - `trace.*`
-
-Acceptance:
-
-- Lint catches “log this Owned value” by default.
-- Docs show “how to allow it safely” via `redact()` / `summarize()`.
+- [ ] Add rules for `console.*`
+- [ ] Add rules for popular loggers (`pino`, `winston`, generic `logger.*`)
+- [ ] Add heuristics for error reporting (`captureException`, `Sentry.*`)
+- [ ] Add OpenTelemetry patterns:
+  - [ ] `span.setAttribute`
+  - [ ] `span.addEvent`
+  - [ ] `trace.*`
+- [ ] Lint catches “log this Owned value” by default
+- [ ] Docs show “how to allow it safely” via `redact()` / `summarize()`
 
 ### 16.3 Telemetry wrapper: safe tracing helpers
 
-Provide optional helpers (thin wrappers, no lock-in):
-
-- `safeSetAttribute(span, key, value)`
-- `safeAddEvent(span, name, attrs)`
-- enforce: only LogSafe / Public-safe values go through unless explicitly redacted.
-
-Acceptance:
-
-- Example shows how a team can adopt this gradually without rewriting their tracing setup.
+- [ ] Provide `safeSetAttribute(span, key, value)`
+- [ ] Provide `safeAddEvent(span, name, attrs)`
+- [ ] Enforce only LogSafe / Public-safe values unless explicitly redacted
+- [ ] Example shows gradual adoption without rewriting tracing setup
 
 ### 16.4 Cache boundary: scoped cache keys
 
-Introduce a scoped cache pattern:
-
-- `CacheKey<Scope>` and/or `ScopedCache<Scope>`
-- rule: key and value scopes must match, or require explicit bridge
-- include a “tenant id must be in key” guidance/example
-
-Acceptance:
-
-- Example: “tenant A cached retrieval result cannot be read by tenant B” becomes hard to implement incorrectly.
+- [ ] Introduce `CacheKey<Scope>` and/or `ScopedCache<Scope>`
+- [ ] Enforce key/value scope match or require explicit bridge
+- [ ] Include “tenant id must be in key” guidance/example
+- [ ] Example: tenant A cached retrieval result cannot be read by tenant B
 
 ### 16.5 Docs + demos update
 
-Add docs page:
-
-- “Sinks: logs, traces, caches”
-  Include 3 patterns:
-
-1. tool metadata -> trace -> reused later by lower-privileged workflow
-2. debug logs copied into prompts during triage
-3. shared cache across tenants/roles
-
-Optional demo extension:
-
-- toggle that shows a “leaky trace attribute” path blocked by lint/safe wrappers.
+- [ ] Add docs page: “Sinks: logs, traces, caches”
+- [ ] Include pattern: tool metadata -> trace -> reused later by lower-privileged workflow
+- [ ] Include pattern: debug logs copied into prompts during triage
+- [ ] Include pattern: shared cache across tenants/roles
+- [ ] Optional: demo toggle that shows a “leaky trace attribute” path blocked by lint/safe wrappers
 
 ## Out of scope (for this task)
 
