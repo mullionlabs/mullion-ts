@@ -7,5 +7,13 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [
+    "demo-base",
+    "demo-helpdesk",
+    "demo-rag",
+    "integration-tests",
+    "mullion-basic-example",
+    "@mullion/template-helpdesk",
+    "@mullion/template-rag-sensitive-data"
+  ]
 }
