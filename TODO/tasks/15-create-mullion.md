@@ -35,7 +35,7 @@ npm create mullion@latest my-app --framework nuxt --scenario rag --ui minimal
 
 | Flag                         | Values                       | Default     |
 | ---------------------------- | ---------------------------- | ----------- |
-| `--framework`                | `nuxt` (Next in Task 16)     | `nuxt`      |
+| `--framework`                | `nuxt` (Next in Task 17)     | `nuxt`      |
 | `--scenario`                 | `rag`, `helpdesk`            | `rag`       |
 | `--ui`                       | `minimal`, `shadcn`          | `minimal`   |
 | `--pm`                       | `pnpm`, `npm`, `yarn`, `bun` | auto-detect |
@@ -61,7 +61,7 @@ packages/create-mullion/
 │   │   └── ui/
 │   │       ├── minimal/
 │   │       └── shadcn/
-│   └── next/                 # Prepared for Task 16 (empty)
+│   └── next/                 # Prepared for Task 17 (empty)
 ├── package.json
 └── README.md
 
@@ -436,11 +436,11 @@ rm -rf test-*
 
 - **Task 12:** Templates are source of truth
 - **Task 13:** Demo apps are reference implementations
-- **Task 16:** Next.js support (after Nuxt MVP)
+- **Task 17:** Next.js support (after Nuxt MVP)
 
 ## Notes
 
-- Start with Nuxt only (Task 16 adds Next.js)
+- Start with Nuxt only (Task 17 adds Next.js)
 - Shadcn UI layer is optional (minimal is default)
 - Mock mode is crucial for "try before API key" UX
 - CLI should work without Mullion packages published (workspace resolution)
@@ -454,7 +454,7 @@ Mark as done when:
 - [x] Tests passing
 - [x] Documentation complete
 
-Then move to: **Task 16 - Next.js Support**
+Then move to: **Task 17 - Next.js Support**
 
 ---
 
