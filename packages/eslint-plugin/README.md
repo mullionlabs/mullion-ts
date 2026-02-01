@@ -80,6 +80,7 @@ export default [
     },
     rules: {
       '@mullion/no-context-leak': 'error',
+      '@mullion/no-sink-leak': 'error',
       '@mullion/require-confidence-check': 'warn',
     },
   },
@@ -93,6 +94,7 @@ export default [
   "plugins": ["@mullion"],
   "rules": {
     "@mullion/no-context-leak": "error",
+    "@mullion/no-sink-leak": "error",
     "@mullion/require-confidence-check": "warn"
   }
 }
@@ -164,6 +166,31 @@ await client.scope('scope-a', async (ctxA) => {
 });
 ```
 
+### `no-sink-leak` (🚨 Error)
+
+**Prevents scoped values from being sent to logs, traces, or error-reporting sinks without explicit redaction.**
+
+#### ❌ Incorrect
+
+```typescript
+const result = await ctx.infer(Schema, input);
+
+console.log(result); // 🚨 ESLint error
+logger.info(result.value); // 🚨 ESLint error
+span.setAttribute('mullion.input', result); // 🚨 ESLint error
+```
+
+#### ✅ Correct
+
+```typescript
+import {redact, summarize} from '@mullion/core';
+
+const result = await ctx.infer(Schema, input);
+
+console.log(redact(result)); // ✅ Safe summary
+span.setAttribute('mullion.input', summarize(result)); // ✅ Safe summary
+```
+
 ### `require-confidence-check` (⚠️ Warning)
 
 **Warns when LLM-generated values are used without checking their confidence scores.**
@@ -214,6 +241,14 @@ await client.scope('processing', async (ctx) => {
 }
 ```
 
+#### `no-sink-leak`
+
+```javascript
+{
+  "@mullion/no-sink-leak": "error"
+}
+```
+
 #### `require-confidence-check`
 
 ```javascript
@@ -234,6 +269,7 @@ await client.scope('processing', async (ctx) => {
 {
   rules: {
     '@mullion/no-context-leak': 'error',
+    '@mullion/no-sink-leak': 'error',
     '@mullion/require-confidence-check': 'warn'
   }
 }
@@ -245,6 +281,7 @@ await client.scope('processing', async (ctx) => {
 {
   rules: {
     '@mullion/no-context-leak': 'error',
+    '@mullion/no-sink-leak': 'error',
     '@mullion/require-confidence-check': 'error' // More strict
   }
 }

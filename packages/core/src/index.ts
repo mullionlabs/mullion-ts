@@ -7,6 +7,27 @@ export type {Brand, ScopeId} from './brand.js';
 export type {Owned, CreateOwnedOptions} from './owned.js';
 export {createOwned, isOwned, ownedSchema} from './owned.js';
 
+// Sink-safe helpers for logs, traces, and caches
+export type {
+  LogSafe,
+  Redacted,
+  SummarizeOptions,
+  RedactOptions,
+} from './sink-safe.js';
+export {redact, summarize, assertSafeFor} from './sink-safe.js';
+
+// Scoped cache helpers
+export type {
+  CacheKey,
+  ScopedCache,
+  ScopedCacheOptions,
+} from './scoped-cache.js';
+export {
+  createCacheKey,
+  createScopedCache,
+  assertOwnedScope,
+} from './scoped-cache.js';
+
 // SemanticValue type for LLM-generated values with alternatives and reasoning
 export type {
   SemanticValue,
@@ -99,6 +120,8 @@ export type {
   SpanContext,
   StartSpanOptions,
   EndSpanOptions,
+  SpanLike,
+  LogSafeAttributes,
   SpanExporter,
   TraceCollectorOptions,
   OTLPHttpExporterOptions,
@@ -116,4 +139,6 @@ export {
   setupMullionTracing,
   TracingPresets,
   disableMullionTracing,
+  safeSetAttribute,
+  safeAddEvent,
 } from './trace/index.js';

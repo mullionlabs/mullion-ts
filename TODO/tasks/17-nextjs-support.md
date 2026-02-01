@@ -1,7 +1,7 @@
 # Task 17: create-mullion + Next.js
 
 **Status:** 📋 Planned
-**Priority:** Medium (After Task 15)
+**Priority:** Medium (After Task 16)
 
 ## Goal
 

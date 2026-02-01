@@ -1,17 +1,16 @@
-# Active Task: Scoped sinks (Task 16)
+# Active Task: create-mullion + Next.js (Task 17)
 
 **Status:** 📋 Planned
 **Started:** 2026-02-01
-**Full Plan:** [tasks/16-scoped-sinks.md](./tasks/16-scoped-sinks.md)
+**Full Plan:** [tasks/17-nextjs-support.md](./tasks/17-nextjs-support.md)
 
 ## Current Focus
 
-Task 16: Scoped sinks (logs / traces / caches) - **UP NEXT**
+Task 17: create-mullion + Next.js - **UP NEXT**
 
 ### Next Steps
 
-1. Task 16: Scoped sinks (logs / traces / caches)
-2. Task 17: Next.js support
+1. Task 17: create-mullion + Next.js
 
 ---
 

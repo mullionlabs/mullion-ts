@@ -295,10 +295,10 @@ TODO/
     ├── 01-11-foundation.md    # Completed tasks (summary only)
     ├── 12-examples.md         # Completed tasks (summary only)
     ├── 13-demo-apps.md        # Completed tasks (summary only)
-    ├── 14-integration-tests.md # 🔥 Active task (full detailed plan)
+    ├── 14-integration-tests.md # ✅ Completed task (summary only)
     ├── 15-create-mullion.md    # ✅ Completed task (summary only)
-    ├── 16-scoped-sinks.md      # 📋 Upcoming task (full plan ready)
-    └── 17-nextjs-support.md    # 📋 Future task (full plan ready)
+    ├── 16-scoped-sinks.md      # ✅ Completed task (summary only)
+    └── 17-nextjs-support.md    # 🔥 Active task (full detailed plan)
 ```
 
 **Workflow for new sessions:**
