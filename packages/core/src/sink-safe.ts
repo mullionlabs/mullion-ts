@@ -75,21 +75,19 @@ function describeType(value: unknown): string {
   if (value === null) return 'null';
   if (value === undefined) return 'undefined';
 
-  const type = typeof value;
-
-  if (type === 'string') return `string(length=${value.length})`;
-  if (type === 'number') return 'number';
-  if (type === 'boolean') return 'boolean';
-  if (type === 'bigint') return 'bigint';
-  if (type === 'symbol') return 'symbol';
-  if (type === 'function') return 'function';
+  if (typeof value === 'string') return `string(length=${value.length})`;
+  if (typeof value === 'number') return 'number';
+  if (typeof value === 'boolean') return 'boolean';
+  if (typeof value === 'bigint') return 'bigint';
+  if (typeof value === 'symbol') return 'symbol';
+  if (typeof value === 'function') return 'function';
 
   if (Array.isArray(value)) return `array(length=${value.length})`;
   if (value instanceof Date) return 'date';
   if (value instanceof Map) return `map(size=${value.size})`;
   if (value instanceof Set) return `set(size=${value.size})`;
 
-  if (type === 'object') {
+  if (typeof value === 'object') {
     const keys = Object.keys(value as Record<string, unknown>);
     return `object(keys=${keys.length})`;
   }
