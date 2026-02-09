@@ -1,5 +1,6 @@
 import {readdir, readFile, stat, writeFile} from 'node:fs/promises';
 import {extname, join} from 'pathe';
+import type {Framework} from './generator.js';
 
 const BINARY_EXTENSIONS = new Set([
   '.png',
@@ -50,6 +51,7 @@ export async function replacePlaceholders(
 export async function ensureEnvExample(
   targetDir: string,
   projectName: string,
+  framework: Framework = 'nuxt',
 ): Promise<void> {
   const envPath = join(targetDir, '.env.example');
   try {
@@ -61,15 +63,7 @@ export async function ensureEnvExample(
     }
   }
 
-  const content = [
-    `# ${projectName} environment`,
-    '# Leave keys empty to use mock mode.',
-    'NUXT_OPENAI_API_KEY=',
-    'NUXT_ANTHROPIC_API_KEY=',
-    '# Optional: disable OpenAI strict JSON schema',
-    '# NUXT_OPENAI_STRICT_JSON_SCHEMA=false',
-    '',
-  ].join('\n');
+  const content = buildEnvExampleContent(projectName, framework);
 
   await writeFile(envPath, content, 'utf8');
 }
@@ -77,6 +71,7 @@ export async function ensureEnvExample(
 export async function ensureReadme(
   targetDir: string,
   projectName: string,
+  framework: Framework = 'nuxt',
 ): Promise<void> {
   const readmePath = join(targetDir, 'README.md');
   try {
@@ -88,7 +83,40 @@ export async function ensureReadme(
     }
   }
 
-  const content = [
+  const content = buildReadmeContent(projectName, framework);
+
+  await writeFile(readmePath, content, 'utf8');
+}
+
+function buildEnvExampleContent(
+  projectName: string,
+  framework: Framework,
+): string {
+  if (framework === 'next') {
+    return [
+      `# ${projectName} environment`,
+      '# Leave keys empty to use mock mode.',
+      'OPENAI_API_KEY=',
+      'ANTHROPIC_API_KEY=',
+      '# Optional: disable OpenAI strict JSON schema',
+      '# OPENAI_STRICT_JSON_SCHEMA=false',
+      '',
+    ].join('\n');
+  }
+
+  return [
+    `# ${projectName} environment`,
+    '# Leave keys empty to use mock mode.',
+    'NUXT_OPENAI_API_KEY=',
+    'NUXT_ANTHROPIC_API_KEY=',
+    '# Optional: disable OpenAI strict JSON schema',
+    '# NUXT_OPENAI_STRICT_JSON_SCHEMA=false',
+    '',
+  ].join('\n');
+}
+
+function buildReadmeContent(projectName: string, framework: Framework): string {
+  const lines = [
     `# ${projectName}`,
     '',
     '## Quick start',
@@ -108,23 +136,48 @@ export async function ensureReadme(
     'Copy `.env.example` to `.env` and add a key:',
     '',
     '```env',
-    'NUXT_ANTHROPIC_API_KEY=sk-ant-...',
-    'NUXT_OPENAI_API_KEY=sk-...',
-    '',
-    '# Optional: disable OpenAI strict JSON schema',
-    '# NUXT_OPENAI_STRICT_JSON_SCHEMA=false',
-    '```',
-    '',
-    '## Project structure',
-    '',
-    '- `app/` - client UI',
-    '- `schemas.ts` - shared Zod schemas (server + client)',
-    '- `server/api/` - API endpoints',
-    '- `server/utils/mullion/` - scenario logic and provider selection',
-    '- `public/` - static assets',
-    '- `nuxt.config.ts` - Nuxt config',
-    '',
-  ].join('\n');
+  ];
 
-  await writeFile(readmePath, content, 'utf8');
+  if (framework === 'next') {
+    lines.push(
+      'ANTHROPIC_API_KEY=sk-ant-...',
+      'OPENAI_API_KEY=sk-...',
+      '',
+      '# Optional: disable OpenAI strict JSON schema',
+      '# OPENAI_STRICT_JSON_SCHEMA=false',
+    );
+  } else {
+    lines.push(
+      'NUXT_ANTHROPIC_API_KEY=sk-ant-...',
+      'NUXT_OPENAI_API_KEY=sk-...',
+      '',
+      '# Optional: disable OpenAI strict JSON schema',
+      '# NUXT_OPENAI_STRICT_JSON_SCHEMA=false',
+    );
+  }
+
+  lines.push('```', '', '## Project structure', '');
+
+  if (framework === 'next') {
+    lines.push(
+      '- `src/app/` - app router UI',
+      '- `src/schemas.ts` - shared Zod schemas (server + client)',
+      '- `src/app/api/` - API endpoints',
+      '- `src/mullion/` - scenario logic and provider selection',
+      '- `next.config.mjs` - Next.js config',
+      '',
+    );
+  } else {
+    lines.push(
+      '- `app/` - client UI',
+      '- `schemas.ts` - shared Zod schemas (server + client)',
+      '- `server/api/` - API endpoints',
+      '- `server/utils/mullion/` - scenario logic and provider selection',
+      '- `public/` - static assets',
+      '- `nuxt.config.ts` - Nuxt config',
+      '',
+    );
+  }
+
+  return lines.join('\n');
 }

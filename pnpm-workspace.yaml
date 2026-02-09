@@ -46,6 +46,18 @@ catalog:
   '@ai-sdk/openai': ^3.0.0
   '@ai-sdk/anthropic': ^3.0.0
 
+  # Next.js & React ecosystem
+  next: ^14.2.0
+  react: ^18.2.0
+  react-dom: ^18.2.0
+  '@types/react': ^18.2.66
+  '@types/react-dom': ^18.2.22
+  clsx: ^2.1.1
+  class-variance-authority: ^0.7.0
+  tailwind-merge: ^2.5.2
+  postcss: ^8.4.35
+  autoprefixer: ^10.4.19
+
   # Nuxt & Vue ecosystem
   nuxt: ^4.2.2
   vue: ^3.5.13

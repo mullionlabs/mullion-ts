@@ -4,7 +4,7 @@
 
 Get a production-ready app with type-safe context management, scope isolation, and real/mock LLM providers — running in seconds.
 
-Note: The generator currently scaffolds Nuxt templates only. Next.js support is planned.
+Supports both **Nuxt 4** and **Next.js (App Router)** templates.
 
 ## Quick Start
 
@@ -14,6 +14,7 @@ npm create mullion@latest
 
 # With options
 npm create mullion@latest my-app --framework nuxt --scenario rag --ui minimal
+npm create mullion@latest my-app --framework next --scenario rag --ui minimal
 ```
 
 ## Features
@@ -21,8 +22,8 @@ npm create mullion@latest my-app --framework nuxt --scenario rag --ui minimal
 - 🚀 **Zero config** — works without API keys (mock mode)
 - 🎯 **Production patterns** — RAG pipelines, helpdesk systems
 - 🔒 **Scope isolation** — built-in trust boundary enforcement
-- 🎨 **UI variants** — minimal CSS or Nuxt UI v4
-- 📦 **Framework support** — Nuxt 4+ (Next.js coming soon)
+- 🎨 **UI variants** — minimal CSS or shadcn-style UI
+- 📦 **Framework support** — Nuxt 4+ and Next.js App Router
 - ✅ **Type-safe** — full TypeScript support out of the box
 
 ## What You Get
@@ -47,9 +48,9 @@ npm create mullion@latest
 You'll be prompted for:
 
 - Project name
-- Framework (Nuxt)
+- Framework (Nuxt or Next.js)
 - Scenario (RAG or Helpdesk)
-- UI style (minimal or Nuxt UI)
+- UI style (minimal or shadcn)
 - Package manager (auto-detected)
 - Install dependencies (yes/no)
 - Initialize git (yes/no)
@@ -64,7 +65,7 @@ npm create mullion@latest <project-name> [options]
 
 | Flag                         | Values                       | Default     | Description                |
 | ---------------------------- | ---------------------------- | ----------- | -------------------------- |
-| `--framework`                | `nuxt`                       | `nuxt`      | Framework to use           |
+| `--framework`                | `nuxt`, `next`               | `nuxt`      | Framework to use           |
 | `--scenario`                 | `rag`, `helpdesk`            | `rag`       | Application scenario       |
 | `--ui`                       | `minimal`, `shadcn`          | `minimal`   | UI library                 |
 | `--pm`                       | `pnpm`, `npm`, `yarn`, `bun` | auto-detect | Package manager            |
@@ -122,18 +123,20 @@ Clean, dependency-free CSS with:
 
 **Best for:** Simple apps, learning, minimal bundle size
 
-### Nuxt UI (shadcn variant)
+### Shadcn (UI variant)
 
-Modern UI with Nuxt UI v4:
+Modern UI with Tailwind + component primitives:
 
 - Pre-built components (Card, Button, Textarea, etc.)
 - Tailwind CSS v4
-- Dark mode support
-- Accessibility built-in
+- Accessibility-friendly defaults
+- Framework-adapted styling (Nuxt UI v4 for Nuxt, shadcn-style for Next)
 
 **Best for:** Production apps, rich interactions, consistent design
 
 ## Project Structure
+
+### Nuxt (framework: `nuxt`)
 
 ```
 my-app/
@@ -163,6 +166,29 @@ my-app/
 └── .gitignore             # Git ignores
 ```
 
+### Next.js (framework: `next`)
+
+```
+my-app/
+├── src/
+│   ├── app/               # App Router pages + API routes
+│   │   ├── api/           # Route handlers
+│   │   └── page.tsx       # Landing page with scenario UI
+│   ├── components/        # React components
+│   │   ├── QueryInput.tsx
+│   │   ├── ResultCard.tsx
+│   │   └── Header.tsx
+│   ├── mullion/           # Mullion business logic
+│   │   ├── provider.ts    # LLM provider selection
+│   │   └── pipeline.ts    # Main processing logic (scenario-specific)
+│   └── schemas.ts         # Shared Zod schemas (server + client)
+├── next.config.mjs        # Next.js configuration
+├── tsconfig.json          # TypeScript config
+├── package.json           # Dependencies
+├── .env.example           # Environment template
+└── .gitignore             # Git ignores
+```
+
 ## After Generation
 
 ### 1. Start Development Server
@@ -184,6 +210,8 @@ cp .env.example .env
 
 Edit `.env`:
 
+**Nuxt:**
+
 ```env
 # Add ONE of these (first found is used):
 NUXT_ANTHROPIC_API_KEY=sk-ant-...
@@ -193,14 +221,25 @@ NUXT_OPENAI_API_KEY=sk-...
 # NUXT_OPENAI_STRICT_JSON_SCHEMA=false
 ```
 
+**Next.js:**
+
+```env
+# Add ONE of these (first found is used):
+ANTHROPIC_API_KEY=sk-ant-...
+OPENAI_API_KEY=sk-...
+
+# Optional: disable strict JSON schema for OpenAI structured outputs
+# OPENAI_STRICT_JSON_SCHEMA=false
+```
+
 Restart the dev server — you're now using a real LLM!
 
 ### 3. Customize
 
-- **Modify scenarios:** Edit `server/utils/mullion/*.ts`
-- **Update UI:** Edit `app/pages/index.vue` and components
-- **Add endpoints:** Create new files in `server/api/`
-- **Change styling:** Edit `app/assets/css/main.css`
+- **Modify scenarios:** `server/utils/mullion/*.ts` (Nuxt) or `src/mullion/*.ts` (Next)
+- **Update UI:** `app/pages/index.vue` (Nuxt) or `src/app/page.tsx` (Next)
+- **Add endpoints:** `server/api/` (Nuxt) or `src/app/api/` (Next)
+- **Change styling:** `app/assets/css/main.css` (Nuxt) or `src/app/globals.css` (Next)
 
 ## Mock Mode
 
@@ -217,13 +256,17 @@ The UI shows a banner: "⚠️ Mock mode — add API key to .env for real result
 
 ### Dependencies
 
-**Core:**
+**Core (all frameworks):**
 
-- `nuxt` (^4.0.0) — Nuxt 4 framework
 - `@mullion/core` — Mullion primitives
 - `@mullion/ai-sdk` — AI SDK integration
 - `ai` — Vercel AI SDK
-- `zod` (^4.0.0) — Schema validation
+- `zod` — Schema validation
+
+**Framework:**
+
+- Nuxt: `nuxt`, `vue`
+- Next.js: `next`, `react`, `react-dom`
 
 **Providers (included):**
 
@@ -232,8 +275,8 @@ The UI shows a banner: "⚠️ Mock mode — add API key to .env for real result
 
 **UI (shadcn only):**
 
-- `@nuxt/ui` (^4.0.0) — Nuxt UI components
-- `tailwindcss` (^4.0.0) — Utility CSS
+- Nuxt: `@nuxt/ui`, `tailwindcss`
+- Next.js: `tailwindcss`, `class-variance-authority`, `clsx`, `tailwind-merge`
 
 ### Nuxt 4 Structure
 
@@ -243,19 +286,35 @@ Generated projects use Nuxt 4 conventions:
 - `server/` directory at root (not nested in `app/`)
 - TypeScript strict mode
 
+### Next.js Structure
+
+Generated projects use App Router conventions:
+
+- `src/app/` for pages + route handlers
+- `src/mullion/` for scenario logic
+- Environment variables stay server-only (no `NEXT_PUBLIC_*` for keys)
+
 ### Provider Selection
 
-The generated `server/utils/mullion/provider.ts` checks for API keys in order:
+The generated provider checks for API keys in order:
+
+**Nuxt (`server/utils/mullion/provider.ts`):**
 
 1. `NUXT_ANTHROPIC_API_KEY` → uses `claude-3-5-haiku-20241022`
 2. `NUXT_OPENAI_API_KEY` → uses `gpt-4o-mini`
+3. No keys → uses mock mode
+
+**Next.js (`src/mullion/provider.ts`):**
+
+1. `ANTHROPIC_API_KEY` → uses `claude-3-5-haiku-20241022`
+2. `OPENAI_API_KEY` → uses `gpt-4o-mini`
 3. No keys → uses mock mode
 
 You can customize models by editing `provider.ts`.
 
 ## Examples
 
-### Generate RAG app with minimal UI
+### Generate RAG app with minimal UI (Nuxt)
 
 ```bash
 npm create mullion@latest my-rag --scenario rag --ui minimal
@@ -265,7 +324,7 @@ pnpm dev
 
 Visit http://localhost:3000 — ask questions about documents!
 
-### Generate Helpdesk app with Nuxt UI
+### Generate Helpdesk app with shadcn UI (Nuxt)
 
 ```bash
 npm create mullion@latest support --scenario helpdesk --ui shadcn
@@ -275,6 +334,16 @@ pnpm dev
 ```
 
 Visit http://localhost:3000 — analyze support tickets!
+
+### Generate RAG app with minimal UI (Next.js)
+
+```bash
+npm create mullion@latest next-rag --framework next --scenario rag --ui minimal
+cd next-rag
+pnpm dev
+```
+
+Visit http://localhost:3000 — ask questions about documents!
 
 ## Troubleshooting
 
@@ -291,7 +360,13 @@ pnpm install
 Try cleaning and rebuilding:
 
 ```bash
+# Nuxt
 rm -rf .nuxt node_modules
+pnpm install
+pnpm dev
+
+# Next.js
+rm -rf .next node_modules
 pnpm install
 pnpm dev
 ```
@@ -301,17 +376,23 @@ pnpm dev
 Check that `.env` doesn't exist or has empty values:
 
 ```env
+# Nuxt
 NUXT_OPENAI_API_KEY=
 NUXT_ANTHROPIC_API_KEY=
+
+# Next.js
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
 ```
 
 ### Types not found
 
-Nuxt generates types on first run. Try:
+Nuxt and Next.js generate types on first run. Try:
 
 ```bash
 pnpm dev
-# Wait for "Types generated in .nuxt"
+# Nuxt: wait for "Types generated in .nuxt"
+# Next.js: wait for .next/types to appear
 ```
 
 ## Next Steps
@@ -319,7 +400,7 @@ pnpm dev
 - **Learn Mullion:** See [Mullion docs](https://github.com/mullionlabs/mullion-ts)
 - **Add more scenarios:** Copy patterns from `examples/`
 - **Deploy:** See [deployment guides](../../docs/guides/deployment.md)
-- **Customize provider:** Edit `server/utils/mullion/provider.ts`
+- **Customize provider:** `server/utils/mullion/provider.ts` (Nuxt) or `src/mullion/provider.ts` (Next)
 
 ## What's Different from Templates?
 

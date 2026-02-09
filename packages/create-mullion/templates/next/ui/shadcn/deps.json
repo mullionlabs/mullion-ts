@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "class-variance-authority": "{{CATALOG:class-variance-authority}}",
+    "clsx": "{{CATALOG:clsx}}",
+    "tailwind-merge": "{{CATALOG:tailwind-merge}}"
+  },
+  "devDependencies": {
+    "tailwindcss": "{{CATALOG:tailwindcss}}",
+    "postcss": "{{CATALOG:postcss}}",
+    "autoprefixer": "{{CATALOG:autoprefixer}}"
+  }
+}

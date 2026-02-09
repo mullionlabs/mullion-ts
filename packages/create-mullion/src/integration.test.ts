@@ -45,6 +45,28 @@ describe('integration tests', () => {
       expect(files).toContain('tsconfig.json');
     });
 
+    it('should generate a valid Next.js project structure', async () => {
+      const targetDir = await createTempDir();
+
+      const options: GenerateOptions = {
+        projectName: 'test-next-app',
+        targetDir,
+        framework: 'next',
+        scenario: 'rag',
+        ui: 'minimal',
+        install: false,
+        git: false,
+      };
+
+      await generateProject(options);
+
+      const files = await readdir(targetDir);
+      expect(files).toContain('package.json');
+      expect(files).toContain('.env.example');
+      expect(files).toContain('next.config.mjs');
+      expect(files).toContain('tsconfig.json');
+    });
+
     it('should generate package.json with correct dependencies', async () => {
       const targetDir = await createTempDir();
 
@@ -91,6 +113,28 @@ describe('integration tests', () => {
 
       expect(content).toContain('NUXT_OPENAI_API_KEY=');
       expect(content).toContain('NUXT_ANTHROPIC_API_KEY=');
+    });
+
+    it('should generate Next.js .env.example with API keys', async () => {
+      const targetDir = await createTempDir();
+
+      const options: GenerateOptions = {
+        projectName: 'test-next-app',
+        targetDir,
+        framework: 'next',
+        scenario: 'rag',
+        ui: 'minimal',
+        install: false,
+        git: false,
+      };
+
+      await generateProject(options);
+
+      const envPath = join(targetDir, '.env.example');
+      const content = await readFile(envPath, 'utf8');
+
+      expect(content).toContain('OPENAI_API_KEY=');
+      expect(content).toContain('ANTHROPIC_API_KEY=');
     });
 
     it('should generate README.md with quick start', async () => {
@@ -163,6 +207,31 @@ describe('integration tests', () => {
 
       expect(appStats.isDirectory()).toBe(true);
       expect(serverStats.isDirectory()).toBe(true);
+    });
+
+    it('should create Next.js app directory structure', async () => {
+      const targetDir = await createTempDir();
+
+      const options: GenerateOptions = {
+        projectName: 'test-next-app',
+        targetDir,
+        framework: 'next',
+        scenario: 'rag',
+        ui: 'minimal',
+        install: false,
+        git: false,
+      };
+
+      await generateProject(options);
+
+      const appDir = join(targetDir, 'src', 'app');
+      const mullionDir = join(targetDir, 'src', 'mullion');
+
+      const appStats = await stat(appDir);
+      const mullionStats = await stat(mullionDir);
+
+      expect(appStats.isDirectory()).toBe(true);
+      expect(mullionStats.isDirectory()).toBe(true);
     });
 
     it('should create server/utils/mullion directory with scenario code', async () => {
@@ -281,19 +350,7 @@ describe('integration tests', () => {
     });
 
     it('should not include deps.json in generated project', async () => {
-      const targetDir = await createTempDir();
-
-      const options: GenerateOptions = {
-        projectName: 'test-no-deps-json',
-        targetDir,
-        framework: 'nuxt',
-        scenario: 'rag',
-        ui: 'minimal',
-        install: false,
-        git: false,
-      };
-
-      await generateProject(options);
+      const frameworks: GenerateOptions['framework'][] = ['nuxt', 'next'];
 
       // Recursively check for deps.json
       async function findDepsJson(dir: string): Promise<string[]> {
@@ -317,8 +374,24 @@ describe('integration tests', () => {
         return found;
       }
 
-      const depsJsonFiles = await findDepsJson(targetDir);
-      expect(depsJsonFiles).toHaveLength(0);
+      for (const framework of frameworks) {
+        const targetDir = await createTempDir();
+
+        const options: GenerateOptions = {
+          projectName: `test-no-deps-json-${framework}`,
+          targetDir,
+          framework,
+          scenario: 'rag',
+          ui: 'minimal',
+          install: false,
+          git: false,
+        };
+
+        await generateProject(options);
+
+        const depsJsonFiles = await findDepsJson(targetDir);
+        expect(depsJsonFiles).toHaveLength(0);
+      }
     });
   });
 });
