@@ -11,7 +11,7 @@ Task 17: create-mullion + Next.js - **IN PROGRESS**
 ### Next Steps
 
 1. Complete remaining items in Task 17 plan
-2. Task 19: Runtime model/pricing catalog + baseline refresh (planned)
+2. Task 19 is complete: [tasks/19-runtime-catalog-and-pricing-refresh.md](./tasks/19-runtime-catalog-and-pricing-refresh.md)
 
 ---
 

@@ -89,6 +89,27 @@ export type {
   ListGeminiModelsCachedOptions,
 } from './providers/gemini-models.js';
 
+// Runtime model catalog (pricing + capabilities)
+export {
+  loadModelCatalog,
+  setModelCatalogOverrides,
+  clearModelCatalogOverrides,
+  getModelCatalogOverrides,
+  ModelCatalogError,
+  ModelCatalogValidationError,
+  ModelCatalogLoadError,
+} from './catalog/model-catalog.js';
+export type {
+  CatalogProvider,
+  CatalogPricingEntry,
+  CatalogCapabilityEntry,
+  CatalogPricingProvider,
+  CatalogCapabilityProvider,
+  ModelCatalog,
+  LoadModelCatalogOptions,
+  LoadModelCatalogResult,
+} from './catalog/model-catalog.js';
+
 // Cache warmup for fork optimization
 export {
   explicitWarmup,

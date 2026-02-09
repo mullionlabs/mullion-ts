@@ -9,3 +9,4 @@ This section contains contributor-facing documentation.
 ## Specialized Guides
 
 - **[Integration Tests](./integration-tests.md)** - Manual testing with real LLM providers
+- **[Model Catalog Refresh](./model-catalog-refresh.md)** - Updating runtime pricing/capability snapshot safely

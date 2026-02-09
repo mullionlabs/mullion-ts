@@ -1,4 +1,4 @@
-import {describe, it, expect} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import {
   getPricing,
   getAllPricing,
@@ -8,6 +8,18 @@ import {
   importPricingFromJSON,
   PRICING_DATA,
 } from './pricing.js';
+import {
+  clearModelCatalogOverrides,
+  setModelCatalogOverrides,
+} from '../catalog/model-catalog.js';
+
+beforeEach(() => {
+  clearModelCatalogOverrides();
+});
+
+afterEach(() => {
+  clearModelCatalogOverrides();
+});
 
 describe('getPricing', () => {
   describe('exact matches', () => {
@@ -50,10 +62,10 @@ describe('getPricing', () => {
       expect(pricing.cacheWritePer1M).toBe(3.75);
     });
 
-    it('should return pricing for Claude Opus 4.5', () => {
-      const pricing = getPricing('claude-opus-4-5-20251101');
+    it('should return pricing for Claude Opus 4.1', () => {
+      const pricing = getPricing('claude-opus-4-1-20250805');
 
-      expect(pricing.model).toBe('claude-opus-4-5-20251101');
+      expect(pricing.model).toBe('claude-opus-4-1-20250805');
       expect(pricing.provider).toBe('anthropic');
       expect(pricing.inputPer1M).toBe(15.0);
       expect(pricing.outputPer1M).toBe(75.0);
@@ -61,9 +73,9 @@ describe('getPricing', () => {
     });
 
     it('should return pricing for Claude Haiku', () => {
-      const pricing = getPricing('claude-haiku-4-5-20241022');
+      const pricing = getPricing('claude-3-5-haiku-20241022');
 
-      expect(pricing.model).toBe('claude-haiku-4-5-20241022');
+      expect(pricing.model).toBe('claude-3-5-haiku-20241022');
       expect(pricing.provider).toBe('anthropic');
       expect(pricing.inputPer1M).toBe(0.8);
       expect(pricing.outputPer1M).toBe(4.0);
@@ -87,7 +99,17 @@ describe('getPricing', () => {
 
       const geminiFlash = getPricing('gemini-2.5-flash');
       expect(geminiFlash.provider).toBe('google');
-      expect(geminiFlash.cachedInputPer1M).toBe(0.03);
+      expect(geminiFlash.cachedInputPer1M).toBe(0.075);
+    });
+
+    it('should return pricing for GPT-5 family', () => {
+      const gpt5 = getPricing('gpt-5');
+      expect(gpt5.inputPer1M).toBe(1.25);
+      expect(gpt5.outputPer1M).toBe(10.0);
+
+      const gpt5Mini = getPricing('gpt-5-mini');
+      expect(gpt5Mini.inputPer1M).toBe(0.25);
+      expect(gpt5Mini.outputPer1M).toBe(2.0);
     });
   });
 
@@ -228,10 +250,10 @@ describe('getPricing', () => {
       });
     });
 
-    it('should have zero cache pricing for OpenAI models', () => {
+    it('should have zero explicit cache write pricing for OpenAI models', () => {
       const openaiModels = getPricingByProvider('openai');
       openaiModels.forEach((pricing) => {
-        expect(pricing.cachedInputPer1M).toBe(0.0);
+        expect(pricing.cachedInputPer1M).toBeGreaterThanOrEqual(0);
         expect(pricing.cacheWritePer1M).toBe(0.0);
       });
     });
@@ -281,9 +303,10 @@ describe('getPricingByProvider', () => {
     const openaiPricing = getPricingByProvider('openai');
     const models = openaiPricing.map((p) => p.model);
 
+    expect(models).toContain('gpt-5');
+    expect(models).toContain('gpt-5-mini');
     expect(models).toContain('gpt-4');
-    expect(models).toContain('gpt-4-turbo');
-    expect(models).toContain('gpt-3.5-turbo');
+    expect(models).toContain('gpt-4.1');
   });
 
   it('should include all major Anthropic models', () => {
@@ -323,7 +346,7 @@ describe('calculateCacheWritePricing', () => {
     });
 
     it('should work for Claude Opus', () => {
-      const pricing = getPricing('claude-opus-4-5-20251101');
+      const pricing = getPricing('claude-opus-4-1-20250805');
       const write5m = calculateCacheWritePricing(pricing, '5m');
       const write1h = calculateCacheWritePricing(pricing, '1h');
 
@@ -332,7 +355,7 @@ describe('calculateCacheWritePricing', () => {
     });
 
     it('should work for Claude Haiku', () => {
-      const pricing = getPricing('claude-haiku-4-5-20241022');
+      const pricing = getPricing('claude-3-5-haiku-20241022');
       const write5m = calculateCacheWritePricing(pricing, '5m');
       const write1h = calculateCacheWritePricing(pricing, '1h');
 
@@ -461,6 +484,91 @@ describe('importPricingFromJSON', () => {
 
   it('should throw on invalid JSON', () => {
     expect(() => importPricingFromJSON('invalid json')).toThrow();
+  });
+});
+
+describe('runtime catalog pricing overrides', () => {
+  it('applies runtime model pricing over baseline', () => {
+    setModelCatalogOverrides({
+      schemaVersion: 1,
+      snapshotDate: '2026-02-09',
+      generatedAt: '2026-02-09T00:00:00.000Z',
+      sources: ['https://example.com/catalog.json'],
+      pricing: {
+        providers: {
+          openai: {
+            models: {
+              'gpt-5': {
+                inputPer1M: 2.5,
+                outputPer1M: 20.0,
+                asOfDate: '2026-02-09',
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const pricing = getPricing('gpt-5');
+
+    expect(pricing.inputPer1M).toBe(2.5);
+    expect(pricing.outputPer1M).toBe(20.0);
+  });
+
+  it('keeps runtime pricing as highest precedence over user overrides', () => {
+    setModelCatalogOverrides({
+      schemaVersion: 1,
+      snapshotDate: '2026-02-09',
+      generatedAt: '2026-02-09T00:00:00.000Z',
+      sources: ['https://example.com/catalog.json'],
+      pricing: {
+        providers: {
+          openai: {
+            models: {
+              'gpt-5': {
+                inputPer1M: 2.5,
+                outputPer1M: 20.0,
+                asOfDate: '2026-02-09',
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const pricing = getPricing('gpt-5', {
+      inputPer1M: 3.0,
+    });
+
+    expect(pricing.inputPer1M).toBe(2.5);
+    expect(pricing.outputPer1M).toBe(20.0);
+  });
+
+  it('adds runtime-only model entries to provider queries', () => {
+    setModelCatalogOverrides({
+      schemaVersion: 1,
+      snapshotDate: '2026-02-09',
+      generatedAt: '2026-02-09T00:00:00.000Z',
+      sources: ['https://example.com/catalog.json'],
+      pricing: {
+        providers: {
+          openai: {
+            models: {
+              'gpt-5-ultra': {
+                inputPer1M: 30.0,
+                outputPer1M: 120.0,
+                asOfDate: '2026-02-09',
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const openaiPricing = getPricingByProvider('openai');
+    const models = openaiPricing.map((pricing) => pricing.model);
+
+    expect(models).toContain('gpt-5-ultra');
   });
 });
 

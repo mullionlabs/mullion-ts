@@ -54,11 +54,13 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src",
+    "lint": "eslint src && pnpm run catalog:check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "catalog:normalize": "node ./scripts/normalize-model-catalog.mjs",
+    "catalog:check": "node ./scripts/normalize-model-catalog.mjs --check"
   },
   "dependencies": {
     "@mullion/core": "workspace:*"

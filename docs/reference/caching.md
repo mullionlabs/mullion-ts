@@ -129,6 +129,31 @@ Only use `'allow-user-content'` when you're certain it's safe.
 
 ## Provider-Specific Behavior
 
+### Runtime Capability Overrides
+
+You can override cache capabilities at runtime via model catalog JSON:
+
+```typescript
+import {getCacheCapabilities, loadModelCatalog} from '@mullion/ai-sdk';
+
+await loadModelCatalog({
+  url: process.env.MULLION_MODEL_CATALOG_URL,
+  ttlMs: 6 * 60 * 60 * 1000,
+});
+
+const caps = getCacheCapabilities('google', 'gemini-2.5-flash');
+console.log(caps);
+```
+
+Capability precedence is runtime catalog first, then built-in baseline.  
+If loading/validation fails, Mullion falls back to baseline capabilities.
+
+Safety guardrails are always enforced:
+
+- OpenAI: runtime catalog cannot enable TTL (`supportsTtl` stays `false`)
+- Anthropic: runtime catalog cannot switch to automatic caching or tool caching
+- Gemini: unsupported modes (`embedding`, `flash-image`, `preview-tts`, `live`, etc.) remain disabled even if runtime JSON attempts to enable them
+
 ### Anthropic
 
 **Cache Control Points:**

@@ -3,6 +3,12 @@
  * @module cost/pricing
  */
 
+import {
+  getCatalogPricingModelKeys,
+  getCatalogPricingOverride,
+  inferCatalogProviderFromModel,
+} from '../catalog/model-catalog.js';
+
 /**
  * Pricing information for a specific model
  */
@@ -23,24 +29,173 @@ export interface ModelPricing {
   asOfDate: string;
 }
 
+type KnownProvider = Exclude<ModelPricing['provider'], 'unknown'>;
+
+const BASELINE_AS_OF_DATE = '2026-02-09';
+
 /**
- * Complete pricing database
- *
- * Prices are as of January 2025. For the most current pricing:
- * - OpenAI: https://openai.com/pricing
- * - Anthropic: https://www.anthropic.com/pricing
+ * Complete baseline pricing database (snapshot as of 2026-02-09).
  */
 export const PRICING_DATA: Record<string, ModelPricing> = {
-  // OpenAI GPT-4 models
+  // OpenAI GPT-5 family
+  'gpt-5': {
+    model: 'gpt-5',
+    provider: 'openai',
+    inputPer1M: 1.25,
+    outputPer1M: 10.0,
+    cachedInputPer1M: 0.125,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-5-mini': {
+    model: 'gpt-5-mini',
+    provider: 'openai',
+    inputPer1M: 0.25,
+    outputPer1M: 2.0,
+    cachedInputPer1M: 0.025,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-5-nano': {
+    model: 'gpt-5-nano',
+    provider: 'openai',
+    inputPer1M: 0.05,
+    outputPer1M: 0.4,
+    cachedInputPer1M: 0.005,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-5-pro': {
+    model: 'gpt-5-pro',
+    provider: 'openai',
+    inputPer1M: 15.0,
+    outputPer1M: 120.0,
+    cachedInputPer1M: 1.5,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-5.2': {
+    model: 'gpt-5.2',
+    provider: 'openai',
+    inputPer1M: 1.75,
+    outputPer1M: 14.0,
+    cachedInputPer1M: 0.175,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-5.2-pro': {
+    model: 'gpt-5.2-pro',
+    provider: 'openai',
+    inputPer1M: 20.0,
+    outputPer1M: 160.0,
+    cachedInputPer1M: 2.0,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+
+  // OpenAI GPT-4.1 and GPT-4o families
+  'gpt-4.1': {
+    model: 'gpt-4.1',
+    provider: 'openai',
+    inputPer1M: 2.0,
+    outputPer1M: 8.0,
+    cachedInputPer1M: 0.5,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-4.1-mini': {
+    model: 'gpt-4.1-mini',
+    provider: 'openai',
+    inputPer1M: 0.4,
+    outputPer1M: 1.6,
+    cachedInputPer1M: 0.1,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-4.1-nano': {
+    model: 'gpt-4.1-nano',
+    provider: 'openai',
+    inputPer1M: 0.1,
+    outputPer1M: 0.4,
+    cachedInputPer1M: 0.025,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-4o': {
+    model: 'gpt-4o',
+    provider: 'openai',
+    inputPer1M: 2.5,
+    outputPer1M: 10.0,
+    cachedInputPer1M: 1.25,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gpt-4o-mini': {
+    model: 'gpt-4o-mini',
+    provider: 'openai',
+    inputPer1M: 0.15,
+    outputPer1M: 0.6,
+    cachedInputPer1M: 0.075,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+
+  // OpenAI reasoning family
+  o1: {
+    model: 'o1',
+    provider: 'openai',
+    inputPer1M: 15.0,
+    outputPer1M: 60.0,
+    cachedInputPer1M: 7.5,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'o1-mini': {
+    model: 'o1-mini',
+    provider: 'openai',
+    inputPer1M: 3.0,
+    outputPer1M: 12.0,
+    cachedInputPer1M: 1.5,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  o3: {
+    model: 'o3',
+    provider: 'openai',
+    inputPer1M: 2.0,
+    outputPer1M: 8.0,
+    cachedInputPer1M: 1.0,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'o3-mini': {
+    model: 'o3-mini',
+    provider: 'openai',
+    inputPer1M: 1.1,
+    outputPer1M: 4.4,
+    cachedInputPer1M: 0.55,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'o4-mini': {
+    model: 'o4-mini',
+    provider: 'openai',
+    inputPer1M: 1.1,
+    outputPer1M: 4.4,
+    cachedInputPer1M: 0.55,
+    cacheWritePer1M: 0.0,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+
+  // OpenAI legacy compatibility entries
   'gpt-4': {
     model: 'gpt-4',
     provider: 'openai',
     inputPer1M: 30.0,
     outputPer1M: 60.0,
-    // OpenAI has automatic prompt caching (free)
     cachedInputPer1M: 0.0,
     cacheWritePer1M: 0.0,
-    asOfDate: '2025-01-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'gpt-4-turbo': {
     model: 'gpt-4-turbo',
@@ -49,7 +204,7 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 30.0,
     cachedInputPer1M: 0.0,
     cacheWritePer1M: 0.0,
-    asOfDate: '2025-01-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'gpt-4-turbo-preview': {
     model: 'gpt-4-turbo-preview',
@@ -58,30 +213,8 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 30.0,
     cachedInputPer1M: 0.0,
     cacheWritePer1M: 0.0,
-    asOfDate: '2025-01-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
-
-  // OpenAI GPT-4o models
-  'gpt-4o': {
-    model: 'gpt-4o',
-    provider: 'openai',
-    inputPer1M: 2.5,
-    outputPer1M: 10.0,
-    cachedInputPer1M: 0.0,
-    cacheWritePer1M: 0.0,
-    asOfDate: '2025-01-01',
-  },
-  'gpt-4o-mini': {
-    model: 'gpt-4o-mini',
-    provider: 'openai',
-    inputPer1M: 0.15,
-    outputPer1M: 0.6,
-    cachedInputPer1M: 0.0,
-    cacheWritePer1M: 0.0,
-    asOfDate: '2025-01-01',
-  },
-
-  // OpenAI GPT-3.5 models
   'gpt-3.5-turbo': {
     model: 'gpt-3.5-turbo',
     provider: 'openai',
@@ -89,10 +222,8 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 1.5,
     cachedInputPer1M: 0.0,
     cacheWritePer1M: 0.0,
-    asOfDate: '2025-01-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
-
-  // OpenAI O1 models
   'o1-preview': {
     model: 'o1-preview',
     provider: 'openai',
@@ -100,29 +231,54 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 60.0,
     cachedInputPer1M: 0.0,
     cacheWritePer1M: 0.0,
-    asOfDate: '2025-01-01',
-  },
-  'o1-mini': {
-    model: 'o1-mini',
-    provider: 'openai',
-    inputPer1M: 3.0,
-    outputPer1M: 12.0,
-    cachedInputPer1M: 0.0,
-    cacheWritePer1M: 0.0,
-    asOfDate: '2025-01-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
 
-  // Anthropic Claude 3.5 models
+  // Anthropic Claude 4.x and legacy lines
+  'claude-opus-4-1-20250805': {
+    model: 'claude-opus-4-1-20250805',
+    provider: 'anthropic',
+    inputPer1M: 15.0,
+    outputPer1M: 75.0,
+    cachedInputPer1M: 1.5,
+    cacheWritePer1M: 18.75,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'claude-opus-4-20250514': {
+    model: 'claude-opus-4-20250514',
+    provider: 'anthropic',
+    inputPer1M: 15.0,
+    outputPer1M: 75.0,
+    cachedInputPer1M: 1.5,
+    cacheWritePer1M: 18.75,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'claude-sonnet-4-5-20250929': {
+    model: 'claude-sonnet-4-5-20250929',
+    provider: 'anthropic',
+    inputPer1M: 3.0,
+    outputPer1M: 15.0,
+    cachedInputPer1M: 0.3,
+    cacheWritePer1M: 3.75,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'claude-sonnet-4-20250514': {
+    model: 'claude-sonnet-4-20250514',
+    provider: 'anthropic',
+    inputPer1M: 3.0,
+    outputPer1M: 15.0,
+    cachedInputPer1M: 0.3,
+    cacheWritePer1M: 3.75,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
   'claude-3-5-sonnet-20241022': {
     model: 'claude-3-5-sonnet-20241022',
     provider: 'anthropic',
     inputPer1M: 3.0,
     outputPer1M: 15.0,
-    // Cache read: 10% of input price
     cachedInputPer1M: 0.3,
-    // Cache write: +25% for 5min TTL, +100% for 1h TTL (using 5min as default)
     cacheWritePer1M: 3.75,
-    asOfDate: '2025-01-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'claude-3-5-sonnet-20240620': {
     model: 'claude-3-5-sonnet-20240620',
@@ -131,58 +287,7 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 15.0,
     cachedInputPer1M: 0.3,
     cacheWritePer1M: 3.75,
-    asOfDate: '2025-01-01',
-  },
-
-  // Anthropic Claude 4.5 models
-  'claude-opus-4-5-20251101': {
-    model: 'claude-opus-4-5-20251101',
-    provider: 'anthropic',
-    inputPer1M: 15.0,
-    outputPer1M: 75.0,
-    cachedInputPer1M: 1.5,
-    cacheWritePer1M: 18.75,
-    asOfDate: '2025-01-01',
-  },
-  'claude-sonnet-4-5-20241022': {
-    model: 'claude-sonnet-4-5-20241022',
-    provider: 'anthropic',
-    inputPer1M: 3.0,
-    outputPer1M: 15.0,
-    cachedInputPer1M: 0.3,
-    cacheWritePer1M: 3.75,
-    asOfDate: '2025-01-01',
-  },
-  'claude-haiku-4-5-20241022': {
-    model: 'claude-haiku-4-5-20241022',
-    provider: 'anthropic',
-    inputPer1M: 0.8,
-    outputPer1M: 4.0,
-    cachedInputPer1M: 0.08,
-    cacheWritePer1M: 1.0,
-    asOfDate: '2025-01-01',
-  },
-
-  // Anthropic Claude 3 Opus
-  'claude-3-opus-20240229': {
-    model: 'claude-3-opus-20240229',
-    provider: 'anthropic',
-    inputPer1M: 15.0,
-    outputPer1M: 75.0,
-    cachedInputPer1M: 1.5,
-    cacheWritePer1M: 18.75,
-    asOfDate: '2025-01-01',
-  },
-
-  // Anthropic Claude 3 Haiku
-  'claude-3-haiku-20240307': {
-    model: 'claude-3-haiku-20240307',
-    provider: 'anthropic',
-    inputPer1M: 0.25,
-    outputPer1M: 1.25,
-    cachedInputPer1M: 0.025,
-    cacheWritePer1M: 0.3125,
-    asOfDate: '2025-01-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'claude-3-5-haiku-20241022': {
     model: 'claude-3-5-haiku-20241022',
@@ -191,10 +296,28 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 4.0,
     cachedInputPer1M: 0.08,
     cacheWritePer1M: 1.0,
-    asOfDate: '2025-01-01',
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'claude-3-opus-20240229': {
+    model: 'claude-3-opus-20240229',
+    provider: 'anthropic',
+    inputPer1M: 15.0,
+    outputPer1M: 75.0,
+    cachedInputPer1M: 1.5,
+    cacheWritePer1M: 18.75,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'claude-3-haiku-20240307': {
+    model: 'claude-3-haiku-20240307',
+    provider: 'anthropic',
+    inputPer1M: 0.25,
+    outputPer1M: 1.25,
+    cachedInputPer1M: 0.025,
+    cacheWritePer1M: 0.3125,
+    asOfDate: BASELINE_AS_OF_DATE,
   },
 
-  // Google Gemini models (baseline, early February 2026)
+  // Google Gemini models (baseline)
   'gemini-3-pro-preview': {
     model: 'gemini-3-pro-preview',
     provider: 'google',
@@ -202,7 +325,7 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 12.0,
     cachedInputPer1M: 0.2,
     cacheWritePer1M: 2.5,
-    asOfDate: '2026-02-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'gemini-3-flash-preview': {
     model: 'gemini-3-flash-preview',
@@ -211,25 +334,25 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 3.5,
     cachedInputPer1M: 0.06,
     cacheWritePer1M: 0.75,
-    asOfDate: '2026-02-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'gemini-2.5-pro': {
     model: 'gemini-2.5-pro',
     provider: 'google',
     inputPer1M: 1.25,
     outputPer1M: 10.0,
-    cachedInputPer1M: 0.125,
+    cachedInputPer1M: 0.31,
     cacheWritePer1M: 1.25,
-    asOfDate: '2026-02-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'gemini-2.5-flash': {
     model: 'gemini-2.5-flash',
     provider: 'google',
     inputPer1M: 0.3,
     outputPer1M: 2.5,
-    cachedInputPer1M: 0.03,
+    cachedInputPer1M: 0.075,
     cacheWritePer1M: 0.3,
-    asOfDate: '2026-02-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'gemini-2.5-flash-lite': {
     model: 'gemini-2.5-flash-lite',
@@ -238,7 +361,7 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 0.4,
     cachedInputPer1M: 0.025,
     cacheWritePer1M: 0.1,
-    asOfDate: '2026-02-01',
+    asOfDate: BASELINE_AS_OF_DATE,
   },
   'gemini-2.0-flash': {
     model: 'gemini-2.0-flash',
@@ -247,265 +370,300 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     outputPer1M: 0.4,
     cachedInputPer1M: 0.025,
     cacheWritePer1M: 0.1,
-    asOfDate: '2026-02-01',
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gemini-2.0-flash-lite': {
+    model: 'gemini-2.0-flash-lite',
+    provider: 'google',
+    inputPer1M: 0.075,
+    outputPer1M: 0.3,
+    cachedInputPer1M: 0.01875,
+    cacheWritePer1M: 0.075,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gemini-1.5-pro': {
+    model: 'gemini-1.5-pro',
+    provider: 'google',
+    inputPer1M: 1.25,
+    outputPer1M: 5.0,
+    cachedInputPer1M: 0.3125,
+    cacheWritePer1M: 1.25,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gemini-1.5-flash': {
+    model: 'gemini-1.5-flash',
+    provider: 'google',
+    inputPer1M: 0.075,
+    outputPer1M: 0.3,
+    cachedInputPer1M: 0.01875,
+    cacheWritePer1M: 0.075,
+    asOfDate: BASELINE_AS_OF_DATE,
+  },
+  'gemini-1.5-flash-8b': {
+    model: 'gemini-1.5-flash-8b',
+    provider: 'google',
+    inputPer1M: 0.0375,
+    outputPer1M: 0.15,
+    cachedInputPer1M: 0.01,
+    cacheWritePer1M: 0.04,
+    asOfDate: BASELINE_AS_OF_DATE,
   },
 };
 
 /**
- * Default pricing for unknown models
+ * Default pricing for unknown models.
  */
 const DEFAULT_PRICING: ModelPricing = {
   model: 'unknown',
   provider: 'unknown',
-  inputPer1M: 10.0, // Conservative estimate
-  outputPer1M: 30.0, // Conservative estimate
+  inputPer1M: 10.0,
+  outputPer1M: 30.0,
   cachedInputPer1M: 1.0,
   cacheWritePer1M: 12.5,
-  asOfDate: '2025-01-01',
+  asOfDate: BASELINE_AS_OF_DATE,
 };
 
 /**
- * Get pricing for a specific model
+ * Get pricing for a specific model.
  *
- * @param model - Model identifier
- * @param overrides - Optional partial pricing to override defaults
- * @returns Model pricing information
- *
- * @example
- * ```typescript
- * const pricing = getPricing('gpt-4');
- * console.log(pricing.inputPer1M); // 30.0
- * ```
- *
- * @example
- * ```typescript
- * // Override pricing for custom deployment
- * const pricing = getPricing('gpt-4', {
- *   inputPer1M: 25.0,
- *   outputPer1M: 50.0,
- * });
- * ```
+ * Precedence: runtime catalog override > user overrides > baseline pricing.
  */
 export function getPricing(
   model: string,
   overrides?: Partial<ModelPricing>,
 ): ModelPricing {
-  // Try exact match first
-  const exactMatch = PRICING_DATA[model];
-  if (exactMatch) {
-    return overrides ? {...exactMatch, ...overrides} : exactMatch;
-  }
+  const baselineMatch = resolveBaselinePricing(model);
+  const inferredProvider = inferCatalogProviderFromModel(model);
+  const providerHint =
+    overrides?.provider ?? baselineMatch?.provider ?? inferredProvider;
 
-  // Try fuzzy match for model families
-  const fuzzyMatch = findFuzzyMatch(model);
-  if (fuzzyMatch) {
-    return overrides ? {...fuzzyMatch, ...overrides} : fuzzyMatch;
-  }
+  const runtimeOverride = getCatalogPricingOverride(providerHint, model);
+  const resolvedProvider =
+    runtimeOverride?.provider ??
+    overrides?.provider ??
+    baselineMatch?.provider ??
+    (runtimeOverride ? providerHint : 'unknown');
 
-  // Fall back to default pricing
-  const defaultWithModel = {...DEFAULT_PRICING, model};
-  return overrides ? {...defaultWithModel, ...overrides} : defaultWithModel;
+  const providerDefault = createProviderDefaultPricing(model, resolvedProvider);
+
+  const resolvedPricing: ModelPricing = {
+    ...DEFAULT_PRICING,
+    ...providerDefault,
+    ...(baselineMatch ?? {}),
+    ...(overrides ?? {}),
+    ...(runtimeOverride ?? {}),
+    model,
+    provider: resolvedProvider,
+    asOfDate:
+      runtimeOverride?.asOfDate ??
+      overrides?.asOfDate ??
+      baselineMatch?.asOfDate ??
+      providerDefault.asOfDate,
+  };
+
+  return resolvedPricing;
 }
 
 /**
- * Find fuzzy match for model name
- *
- * Handles cases like:
- * - 'gpt-4-0613' -> 'gpt-4'
- * - 'claude-3-5-sonnet-latest' -> 'claude-3-5-sonnet-20241022'
- */
-function findFuzzyMatch(model: string): ModelPricing | null {
-  const modelLower = model.toLowerCase();
-
-  // Try prefix matching
-  for (const [key, pricing] of Object.entries(PRICING_DATA)) {
-    const keyLower = key.toLowerCase();
-
-    // Check if the model starts with a known model prefix
-    if (modelLower.startsWith(keyLower) || keyLower.startsWith(modelLower)) {
-      return pricing;
-    }
-
-    // Check for common patterns
-    if (
-      modelLower.includes('gpt-4-turbo') &&
-      keyLower.includes('gpt-4-turbo')
-    ) {
-      return pricing;
-    }
-    if (modelLower.includes('gpt-4') && keyLower === 'gpt-4') {
-      return pricing;
-    }
-    if (modelLower.includes('gpt-3.5') && keyLower.includes('gpt-3.5')) {
-      return pricing;
-    }
-    if (
-      modelLower.includes('claude') &&
-      modelLower.includes('opus') &&
-      keyLower.includes('opus')
-    ) {
-      return pricing;
-    }
-    if (
-      modelLower.includes('claude') &&
-      modelLower.includes('sonnet') &&
-      keyLower.includes('sonnet')
-    ) {
-      return pricing;
-    }
-    if (
-      modelLower.includes('claude') &&
-      modelLower.includes('haiku') &&
-      keyLower.includes('haiku')
-    ) {
-      return pricing;
-    }
-
-    if (
-      modelLower.includes('gemini') &&
-      modelLower.includes('pro') &&
-      keyLower.includes('gemini') &&
-      keyLower.includes('pro')
-    ) {
-      return pricing;
-    }
-    if (
-      modelLower.includes('gemini') &&
-      modelLower.includes('flash') &&
-      modelLower.includes('lite') &&
-      keyLower.includes('gemini') &&
-      keyLower.includes('flash-lite')
-    ) {
-      return pricing;
-    }
-    if (
-      modelLower.includes('gemini') &&
-      modelLower.includes('flash') &&
-      keyLower.includes('gemini') &&
-      keyLower.includes('flash')
-    ) {
-      return pricing;
-    }
-  }
-
-  return null;
-}
-
-/**
- * Get all available model pricing data
- *
- * @returns Array of all model pricing information
- *
- * @example
- * ```typescript
- * const allPricing = getAllPricing();
- * const openaiModels = allPricing.filter(p => p.provider === 'openai');
- * ```
+ * Get all available model pricing data (baseline + runtime catalog models).
  */
 export function getAllPricing(): ModelPricing[] {
-  return Object.values(PRICING_DATA);
+  const modelNames = new Set<string>(Object.keys(PRICING_DATA));
+
+  for (const runtimeModel of getCatalogPricingModelKeys()) {
+    modelNames.add(runtimeModel);
+  }
+
+  return [...modelNames].sort().map((model) => getPricing(model));
 }
 
 /**
- * Get pricing for all models from a specific provider
- *
- * @param provider - Provider name
- * @returns Array of model pricing for the provider
- *
- * @example
- * ```typescript
- * const anthropicPricing = getPricingByProvider('anthropic');
- * console.log(anthropicPricing.length); // Number of Anthropic models
- * ```
+ * Get pricing for all models from a specific provider.
  */
-export function getPricingByProvider(
-  provider: 'anthropic' | 'openai' | 'google',
-): ModelPricing[] {
-  return Object.values(PRICING_DATA).filter((p) => p.provider === provider);
+export function getPricingByProvider(provider: KnownProvider): ModelPricing[] {
+  const modelNames = new Set<string>(
+    Object.entries(PRICING_DATA)
+      .filter(([, pricing]) => pricing.provider === provider)
+      .map(([model]) => model),
+  );
+
+  for (const runtimeModel of getCatalogPricingModelKeys(provider)) {
+    modelNames.add(runtimeModel);
+  }
+
+  return [...modelNames]
+    .sort()
+    .map((model) => getPricing(model))
+    .filter((pricing) => pricing.provider === provider);
 }
 
 /**
- * Calculate cache write pricing for a specific TTL
- *
- * Anthropic cache economics:
- * - 5min TTL: +25% of input price
- * - 1h TTL: +100% of input price
- *
- * @param basePricing - Base model pricing
- * @param ttl - Cache TTL ('5m' or '1h')
- * @returns Cache write price per 1M tokens
- *
- * @example
- * ```typescript
- * const pricing = getPricing('claude-3-5-sonnet-20241022');
- * const write5m = calculateCacheWritePricing(pricing, '5m'); // 3.75
- * const write1h = calculateCacheWritePricing(pricing, '1h'); // 6.0
- * ```
+ * Calculate cache write pricing for a specific TTL.
  */
 export function calculateCacheWritePricing(
   basePricing: ModelPricing,
   ttl: '5m' | '1h',
 ): number {
   if (basePricing.provider === 'openai') {
-    // OpenAI has free automatic caching
+    // OpenAI prompt caching is automatic; no explicit cache write API.
     return 0.0;
   }
 
   if (basePricing.provider === 'anthropic') {
     const baseInput = basePricing.inputPer1M;
     if (ttl === '5m') {
-      return baseInput * 1.25; // +25%
-    } else {
-      return baseInput * 2.0; // +100%
+      return baseInput * 1.25;
     }
+
+    return baseInput * 2.0;
   }
 
   if (basePricing.provider === 'google') {
-    // Gemini uses explicit cache artifacts; keep baseline write pricing.
     return basePricing.cacheWritePer1M ?? basePricing.inputPer1M;
   }
 
-  // Unknown provider - use conservative estimate
   return basePricing.inputPer1M * 1.25;
 }
 
 /**
- * Export pricing data as JSON string
- *
- * Useful for:
- * - Saving pricing to file for easy updates
- * - Integration with external systems
- * - Debugging pricing data
- *
- * @param pretty - Whether to format with indentation (default: true)
- * @returns JSON string of all pricing data
- *
- * @example
- * ```typescript
- * const json = exportPricingAsJSON();
- * fs.writeFileSync('pricing.json', json);
- * ```
+ * Export effective pricing data as JSON string.
  */
 export function exportPricingAsJSON(pretty = true): string {
-  return JSON.stringify(PRICING_DATA, null, pretty ? 2 : 0);
+  const effectivePricing = getAllPricing().reduce<Record<string, ModelPricing>>(
+    (accumulator, pricing) => {
+      accumulator[pricing.model] = pricing;
+      return accumulator;
+    },
+    {},
+  );
+
+  return JSON.stringify(effectivePricing, null, pretty ? 2 : 0);
 }
 
 /**
- * Import pricing data from JSON
- *
- * Allows loading custom pricing from external sources
- *
- * @param json - JSON string of pricing data
- * @returns Record of model pricing
- *
- * @example
- * ```typescript
- * const customPricing = importPricingFromJSON(jsonString);
- * const pricing = getPricing('gpt-4', customPricing['gpt-4']);
- * ```
+ * Import pricing data from JSON.
  */
 export function importPricingFromJSON(
   json: string,
 ): Record<string, ModelPricing> {
   return JSON.parse(json) as Record<string, ModelPricing>;
+}
+
+function resolveBaselinePricing(model: string): ModelPricing | null {
+  const exactMatch = PRICING_DATA[model];
+  if (exactMatch) {
+    return exactMatch;
+  }
+
+  return findFuzzyMatch(model);
+}
+
+function findFuzzyMatch(model: string): ModelPricing | null {
+  const normalizedModel = normalizeModelName(model);
+
+  const entriesBySpecificity = Object.entries(PRICING_DATA).sort(
+    ([leftKey], [rightKey]) =>
+      normalizeModelName(rightKey).length - normalizeModelName(leftKey).length,
+  );
+
+  for (const [key, pricing] of entriesBySpecificity) {
+    const normalizedKey = normalizeModelName(key);
+
+    if (
+      normalizedModel === normalizedKey ||
+      normalizedModel.startsWith(normalizedKey) ||
+      normalizedKey.startsWith(normalizedModel)
+    ) {
+      return pricing;
+    }
+  }
+
+  const familyFallbacks: [RegExp, string][] = [
+    [/^gpt-5\.2/, 'gpt-5.2'],
+    [/^gpt-5/, 'gpt-5'],
+    [/^gpt-4\.1/, 'gpt-4.1'],
+    [/^gpt-4o/, 'gpt-4o'],
+    [/^gpt-4-turbo/, 'gpt-4-turbo'],
+    [/^gpt-4/, 'gpt-4'],
+    [/^gpt-3\.5/, 'gpt-3.5-turbo'],
+    [/^o4/, 'o4-mini'],
+    [/^o3/, 'o3'],
+    [/^o1/, 'o1'],
+    [/claude.*opus.*4-1/, 'claude-opus-4-1-20250805'],
+    [/claude.*opus.*4/, 'claude-opus-4-20250514'],
+    [/claude.*opus/, 'claude-opus-4-1-20250805'],
+    [/claude.*sonnet.*4-5/, 'claude-sonnet-4-5-20250929'],
+    [/claude.*sonnet.*4/, 'claude-sonnet-4-20250514'],
+    [/claude.*sonnet/, 'claude-sonnet-4-5-20250929'],
+    [/claude.*haiku.*3-5/, 'claude-3-5-haiku-20241022'],
+    [/claude.*haiku/, 'claude-3-5-haiku-20241022'],
+    [/gemini.*3.*pro/, 'gemini-3-pro-preview'],
+    [/gemini.*3.*flash/, 'gemini-3-flash-preview'],
+    [/gemini.*2\.5.*pro/, 'gemini-2.5-pro'],
+    [/gemini.*2\.5.*flash.*lite/, 'gemini-2.5-flash-lite'],
+    [/gemini.*2\.5.*flash/, 'gemini-2.5-flash'],
+    [/gemini.*2\.0.*flash.*lite/, 'gemini-2.0-flash-lite'],
+    [/gemini.*2\.0.*flash/, 'gemini-2.0-flash'],
+    [/gemini.*1\.5.*pro/, 'gemini-1.5-pro'],
+    [/gemini.*1\.5.*flash.*8b/, 'gemini-1.5-flash-8b'],
+    [/gemini.*1\.5.*flash/, 'gemini-1.5-flash'],
+  ];
+
+  for (const [pattern, modelKey] of familyFallbacks) {
+    if (pattern.test(normalizedModel) && PRICING_DATA[modelKey]) {
+      return PRICING_DATA[modelKey];
+    }
+  }
+
+  return null;
+}
+
+function createProviderDefaultPricing(
+  model: string,
+  provider: ModelPricing['provider'],
+): ModelPricing {
+  switch (provider) {
+    case 'openai':
+      return {
+        model,
+        provider,
+        inputPer1M: 2.0,
+        outputPer1M: 8.0,
+        cachedInputPer1M: 0.5,
+        cacheWritePer1M: 0.0,
+        asOfDate: BASELINE_AS_OF_DATE,
+      };
+
+    case 'anthropic':
+      return {
+        model,
+        provider,
+        inputPer1M: 3.0,
+        outputPer1M: 15.0,
+        cachedInputPer1M: 0.3,
+        cacheWritePer1M: 3.75,
+        asOfDate: BASELINE_AS_OF_DATE,
+      };
+
+    case 'google':
+      return {
+        model,
+        provider,
+        inputPer1M: 0.3,
+        outputPer1M: 2.5,
+        cachedInputPer1M: 0.075,
+        cacheWritePer1M: 0.3,
+        asOfDate: BASELINE_AS_OF_DATE,
+      };
+
+    default:
+      return {...DEFAULT_PRICING, model};
+  }
+}
+
+function normalizeModelName(model: string): string {
+  return model
+    .trim()
+    .toLowerCase()
+    .replace(/^models\//, '');
 }

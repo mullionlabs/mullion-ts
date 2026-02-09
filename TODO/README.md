@@ -18,7 +18,7 @@
 ✅ Sinks (Task 16)          ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
 📋 CLI Tools (Tasks 15 & 17) ━━━━━━━━━━━━━━━░░░░░░░░ 50%
 ✅ Provider Adapters (Task 18) ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
-📋 Runtime Catalog (Task 19) ━━━━━━━━━━━━━━━━━━━░░░░░ 0%
+✅ Runtime Catalog (Task 19) ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
 ```
 
 ## Task Status
@@ -33,7 +33,7 @@
 | 16   | ✅     | [16-scoped-sinks.md](./tasks/16-scoped-sinks.md)                                               | Scoped sinks for logs, traces, caches                                      |
 | 17   | 📋     | [17-nextjs-support.md](./tasks/17-nextjs-support.md)                                           | Next.js framework support                                                  |
 | 18   | ✅     | [18-gemini-adapter.md](./tasks/18-gemini-adapter.md)                                           | Gemini adapter for `@mullion/ai-sdk` (cache + metrics + cost + tests)      |
-| 19   | 📋     | [19-runtime-catalog-and-pricing-refresh.md](./tasks/19-runtime-catalog-and-pricing-refresh.md) | Runtime model/pricing catalog + baseline refresh (OpenAI/Anthropic/Gemini) |
+| 19   | ✅     | [19-runtime-catalog-and-pricing-refresh.md](./tasks/19-runtime-catalog-and-pricing-refresh.md) | Runtime model/pricing catalog + baseline refresh (OpenAI/Anthropic/Gemini) |
 
 ## Milestones
 

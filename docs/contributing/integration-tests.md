@@ -41,6 +41,10 @@ Optional model overrides:
 - `ANTHROPIC_MODEL`
 - `GEMINI_MODEL`
 
+Optional runtime catalog:
+
+- `MULLION_MODEL_CATALOG_URL` (remote JSON catalog for pricing/capability overrides)
+
 Optional Anthropic toggles:
 
 - `ANTHROPIC_ENABLE_SONNET`
@@ -48,6 +52,10 @@ Optional Anthropic toggles:
 - `ANTHROPIC_CACHE_MIN_TOKENS`
 - `ANTHROPIC_CACHE_DOC_SECTIONS`
 - `ANTHROPIC_CACHE_STRICT`
+
+Optional runtime-catalog toggles:
+
+- `MULLION_MODEL_CATALOG_TTL_MS` (e.g. `21600000` for 6h)
 
 ## Running Tests
 
@@ -62,6 +70,14 @@ Provider-specific suites:
 ```bash
 pnpm --filter integration-tests test:openai
 pnpm --filter integration-tests test:anthropic
+pnpm --filter integration-tests test:gemini
+```
+
+Example (run Gemini tests with runtime catalog loaded by URL):
+
+```bash
+MULLION_MODEL_CATALOG_URL=https://example.com/model-catalog.json \
+MULLION_MODEL_CATALOG_TTL_MS=21600000 \
 pnpm --filter integration-tests test:gemini
 ```
 

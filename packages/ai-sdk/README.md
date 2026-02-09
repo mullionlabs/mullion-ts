@@ -39,6 +39,7 @@ This package provides a seamless integration between Mullion and the Vercel AI S
 - ✅ **Safe-by-default caching** - Never cache user content without opt-in
 - ✅ **TTL support** - `'5m'`, `'1h'` cache lifetimes
 - ✅ **Provider adapters** - OpenAI, Anthropic, Gemini
+- ✅ **Runtime model catalog** - Override model pricing/capabilities without SDK release
 
 ## Quick Start
 
@@ -99,6 +100,80 @@ Mullion is provider-agnostic, and the built-in adapter coverage is:
 | OpenAI    | ✅                 | ✅ (automatic)     | ✅            | ✅              |
 | Anthropic | ✅                 | ✅ (explicit)      | ✅            | ✅              |
 | Gemini    | ✅                 | ✅ (cachedContent) | ✅            | ✅              |
+
+## Runtime Model Catalog
+
+`@mullion/ai-sdk` now supports runtime model catalog overrides for pricing and cache capabilities.
+
+- Use when providers add/rename models faster than package release cadence.
+- Keep a pinned baseline in code (`asOfDate: 2026-02-09`) and overlay runtime JSON.
+- Safe fallback: if loading fails, Mullion keeps baseline behavior.
+
+### Load Catalog From URL
+
+```typescript
+import {loadModelCatalog} from '@mullion/ai-sdk';
+
+const result = await loadModelCatalog({
+  url: process.env.MULLION_MODEL_CATALOG_URL,
+  ttlMs: 6 * 60 * 60 * 1000, // 6h cache
+});
+
+if (result.usedFallback) {
+  console.warn('Catalog load failed, using baseline pricing/capabilities');
+  console.warn(result.error?.message);
+}
+```
+
+### Load Catalog From File or Inline JSON
+
+```typescript
+import {clearModelCatalogOverrides, loadModelCatalog} from '@mullion/ai-sdk';
+
+await loadModelCatalog({
+  filePath: './model-catalog.json',
+  forceRefresh: true,
+});
+
+await loadModelCatalog({
+  json: JSON.stringify({
+    schemaVersion: 1,
+    snapshotDate: '2026-02-09',
+    generatedAt: '2026-02-09T00:00:00.000Z',
+    sources: ['https://example.com/model-catalog.json'],
+    pricing: {
+      providers: {
+        openai: {
+          models: {
+            'gpt-5': {
+              inputPer1M: 1.1,
+              outputPer1M: 8.8,
+              asOfDate: '2026-02-09',
+            },
+          },
+        },
+      },
+    },
+  }),
+});
+
+clearModelCatalogOverrides(); // Back to hardcoded baseline only
+```
+
+### Override Precedence
+
+Pricing precedence is:
+
+1. Runtime catalog override
+2. `getPricing(model, overrides)` user override
+3. Built-in baseline snapshot
+
+### Migration Notes (Hardcoded-Only Users)
+
+- If you do nothing, behavior remains baseline-only (same API calls, no runtime setup required).
+- `getPricing()` now resolves runtime catalog first when loaded.
+- OpenAI/Anthropic/Gemini hardcoded baselines are refreshed to snapshot date `2026-02-09`.
+- For strict deterministic pricing in production, pin your own catalog JSON and load it at startup.
 
 ### OpenAI
 

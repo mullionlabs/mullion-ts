@@ -79,9 +79,9 @@ console.log(pricing);
 //   provider: 'google',
 //   inputPer1M: 1.25,
 //   outputPer1M: 10,
-//   cachedInputPer1M: 0.125,
+//   cachedInputPer1M: 0.31,
 //   cacheWritePer1M: 1.25,
-//   asOfDate: '2026-02-01'
+//   asOfDate: '2026-02-09'
 // }
 ```
 
@@ -105,8 +105,33 @@ Pricing includes baseline entries for:
 - `gemini-2.5-flash`
 - `gemini-2.5-flash-lite`
 - `gemini-2.0-flash`
+- `gemini-2.0-flash-lite`
+- `gemini-1.5-pro`
+- `gemini-1.5-flash`
+- `gemini-1.5-flash-8b`
 
-`asOfDate` for these entries is `2026-02-01`.
+`asOfDate` for these baseline entries is `2026-02-09`.
+
+### Runtime pricing overrides
+
+```typescript
+import {getPricing, loadModelCatalog} from '@mullion/ai-sdk';
+
+await loadModelCatalog({
+  url: process.env.MULLION_MODEL_CATALOG_URL,
+  ttlMs: 6 * 60 * 60 * 1000,
+});
+
+const pricing = getPricing('gpt-5');
+```
+
+Pricing precedence:
+
+1. Runtime catalog overrides
+2. User override in `getPricing(model, overrides)`
+3. Built-in baseline snapshot
+
+If runtime loading or validation fails, `getPricing()` and `getPricingByProvider()` keep using the built-in baseline (safe fallback).
 
 ## Cost Calculation Utilities
 

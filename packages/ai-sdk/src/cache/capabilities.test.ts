@@ -2,7 +2,7 @@
  * Tests for cache capabilities module
  */
 
-import {describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import {
   getCacheCapabilities,
   supportsCacheFeature,
@@ -12,6 +12,18 @@ import {
   type CacheCapabilities,
   type Provider,
 } from './capabilities.js';
+import {
+  clearModelCatalogOverrides,
+  setModelCatalogOverrides,
+} from '../catalog/model-catalog.js';
+
+beforeEach(() => {
+  clearModelCatalogOverrides();
+});
+
+afterEach(() => {
+  clearModelCatalogOverrides();
+});
 
 describe('getCacheCapabilities', () => {
   describe('Anthropic models', () => {
@@ -63,8 +75,11 @@ describe('getCacheCapabilities', () => {
       });
     });
 
-    it('returns correct capabilities for future Claude 4.5 models', () => {
-      const caps = getCacheCapabilities('anthropic', 'claude-opus-4-5');
+    it('returns correct capabilities for Claude Opus 4.1 models', () => {
+      const caps = getCacheCapabilities(
+        'anthropic',
+        'claude-opus-4-1-20250805',
+      );
 
       expect(caps).toEqual({
         supported: true,
@@ -233,7 +248,7 @@ describe('getCacheCapabilities', () => {
       expect(caps).toEqual({
         supported: false,
         minTokens: 2048,
-        maxBreakpoints: 1,
+        maxBreakpoints: 0,
         supportsTtl: false,
         supportedTtl: [],
         supportsToolCaching: false,
@@ -247,7 +262,7 @@ describe('getCacheCapabilities', () => {
       expect(caps).toEqual({
         supported: false,
         minTokens: 2048,
-        maxBreakpoints: 1,
+        maxBreakpoints: 0,
         supportsTtl: false,
         supportedTtl: [],
         supportsToolCaching: false,
@@ -377,6 +392,86 @@ describe('getRecommendedCacheStrategy', () => {
   });
 });
 
+describe('runtime capability overrides', () => {
+  it('applies runtime capability overrides when safe', () => {
+    setModelCatalogOverrides({
+      schemaVersion: 1,
+      snapshotDate: '2026-02-09',
+      generatedAt: '2026-02-09T00:00:00.000Z',
+      sources: ['https://example.com/catalog.json'],
+      capabilities: {
+        providers: {
+          openai: {
+            models: {
+              'gpt-5': {
+                minTokens: 2048,
+                supportsToolCaching: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const caps = getCacheCapabilities('openai', 'gpt-5');
+    expect(caps.minTokens).toBe(2048);
+    expect(caps.supportsToolCaching).toBe(true);
+  });
+
+  it('does not allow runtime override to enable unsupported OpenAI TTL', () => {
+    setModelCatalogOverrides({
+      schemaVersion: 1,
+      snapshotDate: '2026-02-09',
+      generatedAt: '2026-02-09T00:00:00.000Z',
+      sources: ['https://example.com/catalog.json'],
+      capabilities: {
+        providers: {
+          openai: {
+            models: {
+              'gpt-5': {
+                supportsTtl: true,
+                supportedTtl: ['5m', '1h'],
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const caps = getCacheCapabilities('openai', 'gpt-5');
+    expect(caps.supportsTtl).toBe(false);
+    expect(caps.supportedTtl).toEqual([]);
+  });
+
+  it('does not allow unsupported Gemini modes to be re-enabled by runtime override', () => {
+    setModelCatalogOverrides({
+      schemaVersion: 1,
+      snapshotDate: '2026-02-09',
+      generatedAt: '2026-02-09T00:00:00.000Z',
+      sources: ['https://example.com/catalog.json'],
+      capabilities: {
+        providers: {
+          google: {
+            models: {
+              'gemini-2.5-flash-image': {
+                supported: true,
+                supportsTtl: true,
+                supportedTtl: ['5m', '1h'],
+                maxBreakpoints: 1,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const caps = getCacheCapabilities('google', 'gemini-2.5-flash-image');
+    expect(caps.supported).toBe(false);
+    expect(caps.supportsTtl).toBe(false);
+    expect(caps.supportedTtl).toEqual([]);
+  });
+});
+
 describe('Model-specific token thresholds', () => {
   it('verifies Haiku models use higher thresholds', () => {
     const haiku3 = getCacheCapabilities('anthropic', 'claude-3-haiku-20240307');
@@ -384,11 +479,10 @@ describe('Model-specific token thresholds', () => {
       'anthropic',
       'claude-3-5-haiku-20241022',
     );
-    const haiku45 = getCacheCapabilities('anthropic', 'claude-4-5-haiku');
 
     expect(haiku3.minTokens).toBe(2048);
     expect(haiku35.minTokens).toBe(2048);
-    expect(haiku45.minTokens).toBe(4096); // Future model has even higher threshold
+    expect(haiku35.minTokens).toBeGreaterThan(1024);
   });
 
   it('verifies Sonnet models use standard thresholds', () => {
@@ -407,10 +501,13 @@ describe('Model-specific token thresholds', () => {
 
   it('verifies Opus models use correct thresholds', () => {
     const opus3 = getCacheCapabilities('anthropic', 'claude-3-opus-20240229');
-    const opus45 = getCacheCapabilities('anthropic', 'claude-opus-4-5');
+    const opus41 = getCacheCapabilities(
+      'anthropic',
+      'claude-opus-4-1-20250805',
+    );
 
     expect(opus3.minTokens).toBe(1024); // Current Opus
-    expect(opus45.minTokens).toBe(4096); // Future Opus
+    expect(opus41.minTokens).toBe(4096); // Claude 4.x Opus
   });
 
   it('verifies all OpenAI models use 1024 minimum', () => {
