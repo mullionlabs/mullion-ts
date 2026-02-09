@@ -16,7 +16,7 @@ import {
   replacePlaceholders,
 } from './placeholders.js';
 
-export type Framework = 'nuxt';
+export type Framework = 'nuxt' | 'next';
 export type Scenario = 'rag' | 'helpdesk';
 export type Ui = 'minimal' | 'shadcn';
 export type PackageManagerName = 'pnpm' | 'npm' | 'yarn' | 'bun';
@@ -60,7 +60,7 @@ export async function generateProject(options: GenerateOptions): Promise<void> {
   await copyOverlay(scenarioDir, targetDir, 'scenario template');
   await copyOverlay(uiDir, targetDir, 'ui template');
 
-  await copyScenarioCore(options.scenario, targetDir);
+  await copyScenarioCore(options.scenario, targetDir, options.framework);
 
   const basePackage = await readJsonFile<PackageJson>(
     join(baseDir, 'package.json'),
@@ -75,8 +75,8 @@ export async function generateProject(options: GenerateOptions): Promise<void> {
   ]);
   await writePackageJson(join(targetDir, 'package.json'), mergedPackage);
 
-  await ensureEnvExample(targetDir, options.projectName);
-  await ensureReadme(targetDir, options.projectName);
+  await ensureEnvExample(targetDir, options.projectName, options.framework);
+  await ensureReadme(targetDir, options.projectName, options.framework);
   await replacePlaceholders(targetDir, {
     '{{PROJECT_NAME}}': options.projectName,
     ...catalogReplacements,
@@ -186,10 +186,20 @@ async function loadCatalogReplacements(
 async function copyScenarioCore(
   scenario: Scenario,
   targetDir: string,
+  framework: Framework,
 ): Promise<void> {
   const packageName = TEMPLATE_MAP[scenario];
   const require = createRequire(import.meta.url);
   let packageRoot: string | undefined;
+
+  const target = resolveScenarioTargetDir(targetDir, framework);
+  const targetHasContent = await hasDirectoryEntries(target);
+  if (targetHasContent) {
+    consola.info(
+      `Scenario logic already present in ${target}; skipping ${packageName} copy.`,
+    );
+    return;
+  }
 
   try {
     const packageJsonPath = require.resolve(`${packageName}/package.json`, {
@@ -224,8 +234,29 @@ async function copyScenarioCore(
     return;
   }
 
-  const target = join(targetDir, 'server', 'mullion');
   await copyDirRecursive(sourceDir, target);
+}
+
+function resolveScenarioTargetDir(
+  targetDir: string,
+  framework: Framework,
+): string {
+  if (framework === 'next') {
+    return join(targetDir, 'src', 'mullion');
+  }
+  return join(targetDir, 'server', 'utils', 'mullion');
+}
+
+async function hasDirectoryEntries(path: string): Promise<boolean> {
+  try {
+    const entries = await readdir(path);
+    return entries.length > 0;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return false;
+    }
+    throw error;
+  }
 }
 
 async function tryGitInit(targetDir: string): Promise<void> {

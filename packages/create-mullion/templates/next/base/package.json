@@ -1,0 +1,27 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mullion/core": "^0.2.3",
+    "@mullion/ai-sdk": "^0.3.0",
+    "ai": "{{CATALOG:ai}}",
+    "next": "{{CATALOG:next}}",
+    "react": "{{CATALOG:react}}",
+    "react-dom": "{{CATALOG:react-dom}}",
+    "zod": "{{CATALOG:zod}}"
+  },
+  "devDependencies": {
+    "@types/node": "{{CATALOG:@types/node}}",
+    "@types/react": "{{CATALOG:@types/react}}",
+    "@types/react-dom": "{{CATALOG:@types/react-dom}}",
+    "typescript": "{{CATALOG:typescript}}"
+  }
+}

@@ -164,13 +164,13 @@ flowchart LR
 npm create mullion@latest
 ```
 
-Get a working Nuxt app with Mullion built-in:
+Get a working Nuxt or Next.js app with Mullion built-in:
 
 - 🚀 **Works without API keys** (mock mode)
 - 🎯 **Production scenarios** (RAG, helpdesk)
-- 🎨 **UI included** (minimal CSS or Nuxt UI)
+- 🎨 **UI included** (minimal CSS or shadcn-style UI)
 - 📦 **Full TypeScript** setup
-  Note: create-mullion currently scaffolds Nuxt templates only. Next.js support is planned.
+  Note: create-mullion scaffolds both Nuxt and Next.js templates.
 
 [→ See create-mullion docs](./packages/create-mullion/README.md)
 

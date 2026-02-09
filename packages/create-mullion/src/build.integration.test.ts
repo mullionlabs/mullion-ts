@@ -178,6 +178,106 @@ describe('build integration tests', () => {
       expect(result.exitCode).toBe(0);
     }, 200000);
 
+    it('should generate and build a Next.js RAG minimal project', async () => {
+      const targetDir = await createTempDir();
+
+      const options: GenerateOptions = {
+        projectName: 'test-build-next-rag-minimal',
+        targetDir,
+        framework: 'next',
+        scenario: 'rag',
+        ui: 'minimal',
+        install: true,
+        git: false,
+      };
+
+      await generateProject(options);
+
+      const result = await execCommand(
+        'pnpm',
+        ['run', 'build'],
+        targetDir,
+        180000,
+      );
+
+      expect(result.exitCode).toBe(0);
+    }, 200000);
+
+    it('should generate and build a Next.js RAG shadcn project', async () => {
+      const targetDir = await createTempDir();
+
+      const options: GenerateOptions = {
+        projectName: 'test-build-next-rag-shadcn',
+        targetDir,
+        framework: 'next',
+        scenario: 'rag',
+        ui: 'shadcn',
+        install: true,
+        git: false,
+      };
+
+      await generateProject(options);
+
+      const result = await execCommand(
+        'pnpm',
+        ['run', 'build'],
+        targetDir,
+        180000,
+      );
+
+      expect(result.exitCode).toBe(0);
+    }, 200000);
+
+    it('should generate and build a Next.js helpdesk minimal project', async () => {
+      const targetDir = await createTempDir();
+
+      const options: GenerateOptions = {
+        projectName: 'test-build-next-helpdesk-minimal',
+        targetDir,
+        framework: 'next',
+        scenario: 'helpdesk',
+        ui: 'minimal',
+        install: true,
+        git: false,
+      };
+
+      await generateProject(options);
+
+      const result = await execCommand(
+        'pnpm',
+        ['run', 'build'],
+        targetDir,
+        180000,
+      );
+
+      expect(result.exitCode).toBe(0);
+    }, 200000);
+
+    it('should generate and build a Next.js helpdesk shadcn project', async () => {
+      const targetDir = await createTempDir();
+
+      const options: GenerateOptions = {
+        projectName: 'test-build-next-helpdesk-shadcn',
+        targetDir,
+        framework: 'next',
+        scenario: 'helpdesk',
+        ui: 'shadcn',
+        install: true,
+        git: false,
+      };
+
+      await generateProject(options);
+
+      const result = await execCommand(
+        'pnpm',
+        ['run', 'build'],
+        targetDir,
+        180000,
+      );
+
+      expect(result.exitCode).toBe(0);
+    }, 200000);
+
     it.skip('should generate a project that passes type checking', async () => {
       // TODO: Re-enable when base template includes typecheck script
       // This test is currently skipped because the base Nuxt template

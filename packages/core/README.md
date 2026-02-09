@@ -41,7 +41,7 @@ Scaffold a full Nuxt app with Mullion pre-wired:
 npm create mullion@latest
 ```
 
-Note: create-mullion currently scaffolds Nuxt templates only. Next.js support is planned.
+Note: create-mullion scaffolds both Nuxt and Next.js templates.
 
 See: https://github.com/mullionlabs/mullion-ts/tree/main/packages/create-mullion
 

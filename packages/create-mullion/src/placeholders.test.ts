@@ -237,6 +237,21 @@ describe('placeholders', () => {
       expect(lines[5]).toBe('# NUXT_OPENAI_STRICT_JSON_SCHEMA=false');
       expect(lines[6]).toBe(''); // Empty line at end
     });
+
+    it('should create Next.js env example when framework is next', async () => {
+      const dir = await createTempDir();
+
+      await ensureEnvExample(dir, 'next-app', 'next');
+
+      const envPath = join(dir, '.env.example');
+      const content = await readFile(envPath, 'utf8');
+
+      expect(content).toContain('# next-app environment');
+      expect(content).toContain('OPENAI_API_KEY=');
+      expect(content).toContain('ANTHROPIC_API_KEY=');
+      expect(content).toContain('OPENAI_STRICT_JSON_SCHEMA');
+      expect(content).not.toContain('NUXT_OPENAI_API_KEY');
+    });
   });
 
   describe('ensureReadme', () => {
@@ -266,6 +281,21 @@ describe('placeholders', () => {
 
       const content = await readFile(readmePath, 'utf8');
       expect(content).toBe(existingContent);
+    });
+
+    it('should create Next.js README when framework is next', async () => {
+      const dir = await createTempDir();
+
+      await ensureReadme(dir, 'next-demo', 'next');
+
+      const readmePath = join(dir, 'README.md');
+      const content = await readFile(readmePath, 'utf8');
+
+      expect(content).toContain('# next-demo');
+      expect(content).toContain('src/app/');
+      expect(content).toContain('src/mullion/');
+      expect(content).toContain('OPENAI_API_KEY');
+      expect(content).toContain('next.config.mjs');
     });
   });
 });

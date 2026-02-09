@@ -10,7 +10,7 @@ import type {
   Ui,
 } from './generator.js';
 
-const VALID_FRAMEWORKS: Framework[] = ['nuxt'];
+const VALID_FRAMEWORKS: Framework[] = ['nuxt', 'next'];
 const VALID_SCENARIOS: Scenario[] = ['rag', 'helpdesk'];
 const VALID_UI: Ui[] = ['minimal', 'shadcn'];
 const VALID_PM: PackageManagerName[] = ['pnpm', 'npm', 'yarn', 'bun'];
