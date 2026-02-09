@@ -6,6 +6,7 @@
   },
   "devDependencies": {
     "tailwindcss": "{{CATALOG:tailwindcss}}",
+    "@tailwindcss/postcss": "{{CATALOG:@tailwindcss/postcss}}",
     "postcss": "{{CATALOG:postcss}}",
     "autoprefixer": "{{CATALOG:autoprefixer}}"
   }

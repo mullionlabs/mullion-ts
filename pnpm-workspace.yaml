@@ -57,6 +57,7 @@ catalog:
   tailwind-merge: ^2.5.2
   postcss: ^8.4.35
   autoprefixer: ^10.4.19
+  '@tailwindcss/postcss': ^4.0.0
 
   # Nuxt & Vue ecosystem
   nuxt: ^4.2.2
