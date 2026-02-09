@@ -130,7 +130,17 @@ async function main() {
 
   if (checkMode) {
     const currentOutput = await tryReadFile(outputPath);
-    if (currentOutput !== normalizedJson) {
+    if (currentOutput === null) {
+      console.error(
+        `Model catalog baseline is missing at ${outputPath}. Run: pnpm --filter @mullion/ai-sdk catalog:normalize`,
+      );
+      process.exit(1);
+    }
+
+    const currentParsed = parseJsonString(currentOutput, outputPath);
+    const currentNormalizedJson = `${JSON.stringify(sortKeysDeep(currentParsed), null, 2)}\n`;
+
+    if (currentNormalizedJson !== normalizedJson) {
       console.error(
         'Model catalog baseline is out of date. Run: pnpm --filter @mullion/ai-sdk catalog:normalize',
       );
@@ -147,12 +157,7 @@ async function main() {
 
 async function readJsonFile(filePath) {
   const raw = await readFile(filePath, 'utf8');
-
-  try {
-    return JSON.parse(raw);
-  } catch (error) {
-    throw new Error(`Failed to parse JSON at ${filePath}`, {cause: error});
-  }
+  return parseJsonString(raw, filePath);
 }
 
 async function tryReadFile(filePath) {
@@ -160,6 +165,14 @@ async function tryReadFile(filePath) {
     return await readFile(filePath, 'utf8');
   } catch {
     return null;
+  }
+}
+
+function parseJsonString(raw, filePath) {
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    throw new Error(`Failed to parse JSON at ${filePath}`, {cause: error});
   }
 }
 
