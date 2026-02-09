@@ -9,6 +9,9 @@ catalogs:
     '@ai-sdk/anthropic':
       specifier: ^3.0.0
       version: 3.0.12
+    '@ai-sdk/google':
+      specifier: ^2.0.0
+      version: 2.0.52
     '@ai-sdk/openai':
       specifier: ^3.0.0
       version: 3.0.12
@@ -461,6 +464,9 @@ importers:
       '@ai-sdk/anthropic':
         specifier: 'catalog:'
         version: 3.0.12(zod@4.3.5)
+      '@ai-sdk/google':
+        specifier: 'catalog:'
+        version: 2.0.52(zod@4.3.5)
       '@ai-sdk/openai':
         specifier: 'catalog:'
         version: 3.0.12(zod@4.3.5)
@@ -521,10 +527,28 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
+  '@ai-sdk/google@2.0.52':
+    resolution:
+      {
+        integrity: sha512-2XUnGi3f7TV4ujoAhA+Fg3idUoG/+Y2xjCRg70a1/m0DH1KSQqYaCboJ1C19y6ZHGdf5KNT20eJdswP6TvrY2g==,
+      }
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/openai@3.0.12':
     resolution:
       {
         integrity: sha512-zqLWEKuaKnjXhu7xCw1jgz/+yTbd3F7EtgU4T2Q8BAo8OJC5wZv14l+kwM7Jai7M1/2Y2T/zBkrfiIu+7NsvfQ==,
+      }
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider-utils@3.0.20':
+    resolution:
+      {
+        integrity: sha512-iXHVe0apM2zUEzauqJwqmpC37A5rihrStAih5Ks+JE32iTe4LZ58y17UGBjpQQTCRw9YxMeo2UFLxLpBluyvLQ==,
       }
     engines: {node: '>=18'}
     peerDependencies:
@@ -556,6 +580,13 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider@2.0.1':
+    resolution:
+      {
+        integrity: sha512-KCUwswvsC5VsW2PWFqF8eJgSCu5Ysj7m1TxiHTVA6g7k360bk0RNQENT8KTMAYEs+8fWPD3Uu4dEmzGHc+jGng==,
+      }
+    engines: {node: '>=18'}
 
   '@ai-sdk/provider@3.0.2':
     resolution:
@@ -5781,6 +5812,7 @@ packages:
       {
         integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==,
       }
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@13.0.0:
@@ -8692,6 +8724,7 @@ packages:
         integrity: sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==,
       }
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   term-size@2.2.1:
     resolution:
@@ -9708,10 +9741,23 @@ snapshots:
       '@vercel/oidc': 3.1.0
       zod: 4.3.5
 
+  '@ai-sdk/google@2.0.52(zod@4.3.5)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.1
+      '@ai-sdk/provider-utils': 3.0.20(zod@4.3.5)
+      zod: 4.3.5
+
   '@ai-sdk/openai@3.0.12(zod@4.3.5)':
     dependencies:
       '@ai-sdk/provider': 3.0.4
       '@ai-sdk/provider-utils': 4.0.8(zod@4.3.5)
+      zod: 4.3.5
+
+  '@ai-sdk/provider-utils@3.0.20(zod@4.3.5)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.1
+      '@standard-schema/spec': 1.1.0
+      eventsource-parser: 3.0.6
       zod: 4.3.5
 
   '@ai-sdk/provider-utils@4.0.4(zod@4.3.5)':
@@ -9734,6 +9780,10 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.0.6
       zod: 4.3.5
+
+  '@ai-sdk/provider@2.0.1':
+    dependencies:
+      json-schema: 0.4.0
 
   '@ai-sdk/provider@3.0.2':
     dependencies:

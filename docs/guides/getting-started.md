@@ -21,6 +21,30 @@ import {openai} from '@ai-sdk/openai';
 export const client = createMullionClient(openai('gpt-4o-mini'));
 ```
 
+Alternative providers:
+
+```ts
+import {anthropic} from '@ai-sdk/anthropic';
+import {createGoogleGenerativeAI} from '@ai-sdk/google';
+import {createMullionClient} from '@mullion/ai-sdk';
+
+export const anthropicClient = createMullionClient(
+  anthropic('claude-3-5-haiku-20241022'),
+  {
+    provider: 'anthropic',
+    model: 'claude-3-5-haiku-20241022',
+  },
+);
+
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+});
+export const geminiClient = createMullionClient(google('gemini-2.5-flash'), {
+  provider: 'google',
+  model: 'gemini-2.5-flash',
+});
+```
+
 ## 2) Define schemas for model outputs
 
 Mullion encourages schema-first LLM outputs (e.g. Zod):

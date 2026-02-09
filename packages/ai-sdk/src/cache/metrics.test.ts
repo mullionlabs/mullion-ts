@@ -6,6 +6,7 @@ import {describe, expect, it, beforeEach} from 'vitest';
 import {
   parseAnthropicMetrics,
   parseOpenAIMetrics,
+  parseGoogleMetrics,
   parseCacheMetrics,
   aggregateCacheMetrics,
   estimateCacheSavings,
@@ -14,6 +15,7 @@ import {
   type CacheStats,
   type AnthropicCacheMetrics,
   type OpenAICacheMetrics,
+  type GoogleCacheMetrics,
 } from './metrics.js';
 
 describe('parseAnthropicMetrics', () => {
@@ -152,6 +154,45 @@ describe('parseOpenAIMetrics', () => {
   });
 });
 
+describe('parseGoogleMetrics', () => {
+  it('parses Google usage metadata with cached content tokens', () => {
+    const usage: GoogleCacheMetrics = {
+      usageMetadata: {
+        promptTokenCount: 1000,
+        candidatesTokenCount: 250,
+        cachedContentTokenCount: 400,
+        totalTokenCount: 1250,
+      },
+    };
+
+    const stats = parseGoogleMetrics(usage, 'google', 'gemini-2.5-pro');
+
+    expect(stats.provider).toBe('google');
+    expect(stats.inputTokens).toBe(1000);
+    expect(stats.outputTokens).toBe(250);
+    expect(stats.cacheReadTokens).toBe(400);
+    expect(stats.cacheWriteTokens).toBe(0);
+    expect(stats.cacheHitRate).toBe(0.4);
+    expect(stats.estimatedSavingsUsd).toBeCloseTo(0.0005, 8);
+  });
+
+  it('supports flattened usage metadata shape', () => {
+    const usage: GoogleCacheMetrics = {
+      promptTokenCount: 500,
+      candidatesTokenCount: 100,
+      cachedContentTokenCount: 150,
+      totalTokenCount: 600,
+    };
+
+    const stats = parseGoogleMetrics(usage, 'google', 'gemini-2.5-flash');
+
+    expect(stats.provider).toBe('google');
+    expect(stats.inputTokens).toBe(500);
+    expect(stats.outputTokens).toBe(100);
+    expect(stats.cacheReadTokens).toBe(150);
+  });
+});
+
 describe('parseCacheMetrics', () => {
   it('routes to Anthropic parser', () => {
     const usage = {
@@ -184,10 +225,25 @@ describe('parseCacheMetrics', () => {
     expect(stats.cacheReadTokens).toBe(30);
   });
 
-  it('returns unknown provider stats for other providers', () => {
-    const usage = {some_metric: 100};
+  it('routes to Google parser', () => {
+    const usage = {
+      usageMetadata: {
+        promptTokenCount: 100,
+        candidatesTokenCount: 20,
+        cachedContentTokenCount: 30,
+      },
+    };
 
     const stats = parseCacheMetrics(usage, 'google', 'gemini-pro');
+
+    expect(stats.provider).toBe('google');
+    expect(stats.cacheReadTokens).toBe(30);
+  });
+
+  it('returns unknown provider stats for unsupported providers', () => {
+    const usage = {some_metric: 100};
+
+    const stats = parseCacheMetrics(usage, 'other', 'some-model');
 
     expect(stats.provider).toBe('unknown');
     expect(stats.cacheReadTokens).toBe(0);

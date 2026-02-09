@@ -45,6 +45,7 @@ export const ANTHROPIC_MODEL = readEnvString(
   'ANTHROPIC_MODEL',
   'claude-3-5-haiku-20241022',
 );
+export const GEMINI_MODEL = readEnvString('GEMINI_MODEL', 'gemini-2.5-flash');
 export const OPENAI_INVALID_MODEL = readEnvString(
   'OPENAI_INVALID_MODEL',
   `${OPENAI_MODEL}-invalid`,

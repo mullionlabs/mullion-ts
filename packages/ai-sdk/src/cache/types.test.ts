@@ -9,6 +9,7 @@ import {
   validateMinTokens,
   createAnthropicAdapter,
   createOpenAIAdapter,
+  createGeminiAdapter,
   createDefaultCacheConfig,
   createUserContentConfig,
   createDeveloperContentConfig,
@@ -330,6 +331,42 @@ describe('createOpenAIAdapter', () => {
         enabled: true,
       },
     });
+  });
+});
+
+describe('createGeminiAdapter', () => {
+  it('returns cachedContent when enabled and provided', () => {
+    const adapter = createGeminiAdapter('gemini-2.5-pro');
+
+    const result = adapter.toProviderOptions({
+      enabled: true,
+      cachedContent: 'cachedContents/abc123',
+    });
+
+    expect(result).toEqual({
+      cachedContent: 'cachedContents/abc123',
+    });
+  });
+
+  it('returns empty options when cachedContent is missing', () => {
+    const adapter = createGeminiAdapter('gemini-2.5-pro');
+
+    const result = adapter.toProviderOptions({
+      enabled: true,
+    });
+
+    expect(result).toEqual({});
+  });
+
+  it('returns empty options for unsupported Gemini modes', () => {
+    const adapter = createGeminiAdapter('gemini-2.5-flash-image');
+
+    const result = adapter.toProviderOptions({
+      enabled: true,
+      cachedContent: 'cachedContents/abc123',
+    });
+
+    expect(result).toEqual({});
   });
 });
 

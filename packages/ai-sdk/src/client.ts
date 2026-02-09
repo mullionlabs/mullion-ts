@@ -5,7 +5,7 @@ import {createOwned} from '@mullion/core';
 import type {Context, InferOptions, Owned} from '@mullion/core';
 import type {CacheSegmentManager} from './cache/segments.js';
 import {createCacheSegmentManager} from './cache/segments.js';
-import {createDefaultCacheConfig} from './cache/types.js';
+import {createDefaultCacheConfig, createGeminiAdapter} from './cache/types.js';
 import type {Provider} from './cache/capabilities.js';
 import type {CacheStats} from './cache/metrics.js';
 import {CacheMetricsCollector} from './cache/metrics.js';
@@ -23,6 +23,53 @@ type JsonValue =
 
 type ProviderPromptOptions = Record<string, Record<string, JsonValue>>;
 type ProviderCallOptions = Record<string, Record<string, JsonValue>>;
+
+function mergeProviderCallOptions(
+  base: ProviderCallOptions | undefined,
+  additional: ProviderCallOptions,
+): ProviderCallOptions {
+  const merged: ProviderCallOptions = {
+    ...(base ?? {}),
+  };
+
+  for (const [provider, options] of Object.entries(additional)) {
+    merged[provider] = {
+      ...(merged[provider] ?? {}),
+      ...options,
+    };
+  }
+
+  return merged;
+}
+
+function readGoogleCachedContent(
+  options: ProviderCallOptions | undefined,
+): string | undefined {
+  const googleOptions = options?.google;
+  const value = googleOptions?.cachedContent;
+  return typeof value === 'string' && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+}
+
+function withoutGoogleCachedContent(
+  options: ProviderCallOptions | undefined,
+): ProviderCallOptions | undefined {
+  if (!options?.google || !('cachedContent' in options.google)) {
+    return options;
+  }
+
+  const {cachedContent, ...restGoogle} = options.google;
+  void cachedContent;
+  const result: ProviderCallOptions = {...options};
+  if (Object.keys(restGoogle).length === 0) {
+    delete result.google;
+  } else {
+    result.google = restGoogle;
+  }
+
+  return Object.keys(result).length === 0 ? undefined : result;
+}
 
 /**
  * Confidence scores mapped to LLM finish reasons.
@@ -364,6 +411,8 @@ export function createMullionClient(
           const cacheStrategy = options?.cache ?? 'use-segments';
           const useCache = cacheStrategy !== 'none' && cacheManager;
           const segments = cacheManager.getSegments();
+          const baseProviderOptions =
+            options?.providerOptions ?? clientOptions.providerOptions;
 
           const applyCacheControl =
             useCache &&
@@ -433,6 +482,34 @@ export function createMullionClient(
             return {messages};
           };
 
+          const buildCallProviderOptions = ():
+            | ProviderCallOptions
+            | undefined => {
+            if (
+              !useCache ||
+              clientOptions.provider !== 'google' ||
+              !clientOptions.model
+            ) {
+              return baseProviderOptions;
+            }
+
+            const geminiAdapter = createGeminiAdapter(clientOptions.model);
+            const geminiOptions = geminiAdapter.toProviderOptions({
+              enabled: true,
+              ttl: segments[0]?.ttl,
+              breakpoints: segments.length,
+              cachedContent: readGoogleCachedContent(baseProviderOptions),
+            });
+
+            if (Object.keys(geminiOptions).length === 0) {
+              return withoutGoogleCachedContent(baseProviderOptions);
+            }
+
+            return mergeProviderCallOptions(baseProviderOptions, {
+              google: geminiOptions as Record<string, JsonValue>,
+            });
+          };
+
           // Use Vercel AI SDK to generate structured output
           const result = await generateObject({
             model,
@@ -440,8 +517,7 @@ export function createMullionClient(
             ...buildPromptOptions(),
             temperature: options?.temperature,
             maxTokens: options?.maxTokens,
-            providerOptions:
-              options?.providerOptions ?? clientOptions.providerOptions,
+            providerOptions: buildCallProviderOptions(),
           });
 
           // Extract confidence from finish reason
@@ -460,10 +536,25 @@ export function createMullionClient(
             let providerUsage: Record<string, unknown> | undefined;
             if (providerMetadata && typeof providerMetadata === 'object') {
               for (const entry of Object.values(providerMetadata)) {
-                if (entry && typeof entry === 'object' && 'usage' in entry) {
+                if (!entry || typeof entry !== 'object') {
+                  continue;
+                }
+
+                if ('usage' in entry) {
                   const usage = (entry as Record<string, unknown>).usage;
                   if (usage && typeof usage === 'object') {
                     providerUsage = usage as Record<string, unknown>;
+                    break;
+                  }
+                }
+
+                if ('usageMetadata' in entry) {
+                  const usageMetadata = (entry as Record<string, unknown>)
+                    .usageMetadata;
+                  if (usageMetadata && typeof usageMetadata === 'object') {
+                    providerUsage = {
+                      usageMetadata: usageMetadata as Record<string, unknown>,
+                    };
                     break;
                   }
                 }

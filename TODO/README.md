@@ -2,7 +2,7 @@
 
 **Current Sprint:** Task 17 - create-mullion + Next.js
 **Active Task:** [TODO/ACTIVE.md](./ACTIVE.md)
-**Status:** 📋 Planned
+**Status:** 🚧 In Progress
 
 ## Quick Navigation
 
@@ -17,6 +17,7 @@
 ✅ Testing (Task 14)        ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
 ✅ Sinks (Task 16)          ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
 📋 CLI Tools (Tasks 15 & 17) ━━━━━━━━━━━━━━━░░░░░░░░ 50%
+✅ Provider Adapters (Task 18) ━━━━━━━━━━━━━━━━━━━━━━━━ 100%
 ```
 
 ## Task Status
@@ -30,6 +31,7 @@
 | 15   | ✅     | [15-create-mullion.md](./tasks/15-create-mullion.md)       | `npm create mullion` CLI (Nuxt MVP)                                        |
 | 16   | ✅     | [16-scoped-sinks.md](./tasks/16-scoped-sinks.md)           | Scoped sinks for logs, traces, caches                                      |
 | 17   | 📋     | [17-nextjs-support.md](./tasks/17-nextjs-support.md)       | Next.js framework support                                                  |
+| 18   | ✅     | [18-gemini-adapter.md](./tasks/18-gemini-adapter.md)       | Gemini adapter for `@mullion/ai-sdk` (cache + metrics + cost + tests)      |
 
 ## Milestones
 
@@ -75,5 +77,5 @@ Old TODO files are in `TODO/archive/` for reference:
 
 ---
 
-**Last Updated:** 2026-02-01
+**Last Updated:** 2026-02-09
 **Maintained By:** Claude Code + Human Review

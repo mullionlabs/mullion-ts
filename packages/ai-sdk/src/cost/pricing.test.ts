@@ -78,6 +78,17 @@ describe('getPricing', () => {
       expect(o1Mini.inputPer1M).toBe(3.0);
       expect(o1Mini.outputPer1M).toBe(12.0);
     });
+
+    it('should return pricing for Gemini models', () => {
+      const geminiPro = getPricing('gemini-2.5-pro');
+      expect(geminiPro.provider).toBe('google');
+      expect(geminiPro.inputPer1M).toBe(1.25);
+      expect(geminiPro.outputPer1M).toBe(10.0);
+
+      const geminiFlash = getPricing('gemini-2.5-flash');
+      expect(geminiFlash.provider).toBe('google');
+      expect(geminiFlash.cachedInputPer1M).toBe(0.03);
+    });
   });
 
   describe('fuzzy matching', () => {
@@ -109,6 +120,12 @@ describe('getPricing', () => {
       const pricing = getPricing('claude-haiku-latest');
       expect(pricing.provider).toBe('anthropic');
       expect(pricing.model).toContain('haiku');
+    });
+
+    it('should match Gemini variants', () => {
+      const pricing = getPricing('models/gemini-2.5-pro-latest');
+      expect(pricing.provider).toBe('google');
+      expect(pricing.model).toContain('gemini');
     });
   });
 
@@ -277,6 +294,16 @@ describe('getPricingByProvider', () => {
     expect(models.some((m) => m.includes('opus'))).toBe(true);
     expect(models.some((m) => m.includes('haiku'))).toBe(true);
   });
+
+  it('should return Gemini models only', () => {
+    const googlePricing = getPricingByProvider('google');
+
+    expect(googlePricing.length).toBeGreaterThan(0);
+    googlePricing.forEach((pricing) => {
+      expect(pricing.provider).toBe('google');
+      expect(pricing.model).toContain('gemini');
+    });
+  });
 });
 
 describe('calculateCacheWritePricing', () => {
@@ -338,6 +365,17 @@ describe('calculateCacheWritePricing', () => {
       const write5m = calculateCacheWritePricing(pricing, '5m');
 
       expect(write5m).toBe(12.5); // 10.0 * 1.25
+    });
+  });
+
+  describe('Google models', () => {
+    it('should use baseline cache write pricing', () => {
+      const pricing = getPricing('gemini-2.5-pro');
+      const write5m = calculateCacheWritePricing(pricing, '5m');
+      const write1h = calculateCacheWritePricing(pricing, '1h');
+
+      expect(write5m).toBe(1.25);
+      expect(write1h).toBe(1.25);
     });
   });
 });

@@ -119,6 +119,97 @@ describe('createMullionClient', () => {
     });
   });
 
+  it('should pass Gemini cachedContent provider option when configured', async () => {
+    const mockModel = {} as LanguageModel;
+    const client = createMullionClient(mockModel, {
+      provider: 'google',
+      model: 'gemini-2.5-pro',
+      enableCache: true,
+    });
+
+    const TestSchema = z.object({
+      category: z.string(),
+    });
+
+    mockGenerateObject.mockResolvedValueOnce({
+      object: {category: 'support'},
+      finishReason: 'stop',
+      usage: {inputTokens: 10, outputTokens: 5, totalTokens: 15},
+      providerMetadata: {
+        google: {
+          usageMetadata: {
+            promptTokenCount: 10,
+            candidatesTokenCount: 5,
+            cachedContentTokenCount: 4,
+          },
+        },
+      },
+      warnings: undefined,
+      request: {} as never,
+      response: {} as never,
+      rawResponse: {} as never,
+    });
+
+    await client.scope('google-cached-content', async (ctx) => {
+      await ctx.infer(TestSchema, 'Classify this', {
+        providerOptions: {
+          google: {
+            cachedContent: 'cachedContents/test-cache-id',
+          },
+        },
+      });
+    });
+
+    expect(mockGenerateObject).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providerOptions: {
+          google: {
+            cachedContent: 'cachedContents/test-cache-id',
+          },
+        },
+      }),
+    );
+  });
+
+  it('should gracefully strip unsupported Gemini cachedContent options', async () => {
+    const mockModel = {} as LanguageModel;
+    const client = createMullionClient(mockModel, {
+      provider: 'google',
+      model: 'gemini-2.5-flash-image',
+      enableCache: true,
+    });
+
+    const TestSchema = z.object({
+      category: z.string(),
+    });
+
+    mockGenerateObject.mockResolvedValueOnce({
+      object: {category: 'support'},
+      finishReason: 'stop',
+      usage: {inputTokens: 10, outputTokens: 5, totalTokens: 15},
+      warnings: undefined,
+      request: {} as never,
+      response: {} as never,
+      rawResponse: {} as never,
+    });
+
+    await client.scope('google-unsupported-cache', async (ctx) => {
+      await ctx.infer(TestSchema, 'Classify this', {
+        providerOptions: {
+          google: {
+            cachedContent: 'cachedContents/unsupported',
+          },
+        },
+      });
+    });
+
+    expect(mockGenerateObject).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providerOptions: undefined,
+      }),
+    );
+  });
+
   it('should bridge values between scopes', async () => {
     const mockModel = {} as LanguageModel;
     const client = createMullionClient(mockModel);

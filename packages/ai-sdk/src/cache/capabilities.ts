@@ -202,6 +202,35 @@ const OPENAI_MODELS = {
 } as const;
 
 /**
+ * Google Gemini cache capabilities.
+ *
+ * Gemini prompt caching is explicit (cachedContent), not automatic.
+ * We model this as a single explicit cache source per request.
+ */
+const GOOGLE_DEFAULT_CAPABILITIES: CacheCapabilities = {
+  supported: true,
+  minTokens: 1024,
+  maxBreakpoints: 1,
+  supportsTtl: true,
+  supportedTtl: ['5m', '1h'],
+  supportsToolCaching: false,
+  isAutomatic: false,
+} as const;
+
+/**
+ * Model name fragments where Gemini prompt caching is unavailable
+ * or not applicable to text prompt caching.
+ */
+const GOOGLE_CACHE_UNSUPPORTED_PATTERNS = [
+  'embedding',
+  'image-preview',
+  'flash-image',
+  'preview-tts',
+  'native-audio',
+  'live',
+] as const;
+
+/**
  * Default cache capabilities for unknown or unsupported models.
  */
 const DEFAULT_CAPABILITIES: CacheCapabilities = {
@@ -323,16 +352,7 @@ export function getCacheCapabilities(
     }
 
     case 'google':
-      // Google Gemini has caching but different API
-      return {
-        supported: false, // Not implemented yet
-        minTokens: 2048,
-        maxBreakpoints: 1,
-        supportsTtl: true,
-        supportedTtl: ['5m', '1h'],
-        supportsToolCaching: false,
-        isAutomatic: false,
-      };
+      return getGoogleModelCapabilities(model);
 
     case 'other':
     default:
@@ -472,4 +492,34 @@ export function getRecommendedCacheStrategy(
   }
 
   return 'explicit-segments';
+}
+
+/**
+ * Resolve Gemini model cache capabilities from model identifier.
+ */
+function getGoogleModelCapabilities(model: string): CacheCapabilities {
+  const normalizedModel = model
+    .trim()
+    .toLowerCase()
+    .replace(/^models\//, '');
+
+  // Non-Gemini models are not covered by the Gemini cache adapter.
+  if (!normalizedModel.startsWith('gemini-')) {
+    return DEFAULT_CAPABILITIES;
+  }
+
+  if (
+    GOOGLE_CACHE_UNSUPPORTED_PATTERNS.some((pattern) =>
+      normalizedModel.includes(pattern),
+    )
+  ) {
+    return {
+      ...GOOGLE_DEFAULT_CAPABILITIES,
+      supported: false,
+      supportsTtl: false,
+      supportedTtl: [],
+    };
+  }
+
+  return GOOGLE_DEFAULT_CAPABILITIES;
 }

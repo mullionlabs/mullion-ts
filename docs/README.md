@@ -19,6 +19,12 @@
 - **[Merge strategies](./reference/merge-strategies.md)** - Combining results from multiple inferences
 - **[Cost estimation](./reference/cost-estimation.md)** - Token and cost tracking
 
+Provider adapters currently documented and supported in `@mullion/ai-sdk`:
+
+- OpenAI
+- Anthropic
+- Gemini (Google)
+
 ## Tracing / Observability
 
 - **[Tracing (OpenTelemetry)](../packages/core/TRACING.md)** - OpenTelemetry integration guide

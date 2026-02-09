@@ -93,6 +93,26 @@ describe('estimateTokens', () => {
     });
   });
 
+  describe('Google Gemini models', () => {
+    it('should estimate tokens for Gemini 2.5 Pro', () => {
+      const text = 'Hello, world!';
+      const result = estimateTokens(text, 'gemini-2.5-pro');
+
+      expect(result.count).toBeGreaterThan(0);
+      expect(result.method).toBe('approximate');
+      expect(result.model).toBe('gemini-2.5-pro');
+    });
+
+    it('should estimate tokens for models/ prefixed Gemini ids', () => {
+      const text = 'A'.repeat(390);
+      const result = estimateTokens(text, 'models/gemini-2.5-flash');
+
+      expect(result.method).toBe('approximate');
+      expect(result.count).toBeGreaterThanOrEqual(95);
+      expect(result.count).toBeLessThanOrEqual(105);
+    });
+  });
+
   describe('unknown models', () => {
     it('should use generic estimation for unknown model', () => {
       const text = 'A'.repeat(100); // 100 chars
@@ -295,6 +315,20 @@ describe('provider detection', () => {
     claudeModels.forEach((model) => {
       const result = estimateTokens('test', model);
       expect(result.model).toBe(model);
+    });
+  });
+
+  it('should detect Gemini models correctly', () => {
+    const geminiModels = [
+      'gemini-2.5-pro',
+      'gemini-2.5-flash',
+      'models/gemini-3-pro-preview',
+    ];
+
+    geminiModels.forEach((model) => {
+      const result = estimateTokens('test', model);
+      expect(result.model).toBe(model);
+      expect(result.method).toBe('approximate');
     });
   });
 

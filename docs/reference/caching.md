@@ -8,6 +8,7 @@ LLM providers offer prompt caching to reduce costs and latency:
 
 - **Anthropic**: Explicit cache control with breakpoints and TTLs
 - **OpenAI**: Automatic caching for prompts > 1024 tokens
+- **Gemini**: Explicit cached context via `providerOptions.google.cachedContent`
 
 Mullion's cache system:
 
@@ -29,10 +30,10 @@ const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 
 const result = await client.scope('analysis', async (ctx) => {
   // Add cacheable content
-  ctx.cache.addSystemPrompt('You are an expert data analyst.');
-  ctx.cache.addDeveloperContent(largeDocument, {
+  ctx.cache.system('You are an expert data analyst.');
+  ctx.cache.segment('reference-doc', largeDocument, {
     ttl: '5m',
-    scope: 'ephemeral',
+    scope: 'developer-content',
   });
 
   // This inference will benefit from caching on repeat calls
@@ -41,7 +42,7 @@ const result = await client.scope('analysis', async (ctx) => {
   // Check cache performance
   const stats = await ctx.getCacheStats();
   console.log(`Cache hits: ${stats.cacheReadTokens} tokens`);
-  console.log(`Saved: $${stats.estimatedSavings.toFixed(4)}`);
+  console.log(`Saved: $${stats.estimatedSavingsUsd.toFixed(4)}`);
 
   return ctx.use(analysis);
 });
@@ -56,7 +57,7 @@ Access the cache API via `ctx.cache`:
 System prompts are always safe to cache:
 
 ```typescript
-ctx.cache.addSystemPrompt('You are a helpful assistant.');
+ctx.cache.system('You are a helpful assistant.');
 ```
 
 **Anthropic:**
@@ -75,27 +76,26 @@ ctx.cache.addSystemPrompt('You are a helpful assistant.');
 Developer content is owned by you (not user-submitted):
 
 ```typescript
-ctx.cache.addDeveloperContent(documentationText, {
+ctx.cache.segment('documentation', documentationText, {
   ttl: '1h',
-  scope: 'persistent',
+  scope: 'developer-content',
 });
 ```
 
 **Options:**
 
-- `ttl` - Time-to-live: `'5m'` | `'1h'` | `'1d'` (Anthropic only)
+- `ttl` - Time-to-live: `'5m'` | `'1h'` (Anthropic + Gemini)
 - `scope` - Cache scope:
-  - `'ephemeral'` - Short-lived, request-specific
-  - `'persistent'` - Long-lived, shared across requests
+  - `'system-only'` - Cache only static system instructions
+  - `'developer-content'` - Cache developer-owned context (default)
   - `'allow-user-content'` - **Dangerous:** explicitly allow user content
 
 **TTL Guidelines:**
 
-| TTL | Use Case                        | Cost       |
-| --- | ------------------------------- | ---------- |
-| 5m  | Single session, rapid iteration | Base rate  |
-| 1h  | Multi-session workflows         | 10% higher |
-| 1d  | Static documentation/prompts    | 20% higher |
+| TTL | Use Case                        |
+| --- | ------------------------------- |
+| 5m  | Single session, rapid iteration |
+| 1h  | Multi-session workflows         |
 
 See [Anthropic pricing](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching#pricing) for details.
 
@@ -103,10 +103,10 @@ See [Anthropic pricing](https://docs.anthropic.com/en/docs/build-with-claude/pro
 
 ```typescript
 // ❌ REJECTED: User content without explicit opt-in
-ctx.cache.addDeveloperContent(userQuery); // Error!
+ctx.cache.segment('user-query', userQuery); // Error!
 
 // ✅ ALLOWED: Explicit opt-in with understanding
-ctx.cache.addDeveloperContent(userQuery, {
+ctx.cache.segment('user-query', userQuery, {
   scope: 'allow-user-content',
   ttl: '5m',
 });
@@ -144,29 +144,29 @@ Only use `'allow-user-content'` when you're certain it's safe.
 | claude-3-5-sonnet-20241022 | 1024       |
 | claude-3-5-haiku-20241022  | 2048       |
 | claude-3-opus-20240229     | 1024       |
-| claude-3-sonnet-20240229   | 2048       |
-| claude-3-haiku-20240307    | 4096       |
+| claude-3-sonnet-20240229   | 1024       |
+| claude-3-haiku-20240307    | 2048       |
 
 **TTL and Breakpoint Ordering:**
 
 ```typescript
 // ✅ VALID: Longer TTL before shorter
-ctx.cache.addDeveloperContent(docA, {ttl: '1h'});
-ctx.cache.addDeveloperContent(docB, {ttl: '5m'});
+ctx.cache.segment('doc-a', docA, {ttl: '1h'});
+ctx.cache.segment('doc-b', docB, {ttl: '5m'});
 
 // ❌ INVALID: Shorter TTL before longer
-ctx.cache.addDeveloperContent(docC, {ttl: '5m'});
-ctx.cache.addDeveloperContent(docD, {ttl: '1h'}); // Error!
+ctx.cache.segment('doc-c', docC, {ttl: '5m'});
+ctx.cache.segment('doc-d', docD, {ttl: '1h'}); // Error!
 ```
 
 **Max 4 Breakpoints:**
 
 ```typescript
-ctx.cache.addSystemPrompt('...'); // Breakpoint 1
-ctx.cache.addDeveloperContent('...'); // Breakpoint 2
-ctx.cache.addDeveloperContent('...'); // Breakpoint 3
-ctx.cache.addDeveloperContent('...'); // Breakpoint 4
-ctx.cache.addDeveloperContent('...'); // Error: exceeds limit
+ctx.cache.system('...'); // Breakpoint 1
+ctx.cache.segment('doc-1', '...'); // Breakpoint 2
+ctx.cache.segment('doc-2', '...'); // Breakpoint 3
+ctx.cache.segment('doc-3', '...'); // Breakpoint 4
+ctx.cache.segment('doc-4', '...'); // Error: exceeds limit
 ```
 
 ### OpenAI
@@ -186,6 +186,22 @@ const stats = await ctx.getCacheStats();
 console.log(stats.cacheReadTokens); // Automatically detected
 ```
 
+### Gemini
+
+Gemini cache usage is explicit and requires a pre-created `cachedContent` id.
+
+```typescript
+const result = await ctx.infer(AnalysisSchema, prompt, {
+  providerOptions: {
+    google: {
+      cachedContent: 'cachedContents/abc123',
+    },
+  },
+});
+```
+
+If `cachedContent` is missing, Mullion gracefully falls back to a normal call.
+
 ## Cache Metrics
 
 Track cache performance:
@@ -195,12 +211,12 @@ const stats = await ctx.getCacheStats();
 
 console.log(stats);
 // {
-//   cacheCreationInputTokens: 2048,   // Tokens written to cache
-//   cacheReadInputTokens: 2048,       // Tokens read from cache
+//   cacheWriteTokens: 2048,   // Tokens written to cache
+//   cacheReadTokens: 2048,    // Tokens read from cache
 //   inputTokens: 2100,                // Total input tokens
 //   outputTokens: 150,                // Output tokens generated
 //   cacheHitRate: 0.975,              // Cache hit rate
-//   estimatedSavings: 0.0234,         // Estimated $ saved
+//   estimatedSavingsUsd: 0.0234,      // Estimated $ saved
 //   provider: 'anthropic',
 // }
 ```
@@ -214,7 +230,7 @@ const call1Stats = await ctx.getCacheStats();
 const call2Stats = await ctx.getCacheStats();
 
 const total = aggregateCacheMetrics([call1Stats, call2Stats]);
-console.log(`Total saved: $${total.estimatedSavings}`);
+console.log(`Total saved: $${total.estimatedSavingsUsd}`);
 ```
 
 ## Cache Warmup for Fork
@@ -368,41 +384,43 @@ const result = await ctx.fork({
 
 ## Configuration
 
-### Model-Specific Thresholds
-
-Override default thresholds:
+### Cache Config Presets
 
 ```typescript
-import {createDefaultCacheConfig} from '@mullion/ai-sdk';
+import {
+  createDefaultCacheConfig,
+  createDeveloperContentConfig,
+  createUserContentConfig,
+} from '@mullion/ai-sdk';
 
-const config = createDefaultCacheConfig('anthropic', {
-  model: 'claude-3-5-sonnet-20241022',
-  minTokens: 2048, // Override default 1024
-  maxBreakpoints: 3, // Override default 4
-});
+const defaults = createDefaultCacheConfig();
+// { enabled: true, scope: 'developer-content', ttl: '5m', breakpoints: 1 }
+
+const developerHeavy = createDeveloperContentConfig();
+// { enabled: true, scope: 'developer-content', ttl: '1h', breakpoints: 4 }
+
+const userSafe = createUserContentConfig();
+// { enabled: true, scope: 'allow-user-content', ttl: '5m', breakpoints: 1 }
 ```
 
-### Custom Provider Adapters
-
-Integrate custom caching logic:
+### Provider Adapter Factories
 
 ```typescript
-import {createAnthropicAdapter} from '@mullion/ai-sdk';
+import {
+  createAnthropicAdapter,
+  createOpenAIAdapter,
+  createGeminiAdapter,
+} from '@mullion/ai-sdk';
 
-const adapter = createAnthropicAdapter({
-  minTokens: 2048,
-  maxBreakpoints: 4,
-  defaultTtl: '5m',
-});
-
-// Use with client
-const client = createMullionClient(model, {
-  cache: {
-    adapter,
-    enabled: true,
-  },
-});
+const anthropic = createAnthropicAdapter('claude-3-5-sonnet-20241022');
+const openai = createOpenAIAdapter('gpt-4o-mini');
+const gemini = createGeminiAdapter('gemini-2.5-flash');
 ```
+
+Gemini adapter note:
+
+- It applies cache options only when `cachedContent` is provided.
+- If `cachedContent` is missing (or model cache unsupported), Mullion falls back to a normal call.
 
 ## Cost Savings Examples
 
@@ -456,22 +474,22 @@ As document size and branch count increase, savings multiply.
 
 ```typescript
 // ✅ GOOD: Cache documentation, system prompts
-ctx.cache.addSystemPrompt(SYSTEM_PROMPT);
-ctx.cache.addDeveloperContent(docs, {ttl: '1d', scope: 'persistent'});
+ctx.cache.system(SYSTEM_PROMPT);
+ctx.cache.segment('docs', docs, {ttl: '1h', scope: 'developer-content'});
 
 // ❌ BAD: Don't cache frequently changing content
-ctx.cache.addDeveloperContent(realtimeData); // Wastes cache writes
+ctx.cache.segment('realtime-data', realtimeData); // Wastes cache writes
 ```
 
 ### 2. Use Appropriate TTLs
 
 ```typescript
 // ✅ GOOD: Match TTL to content lifecycle
-ctx.cache.addDeveloperContent(staticDocs, {ttl: '1d'});
-ctx.cache.addDeveloperContent(sessionContext, {ttl: '5m'});
+ctx.cache.segment('static-docs', staticDocs, {ttl: '1h'});
+ctx.cache.segment('session-context', sessionContext, {ttl: '5m'});
 
-// ❌ BAD: Long TTL for ephemeral content
-ctx.cache.addDeveloperContent(tempData, {ttl: '1d'}); // Wastes money
+// ❌ BAD: Long TTL for ephemeral content (prefer 5m)
+ctx.cache.segment('temp-data', tempData, {ttl: '1h'}); // Wastes money
 ```
 
 ### 3. Measure Cache Performance
@@ -491,13 +509,13 @@ if (stats.cacheHitRate < 0.5) {
 
 ```typescript
 // ❌ DANGEROUS: Caching user data without review
-ctx.cache.addDeveloperContent(userData, {
+ctx.cache.segment('user-data', userData, {
   scope: 'allow-user-content', // DON'T DO THIS
 });
 
 // ✅ SAFE: Only cache non-sensitive, derived data
 const summary = await ctx.infer(SummarySchema, userData);
-ctx.cache.addDeveloperContent(summary.value.nonSensitiveSummary);
+ctx.cache.segment('summary', summary.value.nonSensitiveSummary);
 ```
 
 ## Troubleshooting
@@ -521,7 +539,7 @@ import {getCacheCapabilities} from '@mullion/ai-sdk';
 
 const caps = getCacheCapabilities('anthropic', 'claude-3-5-sonnet-20241022');
 console.log(`Min tokens: ${caps.minTokens}`);
-console.log(`Supports cache: ${caps.supportsCache}`);
+console.log(`Supports cache: ${caps.supported}`);
 
 // Estimate tokens
 import {estimateTokens} from '@mullion/ai-sdk';

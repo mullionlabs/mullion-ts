@@ -366,7 +366,7 @@ import {aggregateCacheMetrics} from '@mullion/ai-sdk';
 const totalStats = aggregateCacheMetrics([statsA, statsB, statsC]);
 
 console.log(`Total cache hits: ${totalStats.cacheReadTokens}`);
-console.log(`Total saved: $${totalStats.estimatedSavings.toFixed(4)}`);
+console.log(`Total saved: $${totalStats.estimatedSavingsUsd.toFixed(4)}`);
 console.log(`Hit rate: ${(totalStats.cacheHitRate * 100).toFixed(1)}%`);
 ```
 
@@ -385,10 +385,10 @@ const result = await ctx.fork({
 const cheapCost = await result.cheap.context.getLastCallCost();
 const expensiveCost = await result.expensive.context.getLastCallCost();
 
-console.log(`Cheap branch: $${cheapCost.netCost.toFixed(4)}`);
-console.log(`Expensive branch: $${expensiveCost.netCost.toFixed(4)}`);
+console.log(`Cheap branch: $${cheapCost.totalCost.toFixed(4)}`);
+console.log(`Expensive branch: $${expensiveCost.totalCost.toFixed(4)}`);
 console.log(
-  `Total: $${(cheapCost.netCost + expensiveCost.netCost).toFixed(4)}`,
+  `Total: $${(cheapCost.totalCost + expensiveCost.totalCost).toFixed(4)}`,
 );
 ```
 
@@ -595,6 +595,14 @@ OpenAI caches automatically for prompts >1024 tokens, but:
 
 For OpenAI, `fast-parallel` and `cache-optimized` have similar performance.
 
+### Gemini Cached Content
+
+Gemini caching is explicit via `providerOptions.google.cachedContent`.
+
+- Mullion does not auto-create cached content during fork warmup.
+- To get cache reuse in fork branches, create/reuse `cachedContent` externally and pass it in infer `providerOptions`.
+- Without `cachedContent`, Gemini branches behave like normal uncached requests.
+
 ### Schema Conflicts
 
 Different schemas = different tool definitions = different cache keys.
@@ -641,8 +649,8 @@ const costs = await Promise.all(
 );
 
 costs.forEach((cost, i) => {
-  console.log(`Branch ${i}: $${cost.netCost.toFixed(4)}`);
-  console.log(`  Cache savings: $${cost.cacheSavings.toFixed(4)}`);
+  console.log(`Branch ${i}: $${cost.totalCost.toFixed(4)}`);
+  console.log(`  Savings: ${cost.savingsPercent.toFixed(1)}%`);
 });
 ```
 

@@ -203,18 +203,26 @@ describe('getCacheCapabilities', () => {
   });
 
   describe('Google provider', () => {
-    it('returns not-yet-implemented capabilities for Google models', () => {
+    it('returns implemented capabilities for Gemini models', () => {
       const caps = getCacheCapabilities('google', 'gemini-pro');
 
       expect(caps).toEqual({
-        supported: false, // Not implemented yet
-        minTokens: 2048,
+        supported: true,
+        minTokens: 1024,
         maxBreakpoints: 1,
         supportsTtl: true,
         supportedTtl: ['5m', '1h'],
         supportsToolCaching: false,
         isAutomatic: false,
       });
+    });
+
+    it('disables caching for unsupported Gemini modes', () => {
+      const caps = getCacheCapabilities('google', 'gemini-2.5-flash-image');
+
+      expect(caps.supported).toBe(false);
+      expect(caps.supportsTtl).toBe(false);
+      expect(caps.supportedTtl).toEqual([]);
     });
   });
 
@@ -363,9 +371,9 @@ describe('getRecommendedCacheStrategy', () => {
     expect(strategy2).toBe('disabled');
   });
 
-  it('recommends disabled for Google (not yet implemented)', () => {
+  it('recommends explicit segments for Gemini models', () => {
     const strategy = getRecommendedCacheStrategy('google', 'gemini-pro');
-    expect(strategy).toBe('disabled');
+    expect(strategy).toBe('explicit-segments');
   });
 });
 

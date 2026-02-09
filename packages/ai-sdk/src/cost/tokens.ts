@@ -55,6 +55,8 @@ export function estimateTokens(text: string, model?: string): TokenEstimate {
       return estimateOpenAITokens(text, model);
     case 'anthropic':
       return estimateAnthropicTokens(text, model);
+    case 'google':
+      return estimateGeminiTokens(text, model);
     default:
       return estimateGenericTokens(text, model);
   }
@@ -63,7 +65,9 @@ export function estimateTokens(text: string, model?: string): TokenEstimate {
 /**
  * Detect provider from model identifier
  */
-function detectProvider(model?: string): 'openai' | 'anthropic' | 'unknown' {
+function detectProvider(
+  model?: string,
+): 'openai' | 'anthropic' | 'google' | 'unknown' {
   if (!model) {
     return 'unknown';
   }
@@ -82,6 +86,14 @@ function detectProvider(model?: string): 'openai' | 'anthropic' | 'unknown' {
   // Anthropic models
   if (modelLower.startsWith('claude-')) {
     return 'anthropic';
+  }
+
+  // Google Gemini models
+  if (
+    modelLower.startsWith('gemini-') ||
+    modelLower.startsWith('models/gemini-')
+  ) {
+    return 'google';
   }
 
   return 'unknown';
@@ -127,6 +139,21 @@ function estimateAnthropicTokens(text: string, model?: string): TokenEstimate {
   // Anthropic approximation: ~4 chars per token for English text
   // Slightly more conservative estimate than OpenAI
   const count = Math.ceil(text.length / 3.8);
+
+  return {
+    count,
+    method: 'approximate',
+    model,
+  };
+}
+
+/**
+ * Estimate tokens for Google Gemini models.
+ *
+ * Uses a conservative approximation near the 4 chars/token baseline.
+ */
+function estimateGeminiTokens(text: string, model?: string): TokenEstimate {
+  const count = Math.ceil(text.length / 3.9);
 
   return {
     count,
