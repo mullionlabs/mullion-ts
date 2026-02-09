@@ -171,12 +171,20 @@ function sortKeysDeep(value) {
   if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value)
-        .sort(([leftKey], [rightKey]) => leftKey.localeCompare(rightKey))
+        .sort(([leftKey], [rightKey]) => compareKeysStable(leftKey, rightKey))
         .map(([key, nestedValue]) => [key, sortKeysDeep(nestedValue)]),
     );
   }
 
   return value;
+}
+
+function compareKeysStable(leftKey, rightKey) {
+  if (leftKey === rightKey) {
+    return 0;
+  }
+
+  return leftKey < rightKey ? -1 : 1;
 }
 
 main().catch((error) => {

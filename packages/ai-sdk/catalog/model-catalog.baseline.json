@@ -407,320 +407,320 @@
     "models": {
       "claude-3-5-haiku-20241022": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.08,
         "cacheWritePer1M": 1,
+        "cachedInputPer1M": 0.08,
         "inputPer1M": 0.8,
         "outputPer1M": 4,
         "provider": "anthropic"
       },
       "claude-3-5-sonnet-20240620": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.3,
         "cacheWritePer1M": 3.75,
+        "cachedInputPer1M": 0.3,
         "inputPer1M": 3,
         "outputPer1M": 15,
         "provider": "anthropic"
       },
       "claude-3-5-sonnet-20241022": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.3,
         "cacheWritePer1M": 3.75,
+        "cachedInputPer1M": 0.3,
         "inputPer1M": 3,
         "outputPer1M": 15,
         "provider": "anthropic"
       },
       "claude-3-haiku-20240307": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.025,
         "cacheWritePer1M": 0.3125,
+        "cachedInputPer1M": 0.025,
         "inputPer1M": 0.25,
         "outputPer1M": 1.25,
         "provider": "anthropic"
       },
       "claude-3-opus-20240229": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 1.5,
         "cacheWritePer1M": 18.75,
+        "cachedInputPer1M": 1.5,
         "inputPer1M": 15,
         "outputPer1M": 75,
         "provider": "anthropic"
       },
       "claude-opus-4-1-20250805": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 1.5,
         "cacheWritePer1M": 18.75,
+        "cachedInputPer1M": 1.5,
         "inputPer1M": 15,
         "outputPer1M": 75,
         "provider": "anthropic"
       },
       "claude-opus-4-20250514": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 1.5,
         "cacheWritePer1M": 18.75,
+        "cachedInputPer1M": 1.5,
         "inputPer1M": 15,
         "outputPer1M": 75,
         "provider": "anthropic"
       },
       "claude-sonnet-4-20250514": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.3,
         "cacheWritePer1M": 3.75,
+        "cachedInputPer1M": 0.3,
         "inputPer1M": 3,
         "outputPer1M": 15,
         "provider": "anthropic"
       },
       "claude-sonnet-4-5-20250929": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.3,
         "cacheWritePer1M": 3.75,
+        "cachedInputPer1M": 0.3,
         "inputPer1M": 3,
         "outputPer1M": 15,
         "provider": "anthropic"
       },
       "gemini-1.5-flash": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.01875,
         "cacheWritePer1M": 0.075,
+        "cachedInputPer1M": 0.01875,
         "inputPer1M": 0.075,
         "outputPer1M": 0.3,
         "provider": "google"
       },
       "gemini-1.5-flash-8b": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.01,
         "cacheWritePer1M": 0.04,
+        "cachedInputPer1M": 0.01,
         "inputPer1M": 0.0375,
         "outputPer1M": 0.15,
         "provider": "google"
       },
       "gemini-1.5-pro": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.3125,
         "cacheWritePer1M": 1.25,
+        "cachedInputPer1M": 0.3125,
         "inputPer1M": 1.25,
         "outputPer1M": 5,
         "provider": "google"
       },
       "gemini-2.0-flash": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.025,
         "cacheWritePer1M": 0.1,
+        "cachedInputPer1M": 0.025,
         "inputPer1M": 0.1,
         "outputPer1M": 0.4,
         "provider": "google"
       },
       "gemini-2.0-flash-lite": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.01875,
         "cacheWritePer1M": 0.075,
+        "cachedInputPer1M": 0.01875,
         "inputPer1M": 0.075,
         "outputPer1M": 0.3,
         "provider": "google"
       },
       "gemini-2.5-flash": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.075,
         "cacheWritePer1M": 0.3,
+        "cachedInputPer1M": 0.075,
         "inputPer1M": 0.3,
         "outputPer1M": 2.5,
         "provider": "google"
       },
       "gemini-2.5-flash-lite": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.025,
         "cacheWritePer1M": 0.1,
+        "cachedInputPer1M": 0.025,
         "inputPer1M": 0.1,
         "outputPer1M": 0.4,
         "provider": "google"
       },
       "gemini-2.5-pro": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.31,
         "cacheWritePer1M": 1.25,
+        "cachedInputPer1M": 0.31,
         "inputPer1M": 1.25,
         "outputPer1M": 10,
         "provider": "google"
       },
       "gemini-3-flash-preview": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.06,
         "cacheWritePer1M": 0.75,
+        "cachedInputPer1M": 0.06,
         "inputPer1M": 0.6,
         "outputPer1M": 3.5,
         "provider": "google"
       },
       "gemini-3-pro-preview": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.2,
         "cacheWritePer1M": 2.5,
+        "cachedInputPer1M": 0.2,
         "inputPer1M": 2,
         "outputPer1M": 12,
         "provider": "google"
       },
       "gpt-3.5-turbo": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0,
         "inputPer1M": 0.5,
         "outputPer1M": 1.5,
         "provider": "openai"
       },
       "gpt-4": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0,
         "inputPer1M": 30,
         "outputPer1M": 60,
         "provider": "openai"
       },
       "gpt-4-turbo": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0,
         "inputPer1M": 10,
         "outputPer1M": 30,
         "provider": "openai"
       },
       "gpt-4-turbo-preview": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0,
         "inputPer1M": 10,
         "outputPer1M": 30,
         "provider": "openai"
       },
       "gpt-4.1": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.5,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.5,
         "inputPer1M": 2,
         "outputPer1M": 8,
         "provider": "openai"
       },
       "gpt-4.1-mini": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.1,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.1,
         "inputPer1M": 0.4,
         "outputPer1M": 1.6,
         "provider": "openai"
       },
       "gpt-4.1-nano": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.025,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.025,
         "inputPer1M": 0.1,
         "outputPer1M": 0.4,
         "provider": "openai"
       },
       "gpt-4o": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 1.25,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 1.25,
         "inputPer1M": 2.5,
         "outputPer1M": 10,
         "provider": "openai"
       },
       "gpt-4o-mini": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.075,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.075,
         "inputPer1M": 0.15,
         "outputPer1M": 0.6,
         "provider": "openai"
       },
       "gpt-5": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.125,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.125,
         "inputPer1M": 1.25,
         "outputPer1M": 10,
         "provider": "openai"
       },
       "gpt-5-mini": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.025,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.025,
         "inputPer1M": 0.25,
         "outputPer1M": 2,
         "provider": "openai"
       },
       "gpt-5-nano": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.005,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.005,
         "inputPer1M": 0.05,
         "outputPer1M": 0.4,
         "provider": "openai"
       },
       "gpt-5-pro": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 1.5,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 1.5,
         "inputPer1M": 15,
         "outputPer1M": 120,
         "provider": "openai"
       },
       "gpt-5.2": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.175,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.175,
         "inputPer1M": 1.75,
         "outputPer1M": 14,
         "provider": "openai"
       },
       "gpt-5.2-pro": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 2,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 2,
         "inputPer1M": 20,
         "outputPer1M": 160,
         "provider": "openai"
       },
       "o1": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 7.5,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 7.5,
         "inputPer1M": 15,
         "outputPer1M": 60,
         "provider": "openai"
       },
       "o1-mini": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 1.5,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 1.5,
         "inputPer1M": 3,
         "outputPer1M": 12,
         "provider": "openai"
       },
       "o1-preview": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0,
         "inputPer1M": 15,
         "outputPer1M": 60,
         "provider": "openai"
       },
       "o3": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 1,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 1,
         "inputPer1M": 2,
         "outputPer1M": 8,
         "provider": "openai"
       },
       "o3-mini": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.55,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.55,
         "inputPer1M": 1.1,
         "outputPer1M": 4.4,
         "provider": "openai"
       },
       "o4-mini": {
         "asOfDate": "2026-02-09",
-        "cachedInputPer1M": 0.55,
         "cacheWritePer1M": 0,
+        "cachedInputPer1M": 0.55,
         "inputPer1M": 1.1,
         "outputPer1M": 4.4,
         "provider": "openai"
