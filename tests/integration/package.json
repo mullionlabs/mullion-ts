@@ -6,13 +6,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:openai": "vitest run src/openai.test.ts",
-    "test:anthropic": "vitest run src/anthropic.test.ts"
+    "test:anthropic": "vitest run src/anthropic.test.ts",
+    "test:gemini": "vitest run src/gemini.test.ts"
   },
   "dependencies": {
     "@mullion/core": "workspace:*",
     "@mullion/ai-sdk": "workspace:*",
     "@ai-sdk/openai": "catalog:",
     "@ai-sdk/anthropic": "catalog:",
+    "@ai-sdk/google": "catalog:",
     "ai": "catalog:",
     "zod": "catalog:"
   },

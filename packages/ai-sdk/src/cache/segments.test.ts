@@ -499,7 +499,7 @@ describe('CacheSegmentManager', () => {
       ).toBe(true);
     });
 
-    it('validates against Google provider (unsupported)', () => {
+    it('validates against Google Gemini provider', () => {
       const config = createDefaultCacheConfig();
       const googleManager = createCacheSegmentManager(
         'google',
@@ -514,10 +514,8 @@ describe('CacheSegmentManager', () => {
       );
 
       const validation = googleManager.validateForModel('gemini-pro');
-      expect(validation.valid).toBe(false);
-      expect(validation.errors).toContain(
-        "Caching is not supported for model 'gemini-pro'",
-      );
+      expect(validation.valid).toBe(true);
+      expect(validation.errors).toHaveLength(0);
     });
   });
 

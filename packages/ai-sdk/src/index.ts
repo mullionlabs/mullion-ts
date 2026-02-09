@@ -29,6 +29,7 @@ export {
   validateMinTokens,
   createAnthropicAdapter,
   createOpenAIAdapter,
+  createGeminiAdapter,
   createDefaultCacheConfig,
   createUserContentConfig,
   createDeveloperContentConfig,
@@ -39,9 +40,12 @@ export type {
   CacheTTL,
   AnthropicProviderOptions,
   OpenAIProviderOptions,
+  GoogleProviderOptions,
+  GeminiCacheConfig,
   ProviderOptions,
   AnthropicCacheAdapter,
   OpenAICacheAdapter,
+  GeminiCacheAdapter,
   ValidationResult,
 } from './cache/types.js';
 
@@ -57,6 +61,7 @@ export type {
 export {
   parseAnthropicMetrics,
   parseOpenAIMetrics,
+  parseGoogleMetrics,
   parseCacheMetrics,
   aggregateCacheMetrics,
   estimateCacheSavings,
@@ -67,7 +72,22 @@ export type {
   CacheStats,
   AnthropicCacheMetrics,
   OpenAICacheMetrics,
+  GoogleCacheMetrics,
 } from './cache/metrics.js';
+
+// Gemini dynamic model discovery (models.list)
+export {
+  listGeminiModels,
+  listGeminiModelsCached,
+  clearGeminiModelsCache,
+  normalizeGeminiModelName,
+  supportsGenerateContent,
+} from './providers/gemini-models.js';
+export type {
+  GeminiModel,
+  ListGeminiModelsOptions,
+  ListGeminiModelsCachedOptions,
+} from './providers/gemini-models.js';
 
 // Cache warmup for fork optimization
 export {

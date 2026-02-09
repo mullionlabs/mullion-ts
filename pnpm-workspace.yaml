@@ -45,6 +45,7 @@ catalog:
   ai: ^6.0.12
   '@ai-sdk/openai': ^3.0.0
   '@ai-sdk/anthropic': ^3.0.0
+  '@ai-sdk/google': ^2.0.0
 
   # Next.js & React ecosystem
   next: ^14.2.0

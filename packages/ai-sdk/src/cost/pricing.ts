@@ -10,7 +10,7 @@ export interface ModelPricing {
   /** Model identifier */
   model: string;
   /** Provider name */
-  provider: 'anthropic' | 'openai' | 'unknown';
+  provider: 'anthropic' | 'openai' | 'google' | 'unknown';
   /** USD per 1M input tokens */
   inputPer1M: number;
   /** USD per 1M output tokens */
@@ -193,6 +193,62 @@ export const PRICING_DATA: Record<string, ModelPricing> = {
     cacheWritePer1M: 1.0,
     asOfDate: '2025-01-01',
   },
+
+  // Google Gemini models (baseline, early February 2026)
+  'gemini-3-pro-preview': {
+    model: 'gemini-3-pro-preview',
+    provider: 'google',
+    inputPer1M: 2.0,
+    outputPer1M: 12.0,
+    cachedInputPer1M: 0.2,
+    cacheWritePer1M: 2.5,
+    asOfDate: '2026-02-01',
+  },
+  'gemini-3-flash-preview': {
+    model: 'gemini-3-flash-preview',
+    provider: 'google',
+    inputPer1M: 0.6,
+    outputPer1M: 3.5,
+    cachedInputPer1M: 0.06,
+    cacheWritePer1M: 0.75,
+    asOfDate: '2026-02-01',
+  },
+  'gemini-2.5-pro': {
+    model: 'gemini-2.5-pro',
+    provider: 'google',
+    inputPer1M: 1.25,
+    outputPer1M: 10.0,
+    cachedInputPer1M: 0.125,
+    cacheWritePer1M: 1.25,
+    asOfDate: '2026-02-01',
+  },
+  'gemini-2.5-flash': {
+    model: 'gemini-2.5-flash',
+    provider: 'google',
+    inputPer1M: 0.3,
+    outputPer1M: 2.5,
+    cachedInputPer1M: 0.03,
+    cacheWritePer1M: 0.3,
+    asOfDate: '2026-02-01',
+  },
+  'gemini-2.5-flash-lite': {
+    model: 'gemini-2.5-flash-lite',
+    provider: 'google',
+    inputPer1M: 0.1,
+    outputPer1M: 0.4,
+    cachedInputPer1M: 0.025,
+    cacheWritePer1M: 0.1,
+    asOfDate: '2026-02-01',
+  },
+  'gemini-2.0-flash': {
+    model: 'gemini-2.0-flash',
+    provider: 'google',
+    inputPer1M: 0.1,
+    outputPer1M: 0.4,
+    cachedInputPer1M: 0.025,
+    cacheWritePer1M: 0.1,
+    asOfDate: '2026-02-01',
+  },
 };
 
 /**
@@ -304,6 +360,32 @@ function findFuzzyMatch(model: string): ModelPricing | null {
     ) {
       return pricing;
     }
+
+    if (
+      modelLower.includes('gemini') &&
+      modelLower.includes('pro') &&
+      keyLower.includes('gemini') &&
+      keyLower.includes('pro')
+    ) {
+      return pricing;
+    }
+    if (
+      modelLower.includes('gemini') &&
+      modelLower.includes('flash') &&
+      modelLower.includes('lite') &&
+      keyLower.includes('gemini') &&
+      keyLower.includes('flash-lite')
+    ) {
+      return pricing;
+    }
+    if (
+      modelLower.includes('gemini') &&
+      modelLower.includes('flash') &&
+      keyLower.includes('gemini') &&
+      keyLower.includes('flash')
+    ) {
+      return pricing;
+    }
   }
 
   return null;
@@ -337,7 +419,7 @@ export function getAllPricing(): ModelPricing[] {
  * ```
  */
 export function getPricingByProvider(
-  provider: 'anthropic' | 'openai',
+  provider: 'anthropic' | 'openai' | 'google',
 ): ModelPricing[] {
   return Object.values(PRICING_DATA).filter((p) => p.provider === provider);
 }
@@ -376,6 +458,11 @@ export function calculateCacheWritePricing(
     } else {
       return baseInput * 2.0; // +100%
     }
+  }
+
+  if (basePricing.provider === 'google') {
+    // Gemini uses explicit cache artifacts; keep baseline write pricing.
+    return basePricing.cacheWritePer1M ?? basePricing.inputPer1M;
   }
 
   // Unknown provider - use conservative estimate

@@ -20,7 +20,7 @@ import type {CacheTTL} from './types.js';
  */
 export interface CacheStats {
   /** Provider that generated these metrics */
-  readonly provider: 'anthropic' | 'openai' | 'unknown';
+  readonly provider: 'anthropic' | 'openai' | 'google' | 'unknown';
 
   /** Number of tokens written to cache (cache creation cost) */
   readonly cacheWriteTokens: number;
@@ -101,6 +101,35 @@ export interface OpenAICacheMetrics {
 }
 
 /**
+ * Google-specific cache metrics from provider metadata.
+ */
+export interface GoogleCacheMetrics {
+  /**
+   * Provider metadata payload from @ai-sdk/google:
+   * providerMetadata.google.usageMetadata
+   */
+  readonly usageMetadata?: {
+    /** Total input prompt tokens */
+    readonly promptTokenCount?: number;
+    /** Total output/candidate tokens */
+    readonly candidatesTokenCount?: number;
+    /** Total request tokens */
+    readonly totalTokenCount?: number;
+    /** Tokens loaded from cached content */
+    readonly cachedContentTokenCount?: number;
+  };
+
+  /** Fallback shape if usageMetadata is already flattened */
+  readonly promptTokenCount?: number;
+  readonly candidatesTokenCount?: number;
+  readonly totalTokenCount?: number;
+  readonly cachedContentTokenCount?: number;
+
+  /** Additional usage metadata */
+  readonly [key: string]: unknown;
+}
+
+/**
  * Token pricing information for cost calculations.
  *
  * Prices in USD per 1M tokens (typical industry standard).
@@ -120,6 +149,14 @@ const TOKEN_PRICING: Record<string, {input: number; output: number}> = {
   'gpt-4-turbo': {input: 10.0, output: 30.0},
   'gpt-4': {input: 30.0, output: 60.0},
   'gpt-3.5-turbo': {input: 0.5, output: 1.5},
+
+  // Google Gemini models (baseline as of early February 2026, $/1M tokens)
+  'gemini-3-pro-preview': {input: 2.0, output: 12.0},
+  'gemini-3-flash-preview': {input: 0.6, output: 3.5},
+  'gemini-2.5-pro': {input: 1.25, output: 10.0},
+  'gemini-2.5-flash': {input: 0.3, output: 2.5},
+  'gemini-2.5-flash-lite': {input: 0.1, output: 0.4},
+  'gemini-2.0-flash': {input: 0.1, output: 0.4},
 
   // Default fallback pricing (conservative estimate)
   default: {input: 5.0, output: 15.0},
@@ -226,6 +263,59 @@ export function parseOpenAIMetrics(
 }
 
 /**
+ * Parse Google cache metrics from provider metadata.
+ *
+ * Extracts cache usage from usageMetadata.cachedContentTokenCount.
+ */
+export function parseGoogleMetrics(
+  usage: GoogleCacheMetrics,
+  provider: 'google' = 'google',
+  model: string,
+): CacheStats {
+  const usageMetadata =
+    usage.usageMetadata &&
+    typeof usage.usageMetadata === 'object' &&
+    usage.usageMetadata !== null
+      ? usage.usageMetadata
+      : undefined;
+
+  const inputTokens = readNumber(
+    usageMetadata?.promptTokenCount ?? usage.promptTokenCount,
+  );
+  const outputTokens = readNumber(
+    usageMetadata?.candidatesTokenCount ?? usage.candidatesTokenCount,
+  );
+  const cacheReadTokens = readNumber(
+    usageMetadata?.cachedContentTokenCount ?? usage.cachedContentTokenCount,
+  );
+  const cacheWriteTokens = 0;
+  const savedTokens = cacheReadTokens;
+
+  const pricing = TOKEN_PRICING[model] || TOKEN_PRICING.default;
+  const estimatedSavingsUsd = (savedTokens / 1_000_000) * pricing.input;
+  const cacheHitRate = inputTokens > 0 ? cacheReadTokens / inputTokens : 0;
+
+  return {
+    provider,
+    cacheWriteTokens,
+    cacheReadTokens,
+    inputTokens,
+    outputTokens,
+    savedTokens,
+    cacheHitRate,
+    estimatedSavingsUsd,
+    raw: {
+      usageMetadata: usageMetadata ?? {
+        promptTokenCount: usage.promptTokenCount,
+        candidatesTokenCount: usage.candidatesTokenCount,
+        totalTokenCount: usage.totalTokenCount,
+        cachedContentTokenCount: usage.cachedContentTokenCount,
+      },
+    },
+  };
+}
+
+/**
  * Generic cache metrics parser that routes to provider-specific parsers.
  *
  * Automatically detects the provider and model from the usage object
@@ -253,6 +343,8 @@ export function parseCacheMetrics(
       return parseOpenAIMetrics(usage as OpenAICacheMetrics, 'openai', model);
 
     case 'google':
+      return parseGoogleMetrics(usage as GoogleCacheMetrics, 'google', model);
+
     case 'other':
     default:
       // For unknown providers, return minimal stats
@@ -329,6 +421,10 @@ export function aggregateCacheMetrics(metrics: CacheStats[]): CacheStats {
       individualMetrics: metrics.map((m) => m.raw),
     },
   };
+}
+
+function readNumber(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
 }
 
 /**

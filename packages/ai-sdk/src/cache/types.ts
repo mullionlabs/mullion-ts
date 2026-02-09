@@ -78,9 +78,30 @@ export interface OpenAIProviderOptions {
 }
 
 /**
+ * Google provider-specific cache options.
+ *
+ * Gemini prompt caching requires a pre-created cached content resource.
+ */
+export interface GoogleProviderOptions {
+  /** Cached content resource name (for example: cachedContents/abc123) */
+  readonly cachedContent?: string;
+}
+
+/**
+ * Gemini cache config extension with cached content handle.
+ */
+export interface GeminiCacheConfig extends CacheConfig {
+  /** Cached content resource name created via Gemini API */
+  readonly cachedContent?: string;
+}
+
+/**
  * Union type for all provider-specific options.
  */
-export type ProviderOptions = AnthropicProviderOptions | OpenAIProviderOptions;
+export type ProviderOptions =
+  | AnthropicProviderOptions
+  | OpenAIProviderOptions
+  | GoogleProviderOptions;
 
 /**
  * Anthropic cache adapter that converts abstract config to provider options.
@@ -106,6 +127,19 @@ export interface OpenAICacheAdapter {
    * @returns OpenAI provider options
    */
   toProviderOptions(config: CacheConfig): OpenAIProviderOptions;
+}
+
+/**
+ * Gemini cache adapter that converts abstract config to Google options.
+ */
+export interface GeminiCacheAdapter {
+  /**
+   * Convert abstract cache config to Google-specific provider options.
+   *
+   * @param config - Cache configuration with optional cachedContent handle
+   * @returns Google provider options
+   */
+  toProviderOptions(config: GeminiCacheConfig): GoogleProviderOptions;
 }
 
 /**
@@ -278,6 +312,35 @@ export function createOpenAIAdapter(model: string): OpenAICacheAdapter {
           ? {enabled: config.enabled}
           : undefined,
       };
+    },
+  };
+}
+
+/**
+ * Create a Gemini cache adapter with model-specific capabilities.
+ *
+ * Gemini caching is explicit and requires a pre-created cached content
+ * resource id. When unavailable, adapter returns an empty options object.
+ *
+ * @param model - Gemini model name
+ * @returns Configured adapter instance
+ */
+export function createGeminiAdapter(model: string): GeminiCacheAdapter {
+  const capabilities = getCacheCapabilities('google', model);
+
+  return {
+    toProviderOptions(config: GeminiCacheConfig): GoogleProviderOptions {
+      if (!config.enabled || !capabilities.supported) {
+        return {};
+      }
+
+      const cachedContent = config.cachedContent?.trim();
+      if (!cachedContent) {
+        // Graceful fallback: request proceeds without Gemini cache handle.
+        return {};
+      }
+
+      return {cachedContent};
     },
   };
 }

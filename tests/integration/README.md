@@ -1,13 +1,13 @@
 # Integration Tests
 
-Real-provider integration tests for Mullion packages using OpenAI and Anthropic.
+Real-provider integration tests for Mullion packages using OpenAI, Anthropic, and Gemini.
 These tests call live APIs and cost money per run.
 
 ## Requirements
 
 - Node.js >= 20
 - pnpm >= 9
-- OpenAI and/or Anthropic API keys
+- At least one provider API key (OpenAI, Anthropic, or Gemini)
 
 ## Setup
 
@@ -28,6 +28,7 @@ Fill in the API keys inside `tests/integration/.env`:
 
 - `OPENAI_API_KEY`
 - `ANTHROPIC_API_KEY`
+- `GOOGLE_GENERATIVE_AI_API_KEY`
 
 Optional:
 
@@ -39,10 +40,11 @@ Optional:
 - `ANTHROPIC_CACHE_MIN_TOKENS` to override cache token threshold.
 - `ANTHROPIC_CACHE_DOC_SECTIONS` to override cached document size.
 - `ANTHROPIC_CACHE_STRICT=true` to require cache metrics (fail if missing).
+- `GEMINI_MODEL` to override the Gemini test model.
 
 ## Run Tests
 
-Vitest loads `.env` entries with `OPENAI_` and `ANTHROPIC_`.
+Vitest loads `.env` entries with `OPENAI_`, `ANTHROPIC_`, `GEMINI_`, and `GOOGLE_GENERATIVE_AI_`.
 
 ```bash
 pnpm --filter integration-tests test
@@ -59,6 +61,7 @@ Run provider-specific suites:
 ```bash
 pnpm --filter integration-tests test:openai
 pnpm --filter integration-tests test:anthropic
+pnpm --filter integration-tests test:gemini
 ```
 
 ## Adding New Tests
@@ -71,6 +74,7 @@ pnpm --filter integration-tests test:anthropic
 ```ts
 const itOpenAI = process.env.OPENAI_API_KEY ? it : it.skip;
 const itAnthropic = process.env.ANTHROPIC_API_KEY ? it : it.skip;
+const itGemini = process.env.GOOGLE_GENERATIVE_AI_API_KEY ? it : it.skip;
 ```
 
 ## CI
@@ -78,3 +82,4 @@ const itAnthropic = process.env.ANTHROPIC_API_KEY ? it : it.skip;
 CI runs only on manual dispatch or version tags:
 `.github/workflows/integration-tests.yml`.
 Secrets required: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`.
+For Gemini coverage, add `GOOGLE_GENERATIVE_AI_API_KEY`.

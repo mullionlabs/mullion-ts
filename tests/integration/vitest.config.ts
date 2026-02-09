@@ -1,7 +1,7 @@
 import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
-  envPrefix: ['OPENAI_', 'ANTHROPIC_', 'GEMINI_'],
+  envPrefix: ['OPENAI_', 'ANTHROPIC_', 'GEMINI_', 'GOOGLE_GENERATIVE_AI_'],
   test: {
     // 30 second timeout for real API calls
     testTimeout: 30000,

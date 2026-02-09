@@ -23,6 +23,7 @@ export {
   validateMinTokens,
   createAnthropicAdapter,
   createOpenAIAdapter,
+  createGeminiAdapter,
   createDefaultCacheConfig,
   createUserContentConfig,
   createDeveloperContentConfig,
@@ -31,9 +32,12 @@ export {
   type CacheScope,
   type AnthropicProviderOptions,
   type OpenAIProviderOptions,
+  type GoogleProviderOptions,
+  type GeminiCacheConfig,
   type ProviderOptions,
   type AnthropicCacheAdapter,
   type OpenAICacheAdapter,
+  type GeminiCacheAdapter,
   type ValidationResult,
 } from './types.js';
 
@@ -50,6 +54,7 @@ export {
 export {
   parseAnthropicMetrics,
   parseOpenAIMetrics,
+  parseGoogleMetrics,
   parseCacheMetrics,
   aggregateCacheMetrics,
   estimateCacheSavings,
@@ -58,6 +63,7 @@ export {
   type CacheStats,
   type AnthropicCacheMetrics,
   type OpenAICacheMetrics,
+  type GoogleCacheMetrics,
 } from './metrics.js';
 
 // Cache warmup for fork optimization
