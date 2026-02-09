@@ -32,13 +32,13 @@ This package provides a seamless integration between Mullion and the Vercel AI S
 
 - ✅ **Type-safe contexts** - Full Mullion `Owned<T, S>` integration
 - ✅ **Automatic confidence scoring** - Based on finish reasons
-- ✅ **Provider-aware caching** - Anthropic/OpenAI optimizations
+- ✅ **Provider-aware caching** - Anthropic/OpenAI/Gemini optimizations
 - ✅ **Cost estimation & tracking** - Pre-call estimates and actual costs
 - ✅ **Cache metrics** - Hit rates, savings calculation
 - ✅ **Fork integration** - Warmup strategies, schema conflict detection
 - ✅ **Safe-by-default caching** - Never cache user content without opt-in
-- ✅ **TTL support** - '5m', '1h', '1d' cache lifetimes
-- ✅ **All AI SDK providers** - OpenAI, Anthropic, Google, custom
+- ✅ **TTL support** - `'5m'`, `'1h'` cache lifetimes
+- ✅ **Provider adapters** - OpenAI, Anthropic, Gemini
 
 ## Quick Start
 
@@ -92,7 +92,13 @@ const result = await client.scope('admin', async (adminCtx) => {
 
 ## Supported Providers
 
-Works with all Vercel AI SDK providers:
+Mullion is provider-agnostic, and the built-in adapter coverage is:
+
+| Provider  | Client integration | Cache adapter      | Cache metrics | Pricing helpers |
+| --------- | ------------------ | ------------------ | ------------- | --------------- |
+| OpenAI    | ✅                 | ✅ (automatic)     | ✅            | ✅              |
+| Anthropic | ✅                 | ✅ (explicit)      | ✅            | ✅              |
+| Gemini    | ✅                 | ✅ (cachedContent) | ✅            | ✅              |
 
 ### OpenAI
 
@@ -115,9 +121,25 @@ const client = createMullionClient(anthropic('claude-3-5-sonnet-20241022'));
 ### Google
 
 ```typescript
-import {google} from '@ai-sdk/google';
+import {createGoogleGenerativeAI} from '@ai-sdk/google';
 
-const client = createMullionClient(google('gemini-1.5-pro'));
+const provider = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+});
+const client = createMullionClient(provider('gemini-2.5-flash'), {
+  provider: 'google',
+  model: 'gemini-2.5-flash',
+});
+```
+
+Discover active Gemini models dynamically (no hardcoded full list):
+
+```typescript
+import {listGeminiModelsCached} from '@mullion/ai-sdk';
+
+const models = await listGeminiModelsCached({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+});
 ```
 
 ### Custom Providers
@@ -190,10 +212,10 @@ Provider-aware caching with safe-by-default behavior and automatic optimization.
 ```typescript
 const result = await client.scope('analysis', async (ctx) => {
   // Add cacheable content
-  ctx.cache.addSystemPrompt('You are an expert data analyst.');
-  ctx.cache.addDeveloperContent(largeDocument, {
-    ttl: '5m', // Time-to-live: '5m' | '1h' | '1d'
-    scope: 'ephemeral', // or 'persistent'
+  ctx.cache.system('You are an expert data analyst.');
+  ctx.cache.segment('domain-docs', largeDocument, {
+    ttl: '5m', // Time-to-live: '5m' | '1h'
+    scope: 'developer-content',
   });
 
   // This inference benefits from caching on repeat calls
@@ -202,7 +224,7 @@ const result = await client.scope('analysis', async (ctx) => {
   // Check cache performance
   const stats = await ctx.getCacheStats();
   console.log(`Cache hits: ${stats.cacheReadTokens} tokens`);
-  console.log(`Saved: $${stats.estimatedSavings.toFixed(4)}`);
+  console.log(`Saved: $${stats.estimatedSavingsUsd.toFixed(4)}`);
 
   return ctx.use(analysis);
 });
@@ -212,16 +234,16 @@ const result = await client.scope('analysis', async (ctx) => {
 
 ```typescript
 // System prompts (always safe to cache)
-ctx.cache.addSystemPrompt('You are a helpful assistant');
+ctx.cache.system('You are a helpful assistant');
 
 // Developer content (your content, safe to cache)
-ctx.cache.addDeveloperContent(documentation, {
+ctx.cache.segment('docs', documentation, {
   ttl: '1h',
-  scope: 'persistent',
+  scope: 'developer-content',
 });
 
 // User content (requires explicit opt-in)
-ctx.cache.addDeveloperContent(userQuery, {
+ctx.cache.segment('user-query', userQuery, {
   scope: 'allow-user-content', // ⚠️ Only if safe!
   ttl: '5m',
 });
@@ -229,10 +251,11 @@ ctx.cache.addDeveloperContent(userQuery, {
 
 **Provider-Specific Features:**
 
-| Provider  | Min Tokens | TTL Options | Auto-Cache      |
-| --------- | ---------- | ----------- | --------------- |
-| Anthropic | 1024-4096  | 5m, 1h, 1d  | No (explicit)   |
-| OpenAI    | 1024       | 1h (fixed)  | Yes (automatic) |
+| Provider  | Min Tokens | TTL Options | Auto-Cache         |
+| --------- | ---------- | ----------- | ------------------ |
+| Anthropic | 1024-4096  | 5m, 1h      | No (explicit)      |
+| OpenAI    | 1024       | N/A         | Yes (automatic)    |
+| Gemini    | 1024       | 5m, 1h      | No (cachedContent) |
 
 **Learn more:** See [docs/reference/caching.md](../../docs/reference/caching.md)
 
@@ -243,10 +266,10 @@ Track and predict LLM costs before and after API calls.
 ### Pre-Call Estimation
 
 ```typescript
-const estimate = await ctx.estimateNextCallCost(schema, input);
+const estimate = ctx.estimateNextCallCost(input, 300);
 console.log(`Estimated cost: $${estimate.totalCost.toFixed(4)}`);
-console.log(`Input tokens: ${estimate.inputTokens}`);
-console.log(`Expected output tokens: ${estimate.outputTokens}`);
+console.log(`Input cost: $${estimate.inputCost.toFixed(4)}`);
+console.log(`Output cost: $${estimate.outputCost.toFixed(4)}`);
 
 if (estimate.totalCost > 0.1) {
   console.warn('High cost operation!');
@@ -260,8 +283,7 @@ const result = await ctx.infer(schema, input);
 
 const actual = await ctx.getLastCallCost();
 console.log(`Actual cost: $${actual.totalCost.toFixed(4)}`);
-console.log(`Cache saved: $${actual.cacheSavings.toFixed(4)}`);
-console.log(`Net cost: $${actual.netCost.toFixed(4)}`);
+console.log(`Savings: ${actual.savingsPercent.toFixed(1)}%`);
 
 // Compare estimate vs actual
 const diff = actual.totalCost - estimate.totalCost;
@@ -274,7 +296,7 @@ console.log(`Difference: $${diff.toFixed(4)}`);
 import {estimateTokens} from '@mullion/ai-sdk';
 
 const estimate = estimateTokens(text, 'gpt-4');
-console.log(`${estimate.tokens} tokens (${estimate.method})`);
+console.log(`${estimate.count} tokens (${estimate.method})`);
 ```
 
 ### Pricing API
@@ -283,17 +305,18 @@ console.log(`${estimate.tokens} tokens (${estimate.method})`);
 import {getPricing, PRICING_DATA} from '@mullion/ai-sdk';
 
 const pricing = getPricing('claude-3-5-sonnet-20241022');
-console.log(`Input: $${pricing.inputTokenPrice}/token`);
-console.log(`Output: $${pricing.outputTokenPrice}/token`);
-console.log(`Cache write: $${pricing.cacheWritePrice}/token`);
-console.log(`Cache read: $${pricing.cacheReadPrice}/token`);
+console.log(`Input: $${pricing.inputPer1M}/1M tokens`);
+console.log(`Output: $${pricing.outputPer1M}/1M tokens`);
+console.log(`Cache write: $${pricing.cacheWritePer1M}/1M tokens`);
+console.log(`Cache read: $${pricing.cachedInputPer1M}/1M tokens`);
 
 // Custom pricing
 PRICING_DATA['custom-model'] = {
-  modelId: 'custom-model',
-  provider: 'custom',
-  inputTokenPrice: 0.000002,
-  outputTokenPrice: 0.000008,
+  model: 'custom-model',
+  provider: 'unknown',
+  inputPer1M: 2.0,
+  outputPer1M: 8.0,
+  asOfDate: '2026-02-01',
 };
 ```
 
@@ -455,23 +478,25 @@ const pipeline = await client.scope('ingestion', async (ingestCtx) => {
 
 **Context Methods:**
 
-- `ctx.cache.addSystemPrompt(content)` - Add system prompt to cache
-- `ctx.cache.addDeveloperContent(content, options)` - Add developer content
+- `ctx.cache.system(content, options?)` - Add system prompt segment
+- `ctx.cache.segment(key, content, options?)` - Add explicit cache segment
 - `ctx.getCacheStats()` - Get cache performance metrics
 
 **Utilities:**
 
 - `getCacheCapabilities(provider, model)` - Get provider cache capabilities
-- `supportsCacheFeature(provider, feature)` - Check feature support
-- `isValidTtl(ttl)` - Validate TTL string
+- `supportsCacheFeature(provider, model, feature)` - Check feature support
+- `isValidTtl(provider, model, ttl)` - Validate TTL for provider/model
 - `validateTtlOrdering(segments)` - Validate TTL ordering
-- `createAnthropicAdapter(options)` - Create Anthropic adapter
-- `createOpenAIAdapter(options)` - Create OpenAI adapter
-- `createCacheSegmentManager(options)` - Create cache manager
-- `parseAnthropicMetrics(response)` - Parse Anthropic metrics
-- `parseOpenAIMetrics(response)` - Parse OpenAI metrics
+- `createAnthropicAdapter(model)` - Create Anthropic adapter
+- `createOpenAIAdapter(model)` - Create OpenAI adapter
+- `createGeminiAdapter(model)` - Create Gemini adapter
+- `createCacheSegmentManager(provider, model, config)` - Create cache manager
+- `parseAnthropicMetrics(usage, provider, model)` - Parse Anthropic metrics
+- `parseOpenAIMetrics(usage, provider, model)` - Parse OpenAI metrics
+- `parseGoogleMetrics(usage, provider, model)` - Parse Gemini metrics
 - `aggregateCacheMetrics(stats)` - Aggregate metrics
-- `estimateCacheSavings(stats, pricing)` - Estimate savings
+- `estimateCacheSavings(contentTokens, requestCount, provider, model)` - Estimate savings
 
 **Types:**
 
@@ -482,7 +507,7 @@ const pipeline = await client.scope('ingestion', async (ingestCtx) => {
 
 **Context Methods:**
 
-- `ctx.estimateNextCallCost(schema, input, options?)` - Estimate before call
+- `ctx.estimateNextCallCost(prompt, estimatedOutputTokens?)` - Estimate before call
 - `ctx.getLastCallCost()` - Get actual cost after call
 
 **Token Estimation:**
@@ -492,7 +517,7 @@ const pipeline = await client.scope('ingestion', async (ingestCtx) => {
 
 **Pricing:**
 
-- `getPricing(modelId)` - Get pricing for model
+- `getPricing(model)` - Get pricing for model
 - `getAllPricing()` - Get all pricing data
 - `getPricingByProvider(provider)` - Get provider pricing
 - `PRICING_DATA` - Global pricing object
