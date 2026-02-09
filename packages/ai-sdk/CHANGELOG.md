@@ -1,5 +1,11 @@
 # @mullion/ai-sdk
 
+## 0.5.0
+
+### Minor Changes
+
+- 8759d2d: Add runtime model catalog overrides for pricing and cache capabilities, including URL/file/JSON loading with validation, TTL caching, and safe fallback behavior. Refresh OpenAI/Anthropic/Gemini baseline pricing snapshot to 2026-02-09, add GPT-5 family coverage, and include deterministic catalog normalization tooling with CI validation.
+
 ## 0.4.0
 
 ### Minor Changes
