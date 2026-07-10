@@ -5,7 +5,14 @@ import {describe, expect, it, afterEach} from 'vitest';
 import {spawn} from 'node:child_process';
 import {generateProject, type GenerateOptions} from './generator.js';
 
-describe('build integration tests', () => {
+// These heavyweight tests scaffold real projects and run `next build`/`nuxt build`,
+// pulling published @mullion/* and framework deps from npm. create-mullion is frozen
+// (see its README), and these scaffold builds rot as those published deps drift, so
+// they are gated behind RUN_CREATE_MULLION_BUILD_TESTS and skipped in CI by default.
+// Run locally with: RUN_CREATE_MULLION_BUILD_TESTS=1 pnpm --filter create-mullion test
+const runBuildTests = process.env.RUN_CREATE_MULLION_BUILD_TESTS === '1';
+
+describe.skipIf(!runBuildTests)('build integration tests', () => {
   const tempDirs: string[] = [];
 
   afterEach(async () => {
