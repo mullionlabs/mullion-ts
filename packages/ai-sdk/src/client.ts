@@ -626,15 +626,18 @@ export function createMullionClient(
          * Only accepts values whose scope matches this context's scope.
          * Throws an error at runtime if there's a scope mismatch.
          */
-        use<T>(owned: Owned<T, S>): T {
-          if (owned.__scope !== name) {
+        use<T, VS extends string>(
+          owned: S extends VS ? Owned<T, VS> : never,
+        ): T {
+          const resolved = owned as unknown as Owned<T, string>;
+          if (resolved.__scope !== name) {
             throw new Error(
-              `Scope mismatch: attempting to use value from scope '${owned.__scope}' ` +
+              `Scope mismatch: attempting to use value from scope '${resolved.__scope}' ` +
                 `in scope '${name}'. Use bridge() to explicitly transfer values between scopes.`,
             );
           }
 
-          return owned.value;
+          return resolved.value;
         },
 
         /**
