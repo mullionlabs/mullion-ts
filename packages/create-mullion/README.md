@@ -1,5 +1,11 @@
 # create-mullion
 
+> **Status: frozen.** This scaffolder is no longer actively maintained. Its
+> templates pin older `@mullion/*` and framework versions and are not tracked
+> against current AI SDK releases, so generated projects may need dependency
+> updates before they build. The core libraries (`@mullion/core`,
+> `@mullion/eslint-plugin`, `@mullion/ai-sdk`) are unaffected.
+
 **Scaffold Mullion-powered LLM applications with a single command.**
 
 Get a production-ready app with type-safe context management, scope isolation, and real/mock LLM providers — running in seconds.

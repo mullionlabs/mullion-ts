@@ -119,16 +119,20 @@ export async function scope<S extends string, R>(
      * Use method - extracts the raw value from an Owned wrapper
      * Only accepts values whose scope includes this scope (S)
      */
-    use<T>(owned: Owned<T, S>): T {
+    use<T, VS extends string>(owned: S extends VS ? Owned<T, VS> : never): T {
+      // The conditional parameter type only constrains callers; inside the
+      // implementation we work with the resolved runtime shape.
+      const resolved = owned as unknown as Owned<T, string>;
+
       // Runtime validation that the scope matches
-      if (owned.__scope !== name) {
+      if (resolved.__scope !== name) {
         throw new Error(
-          `Scope mismatch: attempting to use value from scope '${owned.__scope}' ` +
+          `Scope mismatch: attempting to use value from scope '${resolved.__scope}' ` +
             `in scope '${name}'. Use bridge() to explicitly transfer values between scopes.`,
         );
       }
 
-      return owned.value;
+      return resolved.value;
     },
   };
 

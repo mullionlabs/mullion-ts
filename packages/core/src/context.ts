@@ -174,8 +174,14 @@ export interface Context<S extends string> {
    * the value's scope matches this context's scope. This provides a type-safe
    * way to unwrap values while preventing use of values from incompatible scopes.
    *
+   * Accepts any Owned value whose scope **includes** this context's scope `S`.
+   * That covers both values created directly in `S` (`Owned<T, S>`) and bridged
+   * values whose scope is a union containing `S` (e.g. `Owned<T, 'admin' | S>`).
+   * Values whose scope does not include `S` are rejected at compile time.
+   *
    * @template T - The type of the value
-   * @param owned - An Owned value from this scope (or a bridged value that includes this scope)
+   * @template VS - The value's scope (a single scope or a union of bridged scopes)
+   * @param owned - An Owned value whose scope includes this context's scope
    * @returns The unwrapped value
    *
    * @example
@@ -224,7 +230,7 @@ export interface Context<S extends string> {
    * // Safe to use - confidence was checked
    * ```
    */
-  use<T>(owned: Owned<T, S>): T;
+  use<T, VS extends string>(owned: S extends VS ? Owned<T, VS> : never): T;
 }
 
 /**

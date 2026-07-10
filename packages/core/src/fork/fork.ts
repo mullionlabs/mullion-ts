@@ -84,7 +84,7 @@ function createChildContext<S extends string>(
       return parentCtx.bridge(owned);
     },
 
-    use<T>(owned: Owned<T, S>): T {
+    use<T, VS extends string>(owned: S extends VS ? Owned<T, VS> : never): T {
       return parentCtx.use(owned);
     },
   };
