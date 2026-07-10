@@ -61,7 +61,7 @@
     "@typescript-eslint/utils": "catalog:"
   },
   "peerDependencies": {
-    "@mullion/core": ">=0.3.0",
+    "@mullion/core": ">=0.3.1",
     "@typescript-eslint/parser": ">=8.0.0",
     "eslint": ">=8.57.0",
     "typescript": ">=5.0.0"
